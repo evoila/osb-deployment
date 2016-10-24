@@ -1,0 +1,52 @@
+heat_template_version: 2015-10-15
+
+parameters:
+  image_id:
+    type: string
+    description: Image used for servers
+  keypair:
+    type: string
+    description: SSH key to connect to the servers
+  flavor:
+    type: string
+    description: flavor used by the web servers
+  network_id:
+    type: string
+    description: Network used by the server
+  volume_size:
+    type: number
+    description: Size of the volume to be created.
+  availability_zone:
+    type: string
+    description: The Availability Zone to launch the instance.
+  user_data:
+    type: string
+    description: user data script
+
+resources:
+  volume:
+    type: OS::Cinder::Volume
+    properties:
+      size: { get_param: volume_size }
+      availability_zone: { get_param: availability_zone }
+  volume_attachment:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: { get_resource: volume }
+      instance_uuid: { get_resource: instance }
+      mountpoint: /dev/vdc
+  instance:
+    type: OS::Nova::Server
+    properties:
+      flavor: {get_param: flavor}
+      image: {get_param: image_id}
+      key_name: {get_param: keypair}
+      networks:
+      - network: {get_param: network_id}
+      security_groups:
+      - all
+      user_data_format: RAW
+      user_data: { get_param: user_data}
+outputs:
+  ip:
+    value: { get_attr: [ instance, first_address ]}
