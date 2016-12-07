@@ -11,13 +11,14 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 
+import de.evoila.cf.cpi.existing.CustomExistingServiceConnection;
 import jersey.repackaged.com.google.common.collect.Lists;
 
 /**
  * @author Johannes Hiemer
  *
  */
-public class MongoDbService {
+public class MongoDbService implements CustomExistingServiceConnection {
 
 	private String host;
 
