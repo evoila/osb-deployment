@@ -43,7 +43,7 @@
 		</dependency>
 		<dependency>
 			<groupId>de.evoila.cf.broker</groupId>
-			<artifactId>persistence-redis</artifactId>
+			<artifactId>persistence-mongodb</artifactId>
 			<version>0.1-RC</version>
 		</dependency>
 	</dependencies>
