@@ -30,8 +30,12 @@ public class MongoDbService implements CustomExistingServiceConnection {
 		return mongoClient != null && mongoClient.getUsedDatabases() != null;
 	}
 
-	public void createConnection(String id, List<de.evoila.cf.broker.model.ServerAddress> hosts)
+	public void createConnection(String database, String username, String password, List<de.evoila.cf.broker.model.ServerAddress> hosts)
 			throws UnknownHostException {
+		
+		if(database == null)
+			database = "admin";
+		
 		List<ServerAddress> serverAddresses = Lists.newArrayList();
 		for (de.evoila.cf.broker.model.ServerAddress host : hosts) {
 			serverAddresses.add(new ServerAddress(host.getIp(), host.getPort()));
@@ -40,7 +44,7 @@ public class MongoDbService implements CustomExistingServiceConnection {
 		this.host = hosts.get(0).getIp();
 		this.port = hosts.get(0).getPort();
 
-		MongoCredential mongoCredential = MongoCredential.createScramSha1Credential(id, "admin", id.toCharArray());
+		MongoCredential mongoCredential = MongoCredential.createScramSha1Credential(username, database, password.toCharArray());
 		mongoClient = new MongoClient(serverAddresses, Arrays.asList(mongoCredential));
 	}
 

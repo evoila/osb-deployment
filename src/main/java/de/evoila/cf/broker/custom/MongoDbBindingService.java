@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.mongodb.BasicDBObject;
 
+import de.evoila.cf.broker.custom.mongodb.MongoDBCustomImplementation;
 import de.evoila.cf.broker.custom.mongodb.MongoDbService;
 import de.evoila.cf.broker.exception.ServiceBrokerException;
 import de.evoila.cf.broker.model.Plan;
@@ -40,7 +41,8 @@ public class MongoDbBindingService extends BindingServiceImpl {
 		MongoDbService mongoDbService = new MongoDbService();
 		log.info("Opening connection to " + host.getIp() + ":" + host.getPort());
 		try {
-			mongoDbService.createConnection(serviceInstance.getId(), serviceInstance.getHosts());
+			mongoDbService.createConnection(null, serviceInstance.getId(), serviceInstance.getId(),
+					serviceInstance.getHosts());
 		} catch (UnknownHostException e) {
 			log.info("Could not establish connection", e);
 			throw new ServiceBrokerException("Could not establish connection", e);
@@ -55,15 +57,10 @@ public class MongoDbBindingService extends BindingServiceImpl {
 
 		SecureRandom random = new SecureRandom();
 		String password = new BigInteger(130, random).toString(32);
+		String database = serviceInstance.getId();
+		String username = bindingId;
 
-		Map<String, Object> commandArguments = new BasicDBObject();
-		commandArguments.put("createUser", bindingId);
-		commandArguments.put("pwd", password);
-		String[] roles = { "readWrite" };
-		commandArguments.put("roles", roles);
-		BasicDBObject command = new BasicDBObject(commandArguments);
-
-		mongoDbService.mongoClient().getDB(serviceInstance.getId()).command(command);
+		MongoDBCustomImplementation.createUserForDatabase(mongoDbService, database, username, password);
 
 		String formattedHosts = "";
 		for (ServerAddress host : hosts) {
@@ -72,8 +69,7 @@ public class MongoDbBindingService extends BindingServiceImpl {
 			formattedHosts += String.format("%s:%d", host.getIp(), host.getPort());
 		}
 
-		String dbURL = String.format("mongodb://%s:%s@%s/%s", bindingId, password, formattedHosts,
-				serviceInstance.getId());
+		String dbURL = String.format("mongodb://%s:%s@%s/%s", bindingId, password, formattedHosts, database);
 		String replicaSet = serviceInstance.getParameters().get("replicaSet");
 		if (replicaSet != null && !replicaSet.equals(""))
 			dbURL += String.format("?replicaSet=%s", replicaSet);
@@ -83,6 +79,8 @@ public class MongoDbBindingService extends BindingServiceImpl {
 
 		return credentials;
 	}
+
+	
 
 	/*
 	 * (non-Javadoc)
