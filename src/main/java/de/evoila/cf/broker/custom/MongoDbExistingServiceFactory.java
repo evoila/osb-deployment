@@ -48,7 +48,7 @@ public class MongoDbExistingServiceFactory extends ExistingServiceFactory {
 			collection.save(new BasicDBObject("auth", "auth"));
 			collection.drop();
 		} catch(MongoException e) {
-			throw new PlatformException("Could not add to database");
+			throw new PlatformException("Could not add to database", e);
 		}
 	}
 
@@ -56,7 +56,7 @@ public class MongoDbExistingServiceFactory extends ExistingServiceFactory {
 		try {
 		connection.mongoClient().dropDatabase(database);
 		} catch (MongoException e) {
-			throw new PlatformException("Could not remove from database");
+			throw new PlatformException("Could not remove from database", e);
 		}
 	}
 

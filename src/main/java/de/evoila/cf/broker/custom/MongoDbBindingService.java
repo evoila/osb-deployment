@@ -41,7 +41,7 @@ public class MongoDbBindingService extends BindingServiceImpl {
 		MongoDbService mongoDbService = new MongoDbService();
 		log.info("Opening connection to " + host.getIp() + ":" + host.getPort());
 		try {
-			mongoDbService.createConnection(null, serviceInstance.getId(), serviceInstance.getId(),
+			mongoDbService.createConnection(serviceInstance.getId(), serviceInstance.getId(), serviceInstance.getId(),
 					serviceInstance.getHosts());
 		} catch (UnknownHostException e) {
 			log.info("Could not establish connection", e);
