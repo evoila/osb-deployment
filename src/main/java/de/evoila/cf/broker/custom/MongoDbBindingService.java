@@ -56,9 +56,10 @@ public class MongoDbBindingService extends BindingServiceImpl {
 		MongoDbService mongoDbService = connection(serviceInstance);
 
 		SecureRandom random = new SecureRandom();
+		
+		String username = bindingId;
 		String password = new BigInteger(130, random).toString(32);
 		String database = serviceInstance.getId();
-		String username = bindingId;
 
 		MongoDBCustomImplementation.createUserForDatabase(mongoDbService, database, username, password);
 
@@ -76,6 +77,9 @@ public class MongoDbBindingService extends BindingServiceImpl {
 
 		Map<String, Object> credentials = new HashMap<String, Object>();
 		credentials.put("uri", dbURL);
+		credentials.put("username", username);
+		credentials.put("password", password);
+		credentials.put("database", database);
 
 		return credentials;
 	}
