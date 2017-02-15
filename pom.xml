@@ -13,6 +13,12 @@
 	<packaging>jar</packaging>
 	<name>ssb-mongodb</name>
 
+    	<properties>
+        	<core.version>0.1-RC</core.version>
+        	<deployment.version>0.1-RC</deployment.version>
+        	<persistence.version>0.1-RC</persistence.version>
+	</properties>
+
 	<dependencies>
 		<!-- MongoDB -->
 		<dependency>
@@ -23,28 +29,28 @@
 		<!-- Cloud Foundry Service Broker -->
 		<dependency>
 			<groupId>de.evoila.cf.broker</groupId>
-			<artifactId>docker</artifactId>
-			<version>0.1-RC</version>
+			<artifactId>core</artifactId>
+			<version>${core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.evoila.cf.broker</groupId>
 			<artifactId>docker</artifactId>
-			<version>0.1-RC</version>
+			<version>${deployment.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.evoila.cf.broker</groupId>
 			<artifactId>openstack</artifactId>
-			<version>0.1-RC</version>
+			<version>${deployment.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.evoila.cf.broker</groupId>
 			<artifactId>existing-service</artifactId>
-			<version>0.1-RC</version>
+			<version>${deployment.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.evoila.cf.broker</groupId>
 			<artifactId>persistence-mongodb</artifactId>
-			<version>0.1-RC</version>
+			<version>${persistence.version}</version>
 		</dependency>
 	</dependencies>
 
