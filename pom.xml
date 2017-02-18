@@ -12,6 +12,7 @@
 	<artifactId>cf-service-broker-mongodb</artifactId>
 	<packaging>jar</packaging>
 	<name>ssb-mongodb</name>
+	<version>0.1-RC</version>
 
     	<properties>
         	<core.version>0.1-RC</core.version>
