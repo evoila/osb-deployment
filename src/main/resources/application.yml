@@ -1,6 +1,6 @@
 ---
 spring:
-  profiles: default
+  profiles: cloud
   ### General Information ###
   application:
       name: cf-service-broker-mongodb
