@@ -32,13 +32,17 @@ public class MongoDBCustomImplementation implements CustomExistingService {
 	 * @see de.evoila.cf.cpi.existing.CustomExistingService#connection(java.lang.String, int, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public CustomExistingServiceConnection connection(String host, int port, String database, String username,
+	public CustomExistingServiceConnection connection(List<String> hosts, int port, String database, String username,
 			String password) throws Exception {
 		
 		MongoDbService mongoDbService = new MongoDbService();
 		
-		List<ServerAddress> serverAddresses = Lists.newArrayList(new ServerAddress("", host, port));
-		log.info("Opening connection to " + host + ":" + port);
+		List<ServerAddress> serverAddresses = Lists.newArrayList();
+		for (String address: hosts) {
+			ServerAddress newAdress = new ServerAddress("", address, port);
+			serverAddresses.add(newAdress);
+			log.info("Opening connection to " + address + ":" + port);
+		}
 		try {
 			mongoDbService.createConnection(null, username, password, serverAddresses);
 		} catch (UnknownHostException e) {
@@ -55,16 +59,20 @@ public class MongoDBCustomImplementation implements CustomExistingService {
 	public void bindRoleToInstanceWithPassword(CustomExistingServiceConnection connection, String database,
 			String username, String password) throws Exception {
 		if(connection instanceof MongoDbService) {
-			createUserForDatabase((MongoDbService) connection, database, username, password);
+			createUserForDatabaseWithRoles((MongoDbService) connection, database, username, password, "readWrite", "userAdmin");
 		}
 	}
 
 	public static void createUserForDatabase(MongoDbService mongoDbService, String database, String username,
 			String password) {
+			createUserForDatabaseWithRoles((MongoDbService) mongoDbService, database, username, password, "readWrite");
+	}
+		
+	public static void createUserForDatabaseWithRoles(MongoDbService mongoDbService, String database, String username,
+			String password, String... roles) {
 		Map<String, Object> commandArguments = new BasicDBObject();
 		commandArguments.put("createUser", username);
 		commandArguments.put("pwd", password);
-		String[] roles = { "readWrite" };
 		commandArguments.put("roles", roles);
 		BasicDBObject command = new BasicDBObject(commandArguments);
 

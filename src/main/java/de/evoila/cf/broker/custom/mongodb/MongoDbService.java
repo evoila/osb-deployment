@@ -10,6 +10,7 @@ import java.util.List;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
+import com.mongodb.WriteConcern;
 
 import de.evoila.cf.cpi.existing.CustomExistingServiceConnection;
 import jersey.repackaged.com.google.common.collect.Lists;
@@ -46,6 +47,7 @@ public class MongoDbService implements CustomExistingServiceConnection {
 
 		MongoCredential mongoCredential = MongoCredential.createScramSha1Credential(username, database, password.toCharArray());
 		mongoClient = new MongoClient(serverAddresses, Arrays.asList(mongoCredential));
+		mongoClient.setWriteConcern(WriteConcern.JOURNAL_SAFE);
 	}
 
 	public String getHost() {
