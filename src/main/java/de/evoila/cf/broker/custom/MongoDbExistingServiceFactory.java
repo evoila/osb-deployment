@@ -33,7 +33,7 @@ import de.evoila.cf.cpi.existing.ExistingServiceFactory;
  */
 
 @Service
-@ConditionalOnProperty(prefix = "existing.endpoint", name = { "host", "port", "username", "password",
+@ConditionalOnProperty(prefix = "existing.endpoint", name = { "hosts", "port", "username", "password",
 		"database" }, havingValue = "")
 public class MongoDbExistingServiceFactory extends ExistingServiceFactory {
 	
@@ -43,6 +43,7 @@ public class MongoDbExistingServiceFactory extends ExistingServiceFactory {
 	public void createDatabase(MongoDbService connection, String database) throws PlatformException {
 		try {
 			MongoClient mongo = connection.mongoClient();
+			mongo.setWriteConcern(WriteConcern.JOURNAL_SAFE);
 			DB db = mongo.getDB(database);
 			DBCollection collection = db.getCollection("_auth");
 			collection.save(new BasicDBObject("auth", "auth"));

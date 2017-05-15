@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>de.evoila.cf.broker</groupId>
 		<artifactId>custom-parent</artifactId>
-		<version>0.1-RC</version>
+		<version>1.1.0</version>
 		<relativePath>../core/custom-parent</relativePath>
 	</parent>
 	<artifactId>cf-service-broker-mongodb</artifactId>
@@ -31,8 +31,13 @@
 		<!-- Cloud Foundry Service Broker -->
 		<dependency>
 			<groupId>de.evoila.cf.broker</groupId>
+<<<<<<< HEAD
 			<artifactId>core</artifactId>
 			<version>${core.version}</version>
+=======
+			<artifactId>docker</artifactId>
+			<version>1.1.0</version>
+>>>>>>> origin/master
 		</dependency>
 		<dependency>
 			<groupId>de.evoila.cf.broker</groupId>
