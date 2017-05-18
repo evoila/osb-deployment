@@ -31,13 +31,8 @@
 		<!-- Cloud Foundry Service Broker -->
 		<dependency>
 			<groupId>de.evoila.cf.broker</groupId>
-<<<<<<< HEAD
 			<artifactId>core</artifactId>
 			<version>${core.version}</version>
-=======
-			<artifactId>docker</artifactId>
-			<version>1.1.0</version>
->>>>>>> origin/master
 		</dependency>
 		<dependency>
 			<groupId>de.evoila.cf.broker</groupId>
