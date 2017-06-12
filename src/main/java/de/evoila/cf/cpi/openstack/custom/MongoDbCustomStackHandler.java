@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import de.evoila.cf.broker.exception.PlatformException;
 import de.evoila.cf.broker.model.ServerAddress;
+import de.evoila.cf.broker.persistence.mongodb.repository.ClusterStackMapping;
+import de.evoila.cf.broker.persistence.mongodb.repository.StackMappingRepository;
 
 /**
  * @author Yannic Remmet, Rene Schollmeyer, evoila
@@ -52,7 +54,7 @@ public class MongoDbCustomStackHandler extends CustomStackHandler {
 	
 	@Override
 	public void delete(String internalId) {
-		MongoDbStackMapping stackMapping = stackMappingRepo.findOne(internalId);
+		ClusterStackMapping stackMapping = stackMappingRepo.findOne(internalId);
 		
 		if(stackMapping == null) {
 			super.delete(internalId);
@@ -74,7 +76,7 @@ public class MongoDbCustomStackHandler extends CustomStackHandler {
 		log.debug(customParameters.toString());
 		if(customParameters.containsKey(ParameterManager.CLUSTER)) {
 			log.debug("Start creating cluster " + instanceId);
-			MongoDbStackMapping clusterStacks = createCluster(instanceId, customParameters);
+			ClusterStackMapping clusterStacks = createCluster(instanceId, customParameters);
 			log.debug("End creating cluster " + instanceId);
 			stackMappingRepo.save(clusterStacks);
 			return clusterStacks.getId();
@@ -83,13 +85,13 @@ public class MongoDbCustomStackHandler extends CustomStackHandler {
 		return super.create(instanceId, customParameters);
 	}
 	
-	private MongoDbStackMapping createCluster(String instanceId, Map<String, String> customParameters) throws PlatformException, InterruptedException {
+	private ClusterStackMapping createCluster(String instanceId, Map<String, String> customParameters) throws PlatformException, InterruptedException {
 		
 		log.debug("Start create a MongoDB cluster");
 		customParameters.putAll(defaultParameters());
 		customParameters.putAll(generateValues(instanceId));
 		
-		MongoDbStackMapping stackMapping = new MongoDbStackMapping();
+		ClusterStackMapping stackMapping = new ClusterStackMapping();
 		stackMapping.setId(instanceId);
 		
 		Stack ipStack = createPreIpStack(instanceId, customParameters);
