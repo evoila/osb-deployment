@@ -4,8 +4,7 @@
 package de.evoila.cf.broker.custom;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
 
 import com.mongodb.BasicDBObject;
@@ -15,6 +14,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 import com.mongodb.WriteConcern;
 
+import de.evoila.cf.broker.bean.ExistingEndpointBean;
 import de.evoila.cf.broker.custom.mongodb.MongoDBCustomImplementation;
 import de.evoila.cf.broker.custom.mongodb.MongoDbService;
 import de.evoila.cf.broker.exception.PlatformException;
@@ -28,8 +28,7 @@ import de.evoila.cf.cpi.existing.ExistingServiceFactory;
  */
 
 @Service
-@ConditionalOnProperty(prefix = "existing.endpoint", name = { "port", "username", "password",
-		"database" }, havingValue = "")
+@ConditionalOnBean(ExistingEndpointBean.class)
 public class MongoDbExistingServiceFactory extends ExistingServiceFactory {
 	
 	@Autowired
