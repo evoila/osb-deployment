@@ -4,14 +4,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import org.openstack4j.model.heat.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
 
+import de.evoila.cf.broker.bean.OpenstackBean;
 import de.evoila.cf.broker.exception.PlatformException;
 import de.evoila.cf.broker.model.ServerAddress;
 import de.evoila.cf.broker.persistence.mongodb.repository.ClusterStackMapping;
@@ -23,7 +25,7 @@ import de.evoila.cf.broker.persistence.mongodb.repository.StackMappingRepository
  */
 
 @Service
-@ConditionalOnProperty(prefix = "openstack", name = { "keypair" }, havingValue = "")
+@ConditionalOnBean(OpenstackBean.class)
 public class MongoDbCustomStackHandler extends CustomStackHandler {
 
 	private static final String PRE_IP_TEMPLATE = "/openstack/pre-ips.yaml";
@@ -40,16 +42,23 @@ public class MongoDbCustomStackHandler extends CustomStackHandler {
 	private static final String IP_ADDRESS_KEY = "port_ips";
 	private static final String VOLUME_KEY = "volume_ids";
 	
-	@Value("${openstack.keypair}")
-	private String keyPair;
-	
 	private final Logger log = LoggerFactory.getLogger(MongoDbCustomStackHandler.class);
 
+	private String keyPair;
+	
 	@Autowired
 	private StackMappingRepository stackMappingRepo;
 	
+	@Autowired
+	private OpenstackBean openstackBean;
+	
 	public MongoDbCustomStackHandler() {
 		super();
+	}
+	
+	@PostConstruct
+	private void initValues() {
+		keyPair = openstackBean.getKeypair();
 	}
 	
 	@Override
