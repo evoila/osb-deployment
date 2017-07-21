@@ -15,7 +15,6 @@ import org.springframework.boot.system.ApplicationPidFileWriter;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.util.Assert;
 
 import de.evoila.cf.broker.bean.MongoDBSecurityKeyBean;
@@ -59,7 +58,7 @@ public class Application {
 		springApplication.addListeners(new ApplicationPidFileWriter());
 		ApplicationContext ctx = springApplication.run(args);
 
-		Assert.notNull(ctx);
+		Assert.notNull(ctx, "ApplicationContext must not be null.");
 	}
 
 }
