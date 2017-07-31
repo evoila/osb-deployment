@@ -19,7 +19,7 @@
 		<module>osb-dashboard</module>
 		<module>osb-core</module>
 		<module>osb-persistence</module>
-		<module>osb-depolyment</module>
+		<module>osb-deployment</module>
 		<module>osb-mongodb</module>
 	</modules>
 
