@@ -20,11 +20,11 @@
 		<module>osb-core</module>
 		<!--		<module>osb-persistence</module>-->
 		<module>osb-deployment</module>
-		<module>osb-mongodb</module>
+		<module>osb-service</module>
 	</modules>
 
 	<properties>
-		<resource.dir>${basedir}/../osb-mongodb/src/main/resources</resource.dir>
+		<resource.dir>${basedir}/../osb-service/src/main/resources</resource.dir>
 		<dashboard.module>mongodb</dashboard.module>
 		<java.version>1.8</java.version>
 	</properties>

@@ -28,21 +28,11 @@
 			<version>3.4.2</version>
 		</dependency>
 
-		<!-- Cloud Foundry Service Broker -->
-		<dependency>
-			<groupId>de.evoila.cf.broker</groupId>
-			<artifactId>docker</artifactId>
-			<version>1.1.0</version>
-		</dependency>		
+		<!-- Cloud Foundry Service Broker -->	
 		<dependency>
 			<groupId>de.evoila.cf.broker</groupId>
 			<artifactId>core</artifactId>
 			<version>${core.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>de.evoila.cf.broker</groupId>
-			<artifactId>docker</artifactId>
-			<version>${deployment.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.evoila.cf.broker</groupId>
