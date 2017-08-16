@@ -5,9 +5,10 @@ package de.evoila.cf.cpi.openstack.util;
 
 import org.openstack4j.model.heat.Stack;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
 
+import de.evoila.cf.broker.bean.OpenstackBean;
 import de.evoila.cf.broker.exception.PlatformException;
 import de.evoila.cf.cpi.openstack.fluent.HeatFluent;
 
@@ -16,7 +17,7 @@ import de.evoila.cf.cpi.openstack.fluent.HeatFluent;
  *
  */
 @Service
-@ConditionalOnProperty(prefix="openstack", name={"endpoint"},havingValue="")
+@ConditionalOnBean(OpenstackBean.class)
 public class StackProgressObserver {
 	public static final String CREATE_IN_PROGRESS = "CREATE_IN_PROGRESS";
 
@@ -76,7 +77,9 @@ public class StackProgressObserver {
 		if (stack != null && stack.getStatus().equals(DELETE_FAILED))
 			throw new PlatformException(stack.getStackStatusReason());
 		
-		while (stack.getStatus().equals(DELETE_IN_PROGRESS)) {
+		while (stack != null &&
+				stack.getStatus() != null &&
+				stack.getStatus().equals(DELETE_IN_PROGRESS)) {
 			stack = heatFluent.get(name);
 
 			try {
