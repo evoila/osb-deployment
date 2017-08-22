@@ -3,9 +3,12 @@
  */
 package de.evoila.cf.cpi.openstack.custom;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import de.evoila.cf.broker.persistence.mongodb.repository.ClusterStackMapping;
+import de.evoila.cf.broker.persistence.mongodb.repository.StackMappingRepository;
 import org.openstack4j.model.heat.Stack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -30,36 +33,20 @@ public class MongoIpAccessor extends CustomIpAccessor {
 
 	@Autowired
 	private DefaultIpAccessor defaultIpAccessor;
+	@Autowired
+	StackMappingRepository stackMappingRepository;
 
 	@Override
 	public List<ServerAddress> getIpAddresses(String instanceId) throws PlatformException {
-		Stack stack = heatFluent.get(HeatFluent.uniqueName(instanceId));
-		List<Map<String, Object>> outputs = stack.getOutputs();
 
-		if (outputs == null || outputs.isEmpty()) {
+
+		ClusterStackMapping mapping = stackMappingRepository.findOne(instanceId);
+
+
+		if (mapping == null) {
 			return defaultIpAccessor.getIpAddresses(instanceId);
 		}
 
-		List<ServerAddress> serverAddresses = Lists.newArrayList();
-		for (Map<String, Object> output : outputs) {
-			Object outputKey = output.get("output_key");
-			if (outputKey != null && outputKey instanceof String) {
-				String key = (String) outputKey;
-				if (key.equals("sec_ips")) {
-					List<String> outputValue = (List<String>) output.get("output_value");
-
-					for (int i = 0; i < outputValue.size(); i++) {
-						serverAddresses
-								.add(new ServerAddress("sec_ips" + "#" + Integer.toString(i), outputValue.get(i)));
-					}
-				} else if (key.equals("prim_ip")) {
-					String outputValue = (String) output.get("output_value");
-
-					serverAddresses.add(new ServerAddress("prim_ip", outputValue));
-				}
-			}
-		}
-
-		return serverAddresses;
+		return Collections.unmodifiableList(mapping.getServerAddresses());
 	}
 }

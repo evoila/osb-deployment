@@ -1,0 +1,141 @@
+heat_template_version: 2016-04-08
+description: Deployment Description for MongoDB-Replicaset Secondary-Nodes (Script 5/5) Two Secondaries needed.
+
+parameters:
+
+  image_id:
+    type: string
+    description: Image used for servers
+  key_name:
+    type: string
+    description: SSH key to connect to the servers
+  flavor:
+    type: string
+    description: flavor used by the servers
+  availability_zone:
+    type: string
+    description: Availability Zone of the nodes.
+  server_group:
+    type: string
+    description: server group of the nodes.
+  
+  secondary_index:
+    type: number
+    description: Index
+  hostname:
+    type: string
+    description: Hostname of the secondary node.
+  secondary_volume_ids:
+    type: comma_delimited_list
+    description: ID of the pre-created volume to be attached to the secondary node.
+  secondary_ports:
+    type: comma_delimited_list
+    description: Network-Port used by the secondary node.
+
+  service_db:
+    type: string
+    description: Name of the Database.
+  admin_user:
+    type: string
+    description: Admin user for the service.
+  sb_user:
+    type: string
+    description: SB-User for the service.
+  admin_password:
+    type: string
+    hidden: true
+    description: Password for the service_user password.
+  mongodb_key:
+    type: string
+    description: Shared key for cluster authentication on all nodes of the replicaset.
+  repset_name:
+    type: string
+    description: Name of the replicaset.
+
+
+resources:
+
+  volume_attachment:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id:
+        get_param:
+        - secondary_volume_ids
+        - { get_param: secondary_index }
+      instance_uuid: { get_resource: instance }
+      mountpoint: /dev/vdb
+
+  instance:
+    type: OS::Nova::Server
+    properties:
+      flavor: {get_param: flavor}
+      image: {get_param: image_id}
+      availability_zone: { get_param: availability_zone }
+      key_name: {get_param: key_name}
+      key_name: {get_param: key_name}
+      scheduler_hints:
+        group: {get_param: server_group}
+      name:
+        str_replace:
+          template: $hostname-s$index
+          params:
+            $hostname: { get_param: hostname }
+            $index:  { get_param: secondary_index }
+      networks:
+      - port:
+          get_param:
+          - secondary_ports
+          - { get_param: secondary_index }
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            mkdir -p /data
+            echo "/dev/vdb       /data       ext4    defaults     0 0" >> /etc/fstab
+            mkfs.ext4 /dev/vdb
+            mount -a
+
+            export REPOSITORY_MONGO="https://bitbucket.org/meshstack/deployment-scripts-mongodb/raw/HEAD/mongodb"
+            export REPOSITORY_MONGO_HA="https://bitbucket.org/meshstack/deployment-scripts-mongodb/raw/HEAD/mongodb/cluster"
+            export REPOSITORY_MONIT="https://bitbucket.org/meshstack/deployment-scripts-monit/raw/HEAD/monit"
+
+            wget $REPOSITORY_MONGO/mongo-template.sh --no-cache
+            wget $REPOSITORY_MONGO_HA/mongo-HA-repset-template.sh --no-cache
+
+            chmod +x mongo-template.sh
+            chmod +x mongo-HA-repset-template.sh
+
+
+            ./mongo-template.sh -d $service_db -u $admin_user -v $sb_user -p $admin_password -e openstack
+
+            ./mongo-HA-repset-template.sh -d $service_db -u $admin_user -p $admin_password -r $repset_name -k "$mongodb_key" -a secondary
+
+            wc_notify --data-binary '{"status": "SUCCESS"}'
+
+          params:
+            $service_db: {get_param: service_db}
+            $admin_user: {get_param: admin_user}
+            $sb_user: {get_param: sb_user}
+            $admin_password: {get_param: admin_password}
+            $mongodb_key: { get_param: mongodb_key}
+            $repset_name: { get_param: repset_name}
+            wc_notify: { get_attr: [  'wait_handle', 'curl_cli'] }
+
+  wait_handle:
+    type: OS::Heat::WaitConditionHandle
+  wait_condition:
+    type: OS::Heat::WaitCondition
+    properties:
+      handle: { get_resource: wait_handle }
+      count: 1
+      timeout: 600
+  wait_for_it:
+    type: OS::Heat::None
+    depends_on: wait_condition
+
+outputs:
+  ip:
+    value: { get_attr: [ instance, first_address ]}
+  vm:
+    value: { get_resource: instance }
