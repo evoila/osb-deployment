@@ -3,14 +3,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 <properties>
-  <deployment.version>1.1.0</deployment.version>
+  <deployment.version>1.2.0</deployment.version>
  </properties>
 
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>de.evoila.cf.broker</groupId>
 		<artifactId>deployment-parent</artifactId>
-		<version>1.1.0</version>
+		<version>1.2.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<artifactId>existing-service</artifactId>
@@ -32,7 +32,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>de.evoila.cf.broker</groupId>
+            <artifactId>model</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+    </dependencies>
 	<build>
 		<plugins>
 			<plugin>
