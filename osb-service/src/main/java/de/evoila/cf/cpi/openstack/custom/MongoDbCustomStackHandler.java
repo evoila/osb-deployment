@@ -3,6 +3,7 @@ package de.evoila.cf.cpi.openstack.custom;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
@@ -71,11 +72,16 @@ public class MongoDbCustomStackHandler extends CustomStackHandler {
 			List<String> secondaryStacks = stackMapping.getSecondaryStacks();
 			for(String stackId : secondaryStacks) {
 				super.delete(stackId);
+				try {
+					Thread.sleep(60000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 			
 			super.delete(stackMapping.getPrimaryStack());
 			super.delete(stackMapping.getPortsStack());
-			
+			stackMapping.getSecondaryStacks().forEach(s -> super.delete(s));
 			stackMappingRepo.delete(stackMapping);
 		}
 	}
@@ -99,7 +105,8 @@ public class MongoDbCustomStackHandler extends CustomStackHandler {
 		log.debug("Start create a MongoDB cluster");
 		customParameters.putAll(defaultParameters());
 		customParameters.putAll(generateValues(instanceId));
-		
+		customParameters.put(ParameterManager.SECONDARY_NUMBER, ParameterManager.getSecondaryNumber(customParameters));
+
 		ClusterStackMapping stackMapping = new ClusterStackMapping();
 		stackMapping.setId(instanceId);
 		
@@ -110,7 +117,8 @@ public class MongoDbCustomStackHandler extends CustomStackHandler {
 		List<String>[] responses = extractResponses(ipStack, PORTS_KEY, IP_ADDRESS_KEY);
 		List<String> ips = responses[1];
 		List<String> ports = responses[0];
-		
+
+
 		for(int i = 0; i < ips.size(); i++) {
 			String ip = ips.get(i);
 			stackMapping.addServerAddress(new ServerAddress("node-" + i, ip, 27017));
@@ -120,6 +128,7 @@ public class MongoDbCustomStackHandler extends CustomStackHandler {
 		Stack preVolumeStack = createPreVolumeStack(instanceId, customParameters);
 		stackMapping.setVolumeStack(preVolumeStack.getId());
 		stackMappingRepo.save(stackMapping);
+
 		
 		responses = extractResponses(preVolumeStack, VOLUME_KEY);
 		List<String> volumes = responses[0];
@@ -138,6 +147,7 @@ public class MongoDbCustomStackHandler extends CustomStackHandler {
 		valueMap.put(ParameterManager.ADMIN_PASSWORD, instanceId);
 		valueMap.put(ParameterManager.SERVICE_DB, instanceId);
 		valueMap.put(ParameterManager.KEY_NAME, keyPair);
+		valueMap.put(ParameterManager.SB_USER, UUID.randomUUID().toString());
 		return valueMap;
 	}
 	
@@ -146,11 +156,12 @@ public class MongoDbCustomStackHandler extends CustomStackHandler {
 				ParameterManager.NODE_NUMBER,
 				ParameterManager.RESOURCE_NAME,
 				ParameterManager.NETWORK_ID,
+				ParameterManager.NODE_NUMBER,
 				ParameterManager.SECURITY_GROUPS);
 		
 		String name = String.format(NAME_TEMPLATE, instanceId, "ip");
 		parametersPreIp.put(ParameterManager.RESOURCE_NAME, name);
-		
+
 		String templatePorts = accessTemplate(PRE_IP_TEMPLATE);
 		
 		heatFluent.create(name, templatePorts, parametersPreIp, false, 10l);
@@ -162,7 +173,7 @@ public class MongoDbCustomStackHandler extends CustomStackHandler {
 	private Stack createPreVolumeStack(String instanceId, Map<String, String> customParameters) throws PlatformException {
 		Map<String, String> parametersPreVolume = ParameterManager.copyProperties(customParameters,
 				ParameterManager.NODE_NUMBER,
-				ParameterManager.RESOURCE_NAME,
+				ParameterManager.RESOURCE_NAME, ParameterManager.NODE_NUMBER,
 				ParameterManager.VOLUME_SIZE);
 		
 		String name = String.format(NAME_TEMPLATE, instanceId, "vol");
@@ -176,24 +187,26 @@ public class MongoDbCustomStackHandler extends CustomStackHandler {
 	
 	private Stack createMainStack(String instanceId, Map<String, String> customParameters) throws PlatformException {
 		Map<String, String> parametersMain = ParameterManager.copyProperties(customParameters,
+				ParameterManager.RESOURCE_NAME,
 				ParameterManager.IMAGE_ID,
 				ParameterManager.KEY_NAME,
 				ParameterManager.FLAVOR,
 				ParameterManager.AVAILABILITY_ZONE,
-				ParameterManager.RESOURCE_NAME,
-				ParameterManager.PRIMARY_VOLUME_ID,
-				ParameterManager.PRIMARY_PORT,
-				ParameterManager.PRIMARY_IP,
-				ParameterManager.SECONDARIES_IP_LIST,
-				ParameterManager.SECONDARY1_VOLUME_ID,
-				ParameterManager.SECONDARY1_PORT,
-				ParameterManager.SECONDARY2_VOLUME_ID,
-				ParameterManager.SECONDARY2_PORT,
+
 				ParameterManager.SERVICE_DB,
 				ParameterManager.ADMIN_USER,
 				ParameterManager.ADMIN_PASSWORD,
-				ParameterManager.MONGODB_KEY,
-				ParameterManager.REPSET_NAME);
+
+				ParameterManager.PRIMARY_VOLUME_ID,
+				ParameterManager.PRIMARY_PORT,
+				ParameterManager.PRIMARY_IP,
+
+				ParameterManager.SECONDARY_NUMBER,
+				ParameterManager.SECONDARY_PORTS,
+				ParameterManager.SECONDARY_VOLUME_IDS,
+
+				ParameterManager.SB_USER
+				);
 		
 		String name = String.format(NAME_TEMPLATE, instanceId, "cl");
 		parametersMain.put(ParameterManager.RESOURCE_NAME, name);

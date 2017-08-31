@@ -11,7 +11,7 @@ public class ParameterManager {
 	public static final String NETWORK_ID = "network_id";
 	public static final String SECURITY_GROUPS = "security_groups";
 	public static final String IMAGE_ID = "image_id";
-	public static final String KEY_NAME = "KEY_NAME";
+	public static final String KEY_NAME = "key_name";
 	public static final String FLAVOR = "flavor";
 	public static final String AVAILABILITY_ZONE = "availability_zone";
 	public static final String VOLUME_SIZE = "volume_size";
@@ -28,8 +28,12 @@ public class ParameterManager {
 	public static final String SECONDARY2_PORT = "secondary2_port";
 	public static final String SECONDARIES_IP_LIST = "secondaries_ip_list";
 	public static final String MONGODB_KEY = "mongodb_key";
+	public static final String SB_USER = "sb_user";
+	public static final String SECONDARY_VOLUME_IDS = "secondary_volume_ids";
+	public static final String SECONDARY_PORTS = "secondary_ports";
 	public static final String REPSET_NAME = "repset_name";
-	
+	public static final String SECONDARY_NUMBER = "secondary_number";
+
 	static void updatePortParameters(Map<String, String> customParameters, List<String> ips, List<String> ports) {
 		String primIp = ips.get(0);
 		ips.remove(0);
@@ -38,17 +42,26 @@ public class ParameterManager {
 
 		customParameters.put(ParameterManager.PRIMARY_PORT, primPort);
 		customParameters.put(ParameterManager.PRIMARY_IP, primIp);
+
+		customParameters.put(SECONDARY_PORTS, join(ports));
+		customParameters.put(SECONDARIES_IP_LIST, join(ips));
 	}
-	
+
+	private static String join (List<String> list) {
+		return String.join(",",list);
+	}
+
 	static void updateVolumeParameters(Map<String, String> customParameters, List<String> volumes) {
 		String primaryVolume = volumes.get(0);
 		volumes.remove(0);
 		
 		customParameters.put(ParameterManager.PRIMARY_VOLUME_ID, primaryVolume);
+
+		customParameters.put(SECONDARY_VOLUME_IDS, join(volumes));
 	}
 	
-	static int getSecondaryNumber(Map<String, String> customParameters) {
-		return Integer.parseInt(customParameters.get(ParameterManager.NODE_NUMBER));
+	static String getSecondaryNumber(Map<String, String> customParameters) {
+		return String.valueOf(Integer.parseInt(customParameters.get(ParameterManager.NODE_NUMBER))-1);
 	}
 	
 	static Map<String, String> copyProperties(Map<String, String> completeList, String... keys) {
@@ -60,4 +73,5 @@ public class ParameterManager {
 		}
 		return copiedProps;
 	}
+
 }

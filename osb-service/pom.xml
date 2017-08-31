@@ -50,4 +50,5 @@
             <version>${persistence.version}</version>
         </dependency>
     </dependencies>
+
 </project>

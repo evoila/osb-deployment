@@ -1,0 +1,150 @@
+heat_template_version: 2016-04-08
+description: >
+        Deployment of of a MongoDB-Replica-Set with 3 nodes (Skript 3/5)
+        Scripts 4 and 5 will used by this script for creation of the primary and the standby node.
+
+parameters:
+
+  image_id:
+    type: string
+    description: Image used for servers.
+    default: ubuntu-xenial-16.04_softwareconfig_0.0.2
+  key_name:
+    type: string
+    description: SSH key to connect to the servers.
+  flavor:
+    type: string
+    description: Flavor used by the servers.
+    default: gp1.tiny
+  availability_zone:
+    type: string
+    description: Availability Zone of the nodes.
+    default: zone00
+  resource_name:
+    type: string
+    description: Name-prefix for created resources in OpenStack.
+
+  primary_volume_id:
+    type: string
+    description: ID of the pre-created volume to be attached to the primary node.
+  primary_port:
+    type: string
+    description: Port-ID of the pre-created Port for the primary node.
+  primary_ip:
+    type: string
+    description: IP of primary node.
+  secondary_ips:
+    type: comma_delimited_list
+    description: Network-IP comma seperate list from secondary mongodb-server.
+    default: []
+
+  secondary_number:
+    type: number
+    description: number of mirrors
+    default:  0
+  secondary_volume_ids:
+    type: comma_delimited_list
+    description: ID of the pre-created volume to be attached to the secondary node.
+    default: []
+  secondary_ports:
+    type: comma_delimited_list
+    description: Network-Port used by the standby node.
+    default: []
+
+  service_db:
+    type: string
+    description: Name of the Database.
+    default: servicedb
+  admin_user:
+    type: string
+    description: Admin user for the service.
+    default: servicedb
+  sb_user:
+    type: string
+    description: SB-User for the service.
+  admin_password:
+    type: string
+    hidden: true
+    description: Password for the service_user password.
+  mongodb_key:
+    type: string
+    description: Shared key for cluster authentication on all nodes of the replicaset.
+    default: |
+      Os0zck0o8wjHW3koBHh2rJ0J8LfErk3r8z+YpnPIdgw7PjP3eRYvK20W4WFl8s7n
+      a/aPLHqN5y5H1EeYtvTtmZdsIOTENJiYbvnKZhexNn8gYneljxocQQyUaIoi89m7
+      5iZl9T3hZpFmBZvXbd2zemOC0K9MjsvSvkeTkhbaClvW9p9esB3PHy2GrOqQgVCr
+      fhSQiZYkNIfjUDjqeaEXh4n6bsJN8Uyj77hCfSV141hh+zE0GBv0KY1x7k9R9hmc
+      aQTcuHGo3V6PqsTZxPEYx70b+cjwYVJSPqGdCpd8kZit98V/SzKDGkGRx8hAZwIs
+      YUjs1HNK0LelzU2m7oCem1+4neh+1FShiXZnk5vS/kLNbpyIh79r0/aErAVt8sHY
+      CxsHM2U6YMUtfaln3HSwqAhr1yVQTSz8ztCL9PKtpeSVJ6D4mDPU7xohe6bvaayQ
+      uLPLfl29g5EO6sWP3p6AYuvA4M1sOyknkspSguQL6a3rjmN8ancL+9uXOY+e3ih6
+      HQ+EF9AYp+2E3BFRgsBrsjl2RCZXCsbMw6ToUdzibIQSRc1JsCPvasTT+lfTW5+j
+      7Q6Eic9E/ySfe/voCTeVNpWISK16vrtW8h7k0XwpuPFqqvBev5oRDB0z4jxo3vXh
+      KtL6UIlk5NJnx23T7gPFQHWx5EwHVM6i45Qy5A1XagGdtLZMixowPEzs36Fja3ZF
+      di7LppDze/VgIZXvQTSYJqUQAg1eBcbt49fxISFL/VikeC7mtkhENXZbCTpwb0Fy
+      KCpEBx767hbuuxbxx3UYhDnspK8OjU0KNk9ZaQU+0Z8nromv7J99Bn3Z41tQst4f
+      4CmWLLkQoLV6UwUSkpEuxto41v0hBYgU83I96lX5lGoIQOoD0u7FIxIaRz12EKFg
+      tIEv8lIM4iYYXHOM3sKTmj1HKM9imixi98QJY1pAyom5a1zE4IrOzijlhCGkfycG
+      G+VNmBvAd+ww3gbdXYnsgSKtMUaE
+  repset_name:
+    type: string
+    description: Name of the replicaset.
+    default: rs1
+
+
+resources:
+
+  anti-affinity:
+    type: OS::Nova::ServerGroup
+    properties:
+      name:
+        str_replace:
+         template: $resource_name-SG
+         params:
+           $resource_name: { get_param: resource_name }
+      policies: [ 'anti-affinity' ]
+
+  mongodb_primary_node:
+    type: primary.yaml
+    depends_on:
+      - mongodb_secondary
+    properties:
+      hostname: { get_param: resource_name }
+      image_id: {get_param: image_id }
+      key_name: {get_param: key_name }
+      flavor: {get_param: flavor }
+      availability_zone: {get_param: availability_zone }
+      service_db: {get_param: service_db }
+      admin_user: {get_param: admin_user }
+      sb_user: {get_param: sb_user }
+      admin_password: {get_param: admin_password }
+      mongodb_key: {get_param: mongodb_key }
+      repset_name: {get_param: repset_name }
+      primary_port: {get_param: primary_port }
+      primary_ip: {get_param: primary_ip }
+      secondaries_ip_list:  {get_param: secondary_ips }
+      primary_volume_id: {get_param: primary_volume_id }
+      server_group: {get_resource: anti-affinity }
+
+  mongodb_secondary:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: { get_param: secondary_number }
+      resource_def:
+        type: secondaries.yaml
+        properties:
+          hostname: { get_param: resource_name }
+          secondary_index: 0%index%
+          image_id: {get_param: image_id }
+          key_name: {get_param: key_name }
+          flavor: {get_param: flavor }
+          availability_zone: {get_param: availability_zone }
+          service_db: {get_param: service_db }
+          admin_user: {get_param: admin_user }
+          sb_user: {get_param: sb_user }
+          admin_password: {get_param: admin_password }
+          secondary_ports: {get_param: secondary_ports }
+          mongodb_key: {get_param: mongodb_key }
+          repset_name: {get_param: repset_name }
+          secondary_volume_ids: {get_param: secondary_volume_ids}
+          server_group: {get_resource: anti-affinity }
