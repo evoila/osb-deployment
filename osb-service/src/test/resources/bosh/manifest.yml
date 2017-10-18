@@ -1,0 +1,85 @@
+---
+name: mongodb3
+director_uuid: 9b61cd26-8e25-4272-b45d-340eaaf47f08 
+releases:
+- name: mongodb3
+  version: latest
+compilation:
+  workers: 1
+  reuse_compilation_vms: false
+  network: default
+  cloud_properties:
+    cpu: 4
+    datacenters:
+    - clusters:
+      - cf_z10:
+          resource_pool: lynn
+      name: demohop 
+    disk: 20480
+    ram: 4096
+update:
+  canaries: 1
+  canary_watch_time: 15000-30000
+  update_watch_time: 15000-30000
+  max_in_flight: 1
+networks:
+- name: compile
+  subnets:
+  - cloud_properties:
+      name: VM Network
+    dns:
+    - 10.254.174.10
+    - 10.104.128.235
+    gateway: 10.241.143.1
+    range: 10.241.143.0/24
+    static_ips:
+    - 10.241.143.44
+- name: default
+  subnets:
+  - range: 10.244.0.0/28
+    reserved: [10.244.0.1]
+
+resource_pools:
+- name: mongodb3 
+  network: default
+  stemcell:
+    name: bosh-warden-boshlite-ubuntu-trusty-go_agent
+#    name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
+    version: latest
+  cloud_properties:
+    cpu: 2
+    datacenters:
+    - clusters:
+      - cf_z10:
+          resource_pool: lynn 
+      name: demohop 
+    disk: 10480
+    ram: 4096
+
+############################################################
+jobs:
+- name: mongodb3 
+  instances: 1
+  templates:
+  - name: mongodb3
+    release: mongodb3
+  - name: node-exporter
+  - name: mongodb-exporter
+  persistent_disk: 2048
+  resource_pool: mongodb3 
+  networks:
+  - name: default
+  properties: {}
+
+- name: create-admin-user
+  lifecycle: errand
+  instances: 1
+  templates:
+  - name: create-admin-user
+    release: mongodb3
+  persistent_disk: 100
+  resource_pool: mongodb3
+  networks:
+  - name: default
+  properties: {}
+

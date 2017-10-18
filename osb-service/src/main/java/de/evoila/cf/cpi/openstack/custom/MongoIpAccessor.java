@@ -12,7 +12,9 @@ import de.evoila.cf.broker.persistence.mongodb.repository.StackMappingRepository
 import org.openstack4j.model.heat.Stack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
 import de.evoila.cf.broker.exception.PlatformException;
@@ -25,16 +27,29 @@ import jersey.repackaged.com.google.common.collect.Lists;
  *
  */
 @Service
-@Primary
 @ConditionalOnBean(HeatFluent.class)
+// @ConditionalOnBean is evaluated after all configuration classes have been processed,
+// i.e you can't use it to make a whole configuration class conditional on the presence of another bean.
+// You can, however, use it where you have to make all of the configuration's beans conditional on the presence of another bean.
+@ConditionalOnProperty(prefix="openstack",
+	name = {"endpoint",
+			   "user.username", "user.password", "user.domainName",
+			   "project.domainName", "project.projectName",
+			   "networkId", "subnetId", "imageId", "keypair",
+			   "cinder.az"
+	}, havingValue="")
 public class MongoIpAccessor extends CustomIpAccessor {
-	@Autowired
-	private HeatFluent heatFluent;
 
-	@Autowired
+	public MongoIpAccessor(HeatFluent heatFluent, DefaultIpAccessor defaultIpAccessor, StackMappingRepository mappingRepository){
+		this.heatFluent = heatFluent;
+		this.defaultIpAccessor = defaultIpAccessor;
+		this.stackMappingRepository = mappingRepository;
+	}
+
+
+	private HeatFluent heatFluent;
 	private DefaultIpAccessor defaultIpAccessor;
-	@Autowired
-	StackMappingRepository stackMappingRepository;
+	private StackMappingRepository stackMappingRepository;
 
 	@Override
 	public List<ServerAddress> getIpAddresses(String instanceId) throws PlatformException {
