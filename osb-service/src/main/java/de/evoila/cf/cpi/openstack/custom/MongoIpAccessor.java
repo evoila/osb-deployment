@@ -38,6 +38,7 @@ import jersey.repackaged.com.google.common.collect.Lists;
 			   "networkId", "subnetId", "imageId", "keypair",
 			   "cinder.az"
 	}, havingValue="")
+@Primary
 public class MongoIpAccessor extends CustomIpAccessor {
 
 	public MongoIpAccessor(HeatFluent heatFluent, DefaultIpAccessor defaultIpAccessor, StackMappingRepository mappingRepository){
