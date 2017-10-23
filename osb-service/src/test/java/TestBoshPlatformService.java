@@ -57,11 +57,9 @@ public class TestBoshPlatformService {
     }
     @Test
     public void testCreate() throws PlatformException {
-
         platformService.createInstance(instance,plan, new HashMap<>());
-        List<DeploymentSummary> summaries = connection.deployments().list().toBlocking().first();
-        assertNotNull(summaries.stream().filter(e -> e.getName().equals(instance.getId())).findFirst().get());
-
+        connection.deployments().list().toBlocking();
+        connection.deployments().get(instance.getId());
     }
 
 }

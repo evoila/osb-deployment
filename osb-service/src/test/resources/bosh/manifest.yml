@@ -59,7 +59,7 @@ resource_pools:
 ############################################################
 jobs:
 - name: mongodb3 
-  instances: 1
+  instances: 3
   templates:
   - name: mongodb3
     release: mongodb3
