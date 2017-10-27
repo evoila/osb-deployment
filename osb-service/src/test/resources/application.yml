@@ -16,5 +16,5 @@ haproxy:
 bosh:
   host: 192.168.50.6
   username: admin
-  password: y4j2tjpnfrmwg1jum9c2
+  password: p40c6ery3wpcrfbbrs1r
 
