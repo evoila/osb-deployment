@@ -24,6 +24,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -55,7 +56,11 @@ public class TestBoshPlatformService {
                                         properties.getHost()).authenticate().connection();
 
         plan = new Plan("planId", "Plan", "Test Plan", Platform.BOSH, 20, VolumeUnit.G, "", false,200);
+
         updatedPlan = new Plan("updatedPlanId", "UpdatedPlan", "Updated Test Plan", Platform.BOSH, 30, VolumeUnit.G, "", false, 200);
+        Map<String,Object> meta = new HashMap<>();
+        meta.put("nodes", 5);
+        updatedPlan.setMetadata(meta);
         instance = new ServiceInstance("serviceId", "serviceDefId", "planId","none","none",null,"");
     }
 
@@ -79,12 +84,13 @@ public class TestBoshPlatformService {
         platformService.updateInstance(instance, updatedPlan);
         assertNotNull(connection.deployments().list().toBlocking().first()
                 .stream().filter(e -> e.getName().equals(instance.getId())).findFirst().get());
-        assertEquals(connection.vms().listDetails(instance.getId()).toBlocking().first().size(), 3);
+        assertEquals(connection.vms().listDetails(instance.getId()).toBlocking().first().size(), 5);
     }
 
     @Test
     public void d_testDelete() throws PlatformException {
         platformService.deleteServiceInstance(instance);
+
         assertTrue(connection.deployments().list().toBlocking().first().isEmpty());
     }
 }
