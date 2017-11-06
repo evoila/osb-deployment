@@ -26,10 +26,14 @@
 		<!-- Openstack Fluent -->
 		<dependency>
 			<groupId>org.pacesys</groupId>
-			<artifactId>openstack4j</artifactId>
+			<artifactId>openstack4j-core</artifactId>
 			<version>3.1.1-SNAPSHOT</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.pacesys.openstack4j.connectors</groupId>
+			<artifactId>openstack4j-httpclient</artifactId>
+			<version>3.1.1-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>de.evoila.cf.broker</groupId>
 			<artifactId>core</artifactId>
