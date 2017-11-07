@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.evoila.cf.broker.model.*;
+import de.evoila.cf.broker.service.PlatformService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,11 +21,6 @@ import com.mongodb.BasicDBObject;
 import de.evoila.cf.broker.custom.mongodb.MongoDBCustomImplementation;
 import de.evoila.cf.broker.custom.mongodb.MongoDbService;
 import de.evoila.cf.broker.exception.ServiceBrokerException;
-import de.evoila.cf.broker.model.Plan;
-import de.evoila.cf.broker.model.RouteBinding;
-import de.evoila.cf.broker.model.ServerAddress;
-import de.evoila.cf.broker.model.ServiceInstance;
-import de.evoila.cf.broker.model.ServiceInstanceBinding;
 import de.evoila.cf.broker.service.impl.BindingServiceImpl;
 import jersey.repackaged.com.google.common.collect.Lists;
 
@@ -37,23 +34,16 @@ public class MongoDbBindingService extends BindingServiceImpl {
 	private Logger log = LoggerFactory.getLogger(MongoDbBindingService.class);
 
 	private MongoDbService connection(ServiceInstance serviceInstance) throws ServiceBrokerException {
-		ServerAddress host = serviceInstance.getHosts().get(0);
-		MongoDbService mongoDbService = new MongoDbService();
-		log.info("Opening connection to " + host.getIp() + ":" + host.getPort());
-		try {
-			mongoDbService.createConnection(serviceInstance.getId(), serviceInstance.getId(), serviceInstance.getId(),
-					serviceInstance.getHosts());
-		} catch (UnknownHostException e) {
-			log.info("Could not establish connection", e);
-			throw new ServiceBrokerException("Could not establish connection", e);
-		}
-		return mongoDbService;
+		return connection(serviceInstance.getId(),serviceInstance.getId(),serviceInstance.getId(),serviceInstance);
 	}
 
 	protected Map<String, Object> createCredentials(String bindingId, ServiceInstance serviceInstance,
-			List<ServerAddress> hosts) throws ServiceBrokerException {
-
-		MongoDbService mongoDbService = connection(serviceInstance);
+			List<ServerAddress> hosts, Plan p) throws ServiceBrokerException {
+		MongoDbService mongoDbService;
+		if(p.getPlatform() == Platform.BOSH)
+			mongoDbService = connection("admin", serviceInstance.getId(), "admin", serviceInstance);
+		else
+			mongoDbService = connection(serviceInstance);
 
 		SecureRandom random = new SecureRandom();
 		
@@ -84,7 +74,19 @@ public class MongoDbBindingService extends BindingServiceImpl {
 		return credentials;
 	}
 
-	
+	private MongoDbService connection (String user, String password, String database, ServiceInstance instance) throws ServiceBrokerException {
+		ServerAddress host = instance.getHosts().get(0);
+		log.info("Opening connection to " + host.getIp() + ":" + host.getPort());
+		MongoDbService mongoDbService = new MongoDbService();
+		try {
+			mongoDbService.createConnection(database, user, password, instance.getHosts());
+		} catch (UnknownHostException e) {
+			log.info("Could not establish connection", e);
+			throw new ServiceBrokerException("Could not establish connection", e);
+		}
+		return mongoDbService;
+	}
+
 
 	/*
 	 * (non-Javadoc)
@@ -99,8 +101,7 @@ public class MongoDbBindingService extends BindingServiceImpl {
 			List<ServerAddress> externalAddresses) throws ServiceBrokerException {
 
 		log.debug("bind service key");
-
-		Map<String, Object> credentials = createCredentials(bindingId, serviceInstance, externalAddresses);
+		Map<String, Object> credentials = createCredentials(bindingId, serviceInstance, externalAddresses, plan);
 
 		ServiceInstanceBinding serviceInstanceBinding = new ServiceInstanceBinding(bindingId, serviceInstance.getId(),
 				credentials, null);
@@ -123,7 +124,7 @@ public class MongoDbBindingService extends BindingServiceImpl {
 		log.debug("bind service");
 
 		List<ServerAddress> hosts = serviceInstance.getHosts();
-		Map<String, Object> credentials = createCredentials(bindingId, serviceInstance, hosts);
+		Map<String, Object> credentials = createCredentials(bindingId, serviceInstance, hosts, plan);
 
 		return new ServiceInstanceBinding(bindingId, serviceInstance.getId(), credentials, null);
 	}
@@ -150,14 +151,14 @@ public class MongoDbBindingService extends BindingServiceImpl {
 	 */
 	@Override
 	protected Map<String, Object> createCredentials(String bindingId, ServiceInstance serviceInstance,
-			ServerAddress host) throws ServiceBrokerException {
+													ServerAddress host, Plan plan) throws ServiceBrokerException {
 		log.warn("de.evoila.cf.broker.custom.MongoDbBindingService#createCredentials( java.lang.String, "
 				+ "de.evoila.cf.broker.model.ServiceInstance, de.evoila.cf.broker.model.ServerAddress) "
 				+ "was used instead of de.evoila.cf.broker.custom.MongoDbBindingService#createCredentials( "
 				+ "java.lang.String, de.evoila.cf.broker.model.ServiceInstance, "
 				+ "java.util.List<de.evoila.cf.broker.model.ServerAddress>)");
 
-		return createCredentials(bindingId, serviceInstance, Lists.newArrayList(host));
+		return createCredentials(bindingId, serviceInstance, Lists.newArrayList(host), plan);
 	}
 
 	/*
