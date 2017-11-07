@@ -18,7 +18,6 @@ stemcells:
 instance_groups:
 - name: mongodb3
   instances: 4
-#  azs: [z1]
   jobs:
   - name: mongodb3
     release: mongodb3

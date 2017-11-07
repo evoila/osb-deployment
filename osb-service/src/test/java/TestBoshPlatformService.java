@@ -1,5 +1,6 @@
 import de.evoila.Application;
 import de.evoila.cf.broker.bean.BoshProperties;
+import de.evoila.cf.broker.custom.mongodb.MongoDBCustomImplementation;
 import de.evoila.cf.broker.exception.PlatformException;
 import de.evoila.cf.broker.model.Plan;
 import de.evoila.cf.broker.model.Platform;
@@ -23,6 +24,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +46,9 @@ public class TestBoshPlatformService {
     @Autowired
     BoshProperties properties;
 
+    @Autowired
+    private MongoDBCustomImplementation mongodb;
+
     private DirectorClient connection;
     ServiceInstance instance;
     Plan plan;
@@ -55,11 +60,15 @@ public class TestBoshPlatformService {
                                         properties.getPassword(),
                                         properties.getHost()).authenticate().connection();
 
-        plan = new Plan("planId", "Plan", "Test Plan", Platform.BOSH, 20, VolumeUnit.G, "", false,200);
-
-        updatedPlan = new Plan("updatedPlanId", "UpdatedPlan", "Updated Test Plan", Platform.BOSH, 30, VolumeUnit.G, "", false, 200);
         Map<String,Object> meta = new HashMap<>();
+        meta.put("nodes", 3);
+        plan = new Plan("planId", "Plan", "Test Plan", Platform.BOSH, 20, VolumeUnit.G, "", false,200);
+        plan.setMetadata(meta);
+
+        meta = new HashMap<>();
         meta.put("nodes", 5);
+        updatedPlan = new Plan("updatedPlanId", "UpdatedPlan", "Updated Test Plan", Platform.BOSH, 30, VolumeUnit.G, "", false, 200);
+
         updatedPlan.setMetadata(meta);
         instance = new ServiceInstance("serviceId", "serviceDefId", "planId","none","none",null,"");
     }
@@ -69,7 +78,9 @@ public class TestBoshPlatformService {
         platformService.createInstance(instance,plan, new HashMap<>());
         assertNotNull(connection.deployments().list().toBlocking().first()
                 .stream().filter(e -> e.getName().equals(instance.getId())).findFirst().get());
+
         assertEquals(connection.vms().listDetails(instance.getId()).toBlocking().first().size(), 3);
+        assertEquals(3, instance.getHosts().size());
     }
 
     @Test
@@ -85,12 +96,15 @@ public class TestBoshPlatformService {
         assertNotNull(connection.deployments().list().toBlocking().first()
                 .stream().filter(e -> e.getName().equals(instance.getId())).findFirst().get());
         assertEquals(connection.vms().listDetails(instance.getId()).toBlocking().first().size(), 5);
+        assertEquals(5, instance.getHosts().size());
     }
 
     @Test
-    public void d_testDelete() throws PlatformException {
+    public void d_testDelete() throws PlatformException, InterruptedException {
         platformService.deleteServiceInstance(instance);
-
+        while (connection.tasks().listRunning().toBlocking().first().size() > 0){
+            Thread.sleep(3000);
+        }
         assertTrue(connection.deployments().list().toBlocking().first().isEmpty());
     }
 }

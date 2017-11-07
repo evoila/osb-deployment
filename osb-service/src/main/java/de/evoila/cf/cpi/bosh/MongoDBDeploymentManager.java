@@ -15,6 +15,7 @@ public class MongoDBDeploymentManager extends DeploymentManager {
     public static final String NODES = "nodes";
     public static final String DATA_PATH = "data_path";
     public static final String REPLICA_SET_NAME = "replica-set-name";
+    public static final String PORT = "port";
     public static final String VM_TYPE = "vm_type";
     public static final String DISK_TYPE = "disk_type";
 
@@ -42,11 +43,18 @@ public class MongoDBDeploymentManager extends DeploymentManager {
             replset.put("keyfile", randomString.nextString());
         }
 
-        if(properties.containsKey(REPLICA_SET_NAME)){
-            replset.put("name", customParameters.get(REPLICA_SET_NAME));
+        if(!properties.containsKey(REPLICA_SET_NAME)){
+            properties.put(REPLICA_SET_NAME, "repSet");
         }
+
+        replset.put("name", properties.get(REPLICA_SET_NAME));
+        instance.getParameters().put("replicaSet", (String) properties.get(REPLICA_SET_NAME));
+
         if(properties.containsKey(DATA_PATH)){
-            mongodb.put(DATA_PATH, customParameters.get(DATA_PATH));
+            mongodb.put(DATA_PATH, properties.get(DATA_PATH));
+        }
+        if(properties.containsKey(PORT)){
+            mongodb.put(PORT, properties.get(PORT));
         }
 
         if(properties.containsKey(NODES)){
@@ -55,6 +63,10 @@ public class MongoDBDeploymentManager extends DeploymentManager {
 
         if(properties.containsKey(VM_TYPE)){
             manifest.getInstance_groups().get(0).setVm_type((String) properties.get(VM_TYPE));
+        }
+
+        if(properties.containsKey(DISK_TYPE)){
+            manifest.getInstance_groups().get(0).setVm_type((String) properties.get(DISK_TYPE));
         }
 
         if(properties.containsKey(DISK_TYPE)){
