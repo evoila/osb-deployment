@@ -12,6 +12,13 @@ import javax.annotation.PostConstruct;
 import javax.ws.rs.NotAcceptableException;
 import javax.ws.rs.NotSupportedException;
 
+import com.google.common.collect.Lists;
+import de.evoila.cf.broker.bean.OpenstackBean;
+import de.evoila.cf.broker.exception.PlatformException;
+import de.evoila.cf.broker.model.*;
+import de.evoila.cf.broker.repository.PlatformRepository;
+import de.evoila.cf.broker.service.ServiceInstanceAvailabilityVerifier;
+import de.evoila.cf.cpi.openstack.OpenstackServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +39,13 @@ import de.evoila.cf.broker.model.VolumeUnit;
 import de.evoila.cf.broker.repository.PlatformRepository;
 import de.evoila.cf.broker.service.availability.ServicePortAvailabilityVerifier;
 import de.evoila.cf.cpi.openstack.OpenstackServiceFactory;
+import javax.annotation.PostConstruct;
+import javax.ws.rs.NotAcceptableException;
+import javax.ws.rs.NotSupportedException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * 
@@ -61,7 +75,8 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
 	private PlatformRepository platformRepository;
 
 	@Autowired
-	private ServicePortAvailabilityVerifier portAvailabilityVerifier;
+
+	private ServiceInstanceAvailabilityVerifier portAvailabilityVerifier;
 	
 
 	@Autowired
@@ -107,7 +122,7 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
 
 		boolean available;
 		try {
-			available = portAvailabilityVerifier.verifyServiceAvailability(serviceInstance.getHosts(), true);
+			available = portAvailabilityVerifier.verifyServiceAvailability(serviceInstance, true);
 		} catch (Exception e) {
 			throw new PlatformException("Service instance is not reachable. Service may not be started on instance.",
 					e);

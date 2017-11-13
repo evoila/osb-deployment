@@ -29,8 +29,7 @@
 	<modules>
 		<module>openstack</module>
 		<module>existing-service</module>
-        <module>bosh</module>
-    </modules>
+	</modules>
 
 	<dependencyManagement>
 		<dependencies>
