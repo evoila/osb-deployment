@@ -15,6 +15,7 @@ import io.bosh.client.deployments.Deployment;
 import io.bosh.client.errands.ErrandSummary;
 import io.bosh.client.tasks.Task;
 import io.bosh.client.vms.Vm;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -46,12 +47,12 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
     ;
 
 
-    BoshPlatformService (PlatformRepository repository,
-                         CatalogService catalogService,
-                         ServicePortAvailabilityVerifier availabilityVerifier,
-                         BoshProperties boshProperties,
-                         Optional<DashboardClient> dashboardClient,
-                         DeploymentManager deploymentManager){
+    public BoshPlatformService (PlatformRepository repository,
+                                CatalogService catalogService,
+                                ServicePortAvailabilityVerifier availabilityVerifier,
+                                BoshProperties boshProperties,
+                                Optional<DashboardClient> dashboardClient,
+                                DeploymentManager deploymentManager){
 
         Assert.notNull(repository, "The platform repository can not be null");
         Assert.notNull(availabilityVerifier, "The ServicePortAvailabilityVerifier can not be null");
@@ -95,21 +96,21 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
 
     @Override
     public ServiceInstance createInstance (ServiceInstance in, Plan plan, Map<String, String> customParameters) throws PlatformException {
+        ServiceInstance instance = createServiceInstanceObject(in, plan);
         try {
-            Deployment deployment = deploymentManager.createDeployment(in,plan,customParameters);
+            Deployment deployment = deploymentManager.createDeployment(instance,plan,customParameters);
             Observable<Task> task = connection.connection().deployments().create(deployment);
-            task.subscribe(n -> logger.info(String.format("Deployment started successfuly. Task %s", n.getId())),
-                           e -> logger.error(String.format("Deployment could not been started %s", e.getMessage())));
+
             waitForTaskCompletion(task.toBlocking().first());
             Observable<List<ErrandSummary>> errands = connection.connection().errands().list(deployment.getName());
-            runCreateErrands(in, plan, deployment, errands);
-            updateHosts(in, plan, deployment);
+            runCreateErrands(instance, plan, deployment, errands);
+            updateHosts(instance, plan, deployment);
         } catch (URISyntaxException | IOException e) {
             logger.error("Couldn't create Service Instance via Bosh Deployment");
             logger.error(e.getMessage());
             throw new PlatformException("Could not create Service Instance", e);
         }
-        return new ServiceInstance(in, in.getDashboardUrl(), in.getId());
+        return instance;
     }
 
     protected void runCreateErrands (ServiceInstance instance, Plan plan, Deployment deployment, Observable<List<ErrandSummary>> errands) throws PlatformException { }
@@ -141,6 +142,14 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
         }
     }
 
+
+    public ServiceInstance createServiceInstanceObject (ServiceInstance instance, Plan plan) {
+        return new ServiceInstance(instance,
+                                   DashboardUtils.dashboard(catalogService.getServiceDefinition(instance.getServiceDefinitionId()), instance.getId()),
+                                   RandomStringUtils.randomAlphanumeric(24)
+                                   );
+    }
+
     @Override
     public ServiceInstance getCreateInstancePromise (ServiceInstance instance, Plan plan) {
         return new ServiceInstance(instance,
@@ -151,7 +160,7 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
 
     @Override
     public void deleteServiceInstance (ServiceInstance serviceInstance) throws PlatformException {
-        Observable<Deployment> obs = connection.connection().deployments().get("sb-" + serviceInstance.getId());
+        Observable<Deployment> obs = connection.connection().deployments().get(deploymentManager.getDeployment(serviceInstance).getName());
         try {
             Deployment deployment = obs.toBlocking().first();
             Observable<List<ErrandSummary>> errands = connection.connection().errands().list(deployment.getName());
@@ -166,7 +175,7 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
 
     @Override
     public ServiceInstance updateInstance (ServiceInstance instance, Plan plan) throws PlatformException {
-        Deployment deployment = connection.connection().deployments().get("sb-" + instance.getId()).toBlocking().first();
+        Deployment deployment = connection.connection().deployments().get(deploymentManager.getDeployment(instance).getName()).toBlocking().first();
         Observable<List<ErrandSummary>> errands = connection.connection().errands().list(deployment.getName());
         runUpdateErrands(instance, plan, deployment, errands);
         try {
@@ -186,5 +195,15 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
     protected abstract void updateHosts (ServiceInstance instance, Plan plan, Deployment deployment);
 
 
+    protected List<Vm> getVms (ServiceInstance instance){
+        return this.connection.connection().vms().listDetails(deploymentManager.getDeployment(instance).getName()).toBlocking().first();
+    }
 
+    protected ServerAddress toServerAddress (String namePrefix, Vm vm, int port){
+        return new ServerAddress(namePrefix+vm.getIndex(), vm.getIps().get(0), port);
+    }
+
+    protected ServerAddress toServerAddress (Vm vm, int port){
+        return toServerAddress(vm.getJobName(), vm, port);
+    }
 }
