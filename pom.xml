@@ -1,77 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+ 
+ 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<org.springframework.boot>1.5.2.RELEASE</org.springframework.boot>
+		<java.version>1.8</java.version>
+		<core.version>1.2.0</core.version>
+		<parent.version>1.2.0</parent.version>
+		<deployment.version>1.2.0</deployment.version>
+	</properties>
+ 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>de.evoila.cf.broker</groupId>
-	<artifactId>repo-parent</artifactId>
-	<version>1.2.0</version>
+	<artifactId>deployment-parent</artifactId>
 	<packaging>pom</packaging>
-	<name>MongoDB</name>
+	<name>deployment-parent</name>
+	<version>1.2.0</version>
 
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.2.RELEASE</version>
+		<groupId>de.evoila.cf.broker</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.2.0</version>
+		<relativePath>../osb-core/</relativePath>
 	</parent>
 
+	
 	<modules>
-		<module>osb-backup-core</module>
-		<module>osb-dashboard</module>
-		<module>osb-core</module>
-		<module>osb-persistence</module>
-		<module>osb-deployment</module>
-		<module>osb-service</module>
-	</modules>
+		<module>openstack</module>
+		<module>existing-service</module>
+        <module>bosh</module>
+    </modules>
 
-	<properties>
-		<resource.dir>${basedir}/../osb-service/src/main/resources</resource.dir>
-		<dashboard.module>mongodb</dashboard.module>
-		<java.version>1.8</java.version>
-	</properties>
+	<dependencyManagement>
+		<dependencies>
 
-	<build>
-		<plugins>
+			<dependency>
+				<groupId>de.evoila.cf.broker</groupId>
+				<artifactId>core</artifactId>
+				<version>${parent.version}</version>
+			</dependency>
 
-		</plugins>
-	</build>
-
-	<repositories>
-		<repository>
-			<id>Maven Central</id>
-			<name>Central Maven Repository</name>
-			<url>http://repo1.maven.org/maven2/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>spring-snapshot</id>
-			<name>Spring Maven SNAPSHOT Repository</name>
-			<url>http://repo.springsource.org/libs-snapshot</url>
-		</repository>
-		<repository>
-			<id>spring-repository</id>
-			<url>https://repo.spring.io/libs-release</url>
-		</repository>
-	</repositories>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>Maven Central</id>
-			<name>Central Maven Repository</name>
-			<url>http://repo1.maven.org/maven2/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-		<pluginRepository>
-			<id>spring-snapshots</id>
-			<url>http://repo.spring.io/snapshot</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>spring-milestones</id>
-			<url>http://repo.spring.io/milestone</url>
-		</pluginRepository>
-	</pluginRepositories>
+		</dependencies>
+	</dependencyManagement>
 </project>
