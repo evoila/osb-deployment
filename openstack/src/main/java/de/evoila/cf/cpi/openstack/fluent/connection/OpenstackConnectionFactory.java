@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.evoila.cf.cpi.openstack.fluent.connection;
 
@@ -20,7 +20,7 @@ public class OpenstackConnectionFactory {
 	private final static Logger log = LoggerFactory.getLogger(OpenstackConnectionFactory.class);
 
 	protected static OSClientV3 osClient;
-	
+
 	private static String username;
 	private static String password;
 	private static String authUrl;

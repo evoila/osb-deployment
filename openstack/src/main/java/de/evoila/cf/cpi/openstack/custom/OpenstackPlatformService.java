@@ -107,7 +107,7 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
 
 		boolean available;
 		try {
-			available = portAvailabilityVerifier.verifyServiceAvailability(serviceInstance.getHosts(), true);
+			available = portAvailabilityVerifier.verifyServiceAvailability(serviceInstance, true);
 		} catch (Exception e) {
 			throw new PlatformException("Service instance is not reachable. Service may not be started on instance.",
 					e);
