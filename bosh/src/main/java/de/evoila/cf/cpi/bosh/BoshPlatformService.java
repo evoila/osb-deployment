@@ -80,7 +80,7 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
     public ServiceInstance postProvisioning (ServiceInstance serviceInstance, Plan plan) throws PlatformException {
         boolean available;
         try {
-            available = portAvailabilityVerifier.verifyServiceAvailability(serviceInstance.getHosts(), false);
+            available = portAvailabilityVerifier.verifyServiceAvailability(serviceInstance, false);
         } catch (Exception e) {
             throw new PlatformException("Service instance is not reachable. Service may not be started on instance.",
                                         e);

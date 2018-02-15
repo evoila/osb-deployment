@@ -28,6 +28,7 @@
 	
 	<modules>
 		<module>openstack</module>
+		<module>bosh</module>
 		<module>existing-service</module>
 	</modules>
 
