@@ -5,10 +5,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-
 import de.evoila.cf.broker.bean.BoshProperties;
 import de.evoila.cf.broker.model.Plan;
 import de.evoila.cf.broker.model.ServiceInstance;
+import de.evoila.cf.cpi.bosh.BoshPlatformService;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Manifest;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Stemcell;
 import io.bosh.client.deployments.Deployment;
@@ -17,7 +17,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.Assert;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +32,6 @@ public class DeploymentManager {
     private final ObjectMapper mapper;
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final BoshProperties boshProperties;
-
 
     public DeploymentManager(BoshProperties properties) {
         Assert.notNull(properties, "Bosh Properties cant be null");
@@ -46,7 +48,7 @@ public class DeploymentManager {
     public Deployment createDeployment (ServiceInstance instance, Plan plan, Map<String, String> customParameters) throws IOException, URISyntaxException {
         Deployment deployment = getDeployment(instance);
         Manifest manifest = readTemplate("bosh/manifest.yml");
-        manifest.setName("sb-" + instance.getId());
+        manifest.setName(deployment.getName());
         addStemcell(manifest);
         replaceParameters(instance, manifest,plan, customParameters);
         deployment.setRawManifest(generateManifest(manifest));
@@ -105,7 +107,7 @@ public class DeploymentManager {
 
     public Deployment getDeployment (ServiceInstance instance) {
         Deployment deployment = new Deployment();
-        deployment.setName("sb-" + instance.getId());
+        deployment.setName(BoshPlatformService.DEPLOYMENT_NAME_PREFIX + instance.getId());
         return deployment;
     }
 }

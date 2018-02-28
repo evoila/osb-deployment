@@ -15,6 +15,7 @@ import io.bosh.client.deployments.Deployment;
 import io.bosh.client.errands.ErrandSummary;
 import io.bosh.client.tasks.Task;
 import io.bosh.client.vms.Vm;
+import io.reactivex.internal.operators.observable.ObservableAutoConnect;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,7 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
     public static final String ERROR = "error";
     public static final String PROCESSING = "processing";
     public static final String DONE = "done";
+    public static final String DEPLOYMENT_NAME_PREFIX = "sb-";
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     protected final BoshConnection connection;
     private final PlatformRepository platformRepository;
@@ -139,8 +141,8 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
                 waitForTaskCompletion(taskObservable.toBlocking().first());
                 return;
             case ERROR:
-                logger.error(String.format("Could not create Service Instance. Task finished with error. [%s]  %s", task.getId(), task.getResult()));
-                throw new PlatformException(String.format("Could not create Service Instance. Task finished with error. [%s]  %s", task.getId(), task.getResult()));
+                logger.error(String.format("Task finished with error. [%s]  %s", task.getId(), task.getResult()));
+                throw new PlatformException(String.format("Task finished with error. [%s]  %s", task.getId(), task.getResult()));
             case DONE:
                 return;
         }
@@ -170,6 +172,8 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
             Observable<List<ErrandSummary>> errands = connection.connection().errands().list(deployment.getName());
             runDeleteErrands(serviceInstance, deployment, errands);
             connection.connection().deployments().delete(deployment);
+            Observable<Task> task = connection.connection().deployments().delete(deployment);
+            waitForTaskCompletion(task.toBlocking().first());
         } catch (Exception e) {
             throw new PlatformException("Could not delete failed service instance", e);
         }
