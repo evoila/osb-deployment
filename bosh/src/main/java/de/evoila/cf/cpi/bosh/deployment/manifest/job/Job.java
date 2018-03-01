@@ -2,8 +2,6 @@ package de.evoila.cf.cpi.bosh.deployment.manifest.job;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.evoila.cf.cpi.bosh.deployment.manifest.network.Network;
-import de.evoila.cf.cpi.bosh.deployment.manifest.ResourcePool;
-import sun.nio.ch.Net;
 
 import java.util.ArrayList;
 import java.util.HashMap;
