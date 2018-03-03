@@ -206,7 +206,7 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
                 instance.getDashboardUrl(), instance.getInternalId());
     }
 
-    protected abstract void updateHosts(ServiceInstance instance, Plan plan, Deployment deployment);
+    protected abstract void updateHosts(ServiceInstance instance, Plan plan, Deployment deployment) throws PlatformException;
 
 
     protected List<Vm> getVms(ServiceInstance instance) throws PlatformException {
