@@ -4,8 +4,6 @@ import io.bosh.client.Authentication;
 import io.bosh.client.DirectorClient;
 import io.bosh.client.Scheme;
 import io.bosh.client.SpringDirectorClientBuilder;
-import io.bosh.client.authentication.BasicAuth;
-import io.bosh.client.authentication.OAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -38,15 +36,11 @@ public class BoshConnection {
 
 
     public BoshConnection authenticate() {
-        io.bosh.client.authentication.Authentication clientAuth;
-        if (authentication.equals(Authentication.BASIC))
-            clientAuth = new BasicAuth();
-        else
-            clientAuth = new OAuth(false);
-
         directorClient = new SpringDirectorClientBuilder()
+                .withScheme(Scheme.https)
                 .withHost(host)
-                .withCredentials(username, password, clientAuth, Scheme.https, this.port)
+                .withPort(25555)
+                .withCredentials(username, password, authentication)
                 .build();
 
         return this;

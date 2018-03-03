@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @ConfigurationProperties(prefix = "bosh")
-@ConditionalOnProperty(prefix = "bosh", name = {"host", "port", "username", "password", "stemcellVersion", "stemcellOs", "authentication"}, havingValue = "")
+@ConditionalOnProperty(prefix = "bosh", name = {"host", "username", "password", "stemcellVersion", "stemcellOs", "authentication"}, havingValue = "")
 public class BoshProperties {
 
     private String host;
