@@ -1,7 +1,8 @@
 package de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup;
 
-import ch.qos.logback.core.spi.LifeCycle;
+import ch.qos.logback.core.spi.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import de.evoila.cf.broker.model.VolumeUnit;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Update;
 
 import java.util.ArrayList;
@@ -9,8 +10,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class InstanceGroup {
+/**
+ * Created by jannikheyl on 23.01.18.
+ *
+ * Alternative to Instancegroup when deploying a single Job
+ */
+@JsonIgnoreProperties(
+        ignoreUnknown = true
+)
+public class InstanceJob {
     private String name;
     private List<String> azs;
     private int instances;
@@ -18,10 +26,12 @@ public class InstanceGroup {
     private String stemcell;
     private List<NetworkV2> networks;
     private Update update;
-    private LifeCycle lifecycle;
+    private ch.qos.logback.core.spi.LifeCycle lifecycle;
     private Map<String, Object> properties;
     private String vm_type;
     private String persistent_disk_type;
+    private Integer persistent_disk;
+
 
     public String getName () {
         return name;
@@ -85,11 +95,11 @@ public class InstanceGroup {
         this.update = update;
     }
 
-    public LifeCycle getLifecycle () {
+    public ch.qos.logback.core.spi.LifeCycle getLifecycle () {
         return lifecycle;
     }
 
-    public void setLifecycle (LifeCycle lifecycle) {
+    public void setLifecycle (ch.qos.logback.core.spi.LifeCycle lifecycle) {
         this.lifecycle = lifecycle;
     }
 
@@ -97,10 +107,6 @@ public class InstanceGroup {
         if(properties == null)
             properties = new HashMap<>();
         return properties;
-    }
-
-    public void setProperties (Map<String, Object> properties) {
-        this.properties = properties;
     }
 
     public String getVm_type() {
@@ -111,11 +117,38 @@ public class InstanceGroup {
         this.vm_type = vm_type;
     }
 
+    public void setProperties (Map<String, Object> properties) {
+        this.properties = properties;
+    }
+
     public String getPersistent_disk_type() {
         return persistent_disk_type;
     }
 
     public void setPersistent_disk_type(String persistent_disk_type) {
         this.persistent_disk_type = persistent_disk_type;
+    }
+
+    public Integer getPersistent_disk() {
+        return persistent_disk;
+    }
+
+    public void setPersistent_disk(Integer persistent_disk) {
+        this.persistent_disk = persistent_disk;
+    }
+    public void setPersistent_disk(Integer persistent_disk, VolumeUnit volumeUnit){
+        switch (volumeUnit){
+            case M:
+                this.persistent_disk = persistent_disk;
+                break;
+            case G:
+                this.persistent_disk = persistent_disk *1000;
+                break;
+            case T:
+                this.persistent_disk = persistent_disk *1000000;
+                break;
+
+        }
+
     }
 }

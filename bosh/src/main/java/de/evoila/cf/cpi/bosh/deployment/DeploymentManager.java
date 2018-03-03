@@ -8,7 +8,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import de.evoila.cf.broker.bean.BoshProperties;
 import de.evoila.cf.broker.model.Plan;
 import de.evoila.cf.broker.model.ServiceInstance;
-import de.evoila.cf.cpi.bosh.BoshPlatformService;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Manifest;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Stemcell;
 import io.bosh.client.deployments.Deployment;
@@ -21,12 +20,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public class DeploymentManager {
+    
     public static final String STEMCELL_VERSION = "stemcell_version";
     private final ObjectReader reader;
     private final ObjectMapper mapper;
@@ -41,21 +40,21 @@ public class DeploymentManager {
         this.reader = mapper.readerFor(Manifest.class);
     }
 
-    protected void replaceParameters (ServiceInstance instance, Manifest manifest, Plan plan, Map<String, String> customParameters) {
+    private void replaceParameters(ServiceInstance instance, Manifest manifest, Plan plan, Map<String, String> customParameters) {
         manifest.getProperties().putAll(plan.getMetadata());
     }
 
-    public Deployment createDeployment (ServiceInstance instance, Plan plan, Map<String, String> customParameters) throws IOException, URISyntaxException {
+    public Deployment createDeployment(ServiceInstance instance, Plan plan, Map<String, String> customParameters) throws IOException {
         Deployment deployment = getDeployment(instance);
         Manifest manifest = readTemplate("bosh/manifest.yml");
-        manifest.setName(deployment.getName());
+        manifest.setName("sb-" + instance.getId());
         addStemcell(manifest);
         replaceParameters(instance, manifest,plan, customParameters);
         deployment.setRawManifest(generateManifest(manifest));
         return deployment;
     }
 
-    private void addStemcell (Manifest manifest) {
+    private void addStemcell(Manifest manifest) {
         Optional<Stemcell> stemcellOptional = manifest.getStemcells().stream().filter(s -> s.getAlias().equals("default")).findFirst();
         Stemcell defaultStemcell;
         if(stemcellOptional.isPresent()){
@@ -66,10 +65,9 @@ public class DeploymentManager {
             defaultStemcell = new Stemcell("default", boshProperties.getStemcellVersion(), boshProperties.getStemcellOs());
             manifest.getStemcells().add(defaultStemcell);
         }
-
     }
 
-    public Manifest readTemplate(String path) throws IOException, URISyntaxException {
+    public Manifest readTemplate(String path) throws IOException {
         String manifest = accessTemplate(path);
         return mapper.readValue(manifest,Manifest.class);
     }
@@ -85,12 +83,12 @@ public class DeploymentManager {
         return deployment;
     }
 
-    private String accessTemplate(final String templatePath) throws IOException, URISyntaxException {
+    private String accessTemplate(final String templatePath) throws IOException {
         InputStream inputStream = new ClassPathResource(templatePath).getInputStream();
         return this.readTemplateFile(inputStream);
     }
 
-    private String readTemplateFile(InputStream inputStream) throws IOException, URISyntaxException {
+    private String readTemplateFile(InputStream inputStream) throws IOException {
         BufferedReader reader =new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -100,14 +98,12 @@ public class DeploymentManager {
             stringBuilder.append("\n");
             line = reader.readLine();
         }
-
         return stringBuilder.toString();
     }
 
-
     public Deployment getDeployment (ServiceInstance instance) {
         Deployment deployment = new Deployment();
-        deployment.setName(BoshPlatformService.DEPLOYMENT_NAME_PREFIX + instance.getId());
+        deployment.setName("sb-" + instance.getId());
         return deployment;
     }
 }

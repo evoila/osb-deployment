@@ -27,9 +27,9 @@ public class ManifestGeneratorTest extends ManifestTest {
     DeploymentManager deploymentManager;
 
     Manifest manifest;
-
-
-    @Before public void before() throws IOException, URISyntaxException {
+    
+    @Before 
+    public void before() throws IOException, URISyntaxException {
         manifest = new Manifest();
         manifest.setDirector_uuid(DIRECTOR_UUID);
         manifest.setName(DEPLOYMENT_NAME);
@@ -93,7 +93,8 @@ public class ManifestGeneratorTest extends ManifestTest {
         manifest.getJobs().add(job);
     }
 
-    @Test public void testManifestGeneration() throws IOException, URISyntaxException {
+    @Test 
+    public void testManifestGeneration() throws IOException, URISyntaxException {
         String manifest = deploymentManager.generateManifest(this.manifest);
         String cmp_manifest = readFile("cmp_manifest.yml");
         assertEquals(cmp_manifest, manifest);

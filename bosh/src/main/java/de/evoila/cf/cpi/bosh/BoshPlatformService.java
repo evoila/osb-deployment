@@ -1,6 +1,5 @@
 package de.evoila.cf.cpi.bosh;
 
-
 import de.evoila.cf.broker.bean.BoshProperties;
 import de.evoila.cf.broker.controller.utils.DashboardUtils;
 import de.evoila.cf.broker.exception.PlatformException;
@@ -15,8 +14,6 @@ import io.bosh.client.deployments.Deployment;
 import io.bosh.client.errands.ErrandSummary;
 import io.bosh.client.tasks.Task;
 import io.bosh.client.vms.Vm;
-import io.reactivex.internal.operators.observable.ObservableAutoConnect;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -24,36 +21,37 @@ import rx.Observable;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+import java.util.UUID;
 
 public abstract class BoshPlatformService extends PlatformServiceAdapter {
-    public static final String QUEUED = "queued";
-    public static final int SLEEP = 3000;
-    public static final String ERROR = "error";
-    public static final String PROCESSING = "processing";
-    public static final String DONE = "done";
-    public static final String DEPLOYMENT_NAME_PREFIX = "sb-";
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private static final String QUEUED = "queued";
+    private static final int SLEEP = 3000;
+    private static final String ERROR = "error";
+    private static final String PROCESSING = "processing";
+    private static final String DONE = "done";
+    private static final String DEPLOYMENT_NAME_PREFIX = "sb-";
+
     protected final BoshConnection connection;
+
     private final PlatformRepository platformRepository;
     private final ServicePortAvailabilityVerifier portAvailabilityVerifier;
     private final DeploymentManager deploymentManager;
     private final Optional<DashboardClient> dashboardClient;
     private final BoshProperties boshProperties;
     private final CatalogService catalogService;
-    ;
-
 
     public BoshPlatformService(PlatformRepository repository,
                                CatalogService catalogService,
                                ServicePortAvailabilityVerifier availabilityVerifier,
                                BoshProperties boshProperties,
                                Optional<DashboardClient> dashboardClient,
-                               DeploymentManager deploymentManager) {
+                               DeploymentManager deploymentManager) throws PlatformException {
 
         Assert.notNull(repository, "The platform repository can not be null");
         Assert.notNull(availabilityVerifier, "The ServicePortAvailabilityVerifier can not be null");
@@ -68,8 +66,10 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
         this.deploymentManager = deploymentManager;
         this.boshProperties = boshProperties;
         connection = new BoshConnection(boshProperties.getUsername(),
-                boshProperties.getPassword(),
-                boshProperties.getHost()).authenticate();
+                                        boshProperties.getPassword(),
+                                        boshProperties.getHost(),
+                                        boshProperties.getAuthentication()
+                ).authenticate();
     }
 
     @Override
@@ -106,7 +106,7 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
             Observable<List<ErrandSummary>> errands = connection.connection().errands().list(deployment.getName());
             runCreateErrands(instance, plan, deployment, errands);
             updateHosts(instance, plan, deployment);
-        } catch (URISyntaxException | IOException e) {
+        } catch (IOException e) {
             logger.error("Couldn't create Service Instance via Bosh Deployment");
             logger.error(e.getMessage());
             throw new PlatformException("Could not create Service Instance", e);
@@ -141,8 +141,8 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
                 waitForTaskCompletion(taskObservable.toBlocking().first());
                 return;
             case ERROR:
-                logger.error(String.format("Task finished with error. [%s]  %s", task.getId(), task.getResult()));
-                throw new PlatformException(String.format("Task finished with error. [%s]  %s", task.getId(), task.getResult()));
+                logger.error(String.format("Could not create Service Instance. Task finished with error. [%s]  %s", task.getId(), task.getResult()));
+                throw new PlatformException(String.format("Could not create Service Instance. Task finished with error. [%s]  %s", task.getId(), task.getResult()));
             case DONE:
                 return;
         }
@@ -150,10 +150,17 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
 
 
     public ServiceInstance createServiceInstanceObject(ServiceInstance instance, Plan plan) {
-        return new ServiceInstance(instance,
-                DashboardUtils.dashboard(catalogService.getServiceDefinition(instance.getServiceDefinitionId()), instance.getId()),
-                RandomStringUtils.randomAlphanumeric(24)
-        );
+        if(dashboardClient.isPresent()) {
+            return new ServiceInstance(instance,
+                    DashboardUtils.dashboard(catalogService.getServiceDefinition(instance.getServiceDefinitionId()), instance.getId()),
+                    randomString());
+        } else {
+            return new ServiceInstance(instance, randomString());
+        }
+    }
+
+    private String randomString() {
+        return UUID.randomUUID().toString().replace("-", "");
     }
 
     @Override
@@ -202,8 +209,11 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
     protected abstract void updateHosts(ServiceInstance instance, Plan plan, Deployment deployment);
 
 
-    protected List<Vm> getVms(ServiceInstance instance) {
-        return this.connection.connection().vms().listDetails(deploymentManager.getDeployment(instance).getName()).toBlocking().first();
+    protected List<Vm> getVms(ServiceInstance instance) throws PlatformException {
+        return this.connection
+                .connection().vms()
+                .listDetails(deploymentManager.getDeployment(instance)
+                        .getName()).toBlocking().first();
     }
 
     protected ServerAddress toServerAddress(String namePrefix, Vm vm, int port) {

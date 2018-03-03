@@ -3,6 +3,7 @@ package de.evoila.cf.cpi.bosh.deployment.manifest;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.evoila.cf.cpi.bosh.deployment.manifest.job.Job;
 import de.evoila.cf.cpi.bosh.deployment.manifest.network.Network;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,105 +12,87 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Manifest {
 
-        private String director_uuid;
-        private String name;
-        private List<Release> releases = new ArrayList<>();
-        private Update update;
-        private List<Stemcell> stemcells = new ArrayList<>();
-        private List<InstanceGroup> instance_groups = new ArrayList<>();
-        private Map<String, Object> properties = new HashMap<>();
-        private Compilation compilation;
+    private String director_uuid;
+    private String name;
+    private List<Release> releases = new ArrayList<>();
+    private Update update;
+    private List<Stemcell> stemcells = new ArrayList<>();
+    private List<InstanceGroup> instance_groups = new ArrayList<>();
+    private Map<String, Object> properties = new HashMap<>();
+    private Compilation compilation;
+    private List<Job> jobs = new ArrayList<>();
+    private List<Network> networks = new ArrayList<>();
+    private List<ResourcePool> resource_pools = new ArrayList<>();
 
-        private List<Job> jobs = new ArrayList<>();
+    public String getDirector_uuid() {
+        return director_uuid;
+    }
 
-        private List<Network> networks = new ArrayList<>();
-        private List<ResourcePool> resource_pools = new ArrayList<>();
+    public void setDirector_uuid(String director_uuid) {
+        this.director_uuid = director_uuid;
+    }
 
-        public String getDirector_uuid () {
-                return director_uuid;
-        }
+    public String getName() {
+        return name;
+    }
 
-        public void setDirector_uuid (String director_uuid) {
-                this.director_uuid = director_uuid;
-        }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-        public String getName () {
-                return name;
-        }
+    public List<Release> getReleases() {
+        return releases;
+    }
 
-        public void setName (String name) {
-                this.name = name;
-        }
+    public void setReleases(List<Release> releases) {
+        this.releases = releases;
+    }
 
-        public List<Release> getReleases () {
-                return releases;
-        }
+    public Update getUpdate() {
+        return update;
+    }
 
-        public void setReleases (List<Release> releases) {
-                this.releases = releases;
-        }
+    public void setUpdate(Update update) {
+        this.update = update;
+    }
 
-        public Update getUpdate () {
-                return update;
-        }
+    public List<Stemcell> getStemcells() {
+        return stemcells;
+    }
 
-        public void setUpdate (Update update) {
-                this.update = update;
-        }
+    public void setStemcells(List<Stemcell> stemcells) {
+        this.stemcells = stemcells;
+    }
 
-        public List<Stemcell> getStemcells () {
-                return stemcells;
-        }
+    public List<InstanceGroup> getInstance_groups() {
+        return instance_groups;
+    }
 
-        public void setStemcells (List<Stemcell> stemcells) {
-                this.stemcells = stemcells;
-        }
+    public void setInstance_groups(List<InstanceGroup> instance_groups) {
+        this.instance_groups = instance_groups;
+    }
 
-        public List<InstanceGroup> getInstance_groups () {
-                return instance_groups;
-        }
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
 
-        public void setInstance_groups (List<InstanceGroup> instance_groups) {
-                this.instance_groups = instance_groups;
-        }
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
+    }
 
-        public Map<String, Object> getProperties () {
-                return properties;
-        }
+    public List<Job> getJobs() { return jobs; }
 
-        public void setProperties (Map<String, Object> properties) {
-                this.properties = properties;
-        }
+    public void setJobs(List<Job> jobs) { this.jobs = jobs; }
 
-        public List<Job> getJobs () {
-                return jobs;
-        }
+    public List<Network> getNetworks() { return networks; }
 
-        public void setJobs (List<Job> jobs) {
-                this.jobs = jobs;
-        }
+    public void setNetworks(List<Network> networks) { this.networks = networks; }
 
-        public List<Network> getNetworks () {
-                return networks;
-        }
+    public List<ResourcePool> getResource_pools() { return resource_pools; }
 
-        public void setNetworks (List<Network> networks) {
-                this.networks = networks;
-        }
+    public void setResource_pools(List<ResourcePool> resource_pools) { this.resource_pools = resource_pools; }
 
-        public List<ResourcePool> getResource_pools () {
-                return resource_pools;
-        }
+    public Compilation getCompilation() { return compilation; }
 
-        public void setResource_pools (List<ResourcePool> resource_pools) {
-                this.resource_pools = resource_pools;
-        }
-
-        public Compilation getCompilation () {
-                return compilation;
-        }
-
-        public void setCompilation (Compilation compilation) {
-                this.compilation = compilation;
-        }
+    public void setCompilation(Compilation compilation) { this.compilation = compilation; }
 }
