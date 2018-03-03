@@ -39,7 +39,7 @@
         <dependency>
             <groupId>de.evoila</groupId>
             <artifactId>bosh-java-client</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.0.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>io.reactivex.rxjava2</groupId>
@@ -49,6 +49,11 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
+            <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
             <version>RELEASE</version>
         </dependency>
     </dependencies>

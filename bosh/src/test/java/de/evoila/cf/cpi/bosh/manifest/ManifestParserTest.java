@@ -27,24 +27,24 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = { DeploymentManager.class})
 public class ManifestParserTest extends ManifestTest {
 
-
-
     @Autowired
     DeploymentManager deploymentManager;
 
     Manifest manifest;
 
-
-    @Before public void before() throws IOException, URISyntaxException {
+    @Before 
+    public void before() throws IOException, URISyntaxException {
         manifest = deploymentManager.readTemplate("/manifest.yml");
     }
 
-    @Test public void testManifestParameter() throws IOException, URISyntaxException {
+    @Test 
+    public void testManifestParameter() throws IOException, URISyntaxException {
         assertEquals(DIRECTOR_UUID, manifest.getDirector_uuid());
         assertEquals(DEPLOYMENT_NAME, manifest.getName());
     }
 
-    @Test public void testUpdateParameter() throws IOException, URISyntaxException {
+    @Test 
+    public void testUpdateParameter() throws IOException, URISyntaxException {
         Update update = manifest.getUpdate();
         assertEquals(CANARIES, update.getCanaries());
         assertEquals(CANARY_WATCH_TIME, update.getCanary_watch_time());
@@ -52,7 +52,8 @@ public class ManifestParserTest extends ManifestTest {
         assertEquals(MAX_IN_FLIGHT, update.getMax_in_flight());
     }
 
-    @Test public void testResourcePoolParameter(){
+    @Test 
+    public void testResourcePoolParameter(){
         ResourcePool pool = manifest.getResource_pools().get(0);
         assertEquals(R_POOL_NAME, pool.getName());
         assertEquals(R_NETWORK_NAME, pool.getNetwork());
@@ -63,7 +64,8 @@ public class ManifestParserTest extends ManifestTest {
         assertEquals(4096, pool.getCloud_properties().get("ram"));
     }
 
-    @Test public void testJobParameter(){
+    @Test 
+    public void testJobParameter(){
         Job job = manifest.getJobs().get(0);
         assertEquals(JOB_NAME, job.getName());
         assertEquals(INSTANCES, job.getInstances());
@@ -73,7 +75,8 @@ public class ManifestParserTest extends ManifestTest {
         assertTrue(job.getProperties().isEmpty());
     }
 
-    @Test public void testTemplates(){
+    @Test
+    public void testTemplates(){
         Job job = manifest.getJobs().get(0);
         Template t = job.getTemplates().get(0);
         assertEquals(TEMPLATE1, t.getName());
@@ -83,7 +86,8 @@ public class ManifestParserTest extends ManifestTest {
         assertEquals(TEMPLATE2, t.getRelease());
     }
 
-    @Test public void testNetworks(){
+    @Test 
+    public void testNetworks(){
         Network net = manifest.getNetworks().get(0);
         assertEquals(NETWORK_NAME, net.getName());
 
@@ -95,7 +99,8 @@ public class ManifestParserTest extends ManifestTest {
         assertEquals(N_CP_NAME, snet.getCloud_properties().get("name"));
     }
 
-    @Test public void properties(){
+    @Test 
+    public void properties(){
         Map<String,Object> objectMap = manifest.getProperties();
         assertFalse(objectMap.isEmpty());
 
@@ -107,12 +112,14 @@ public class ManifestParserTest extends ManifestTest {
         }
     }
 
-    @Test public void testReleases(){
+    @Test 
+    public void testReleases(){
         assertEquals(RELEASE_NAME, manifest.getReleases().get(0).getName());
         assertEquals(RELEASE_VERSION, manifest.getReleases().get(0).getVersion());
     }
 
-    @Test public void testCompilation(){
+    @Test 
+    public void testCompilation(){
         Compilation comp = manifest.getCompilation();
 
         assertEquals(COMP_NETWORK, comp.getNetwork());

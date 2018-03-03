@@ -8,8 +8,6 @@ import de.evoila.cf.broker.model.ServerAddress;
 import de.evoila.cf.broker.model.ServiceInstance;
 import de.evoila.cf.broker.repository.PlatformRepository;
 import de.evoila.cf.broker.service.PlatformService;
-
-import de.evoila.cf.broker.service.ServiceInstanceAvailabilityVerifier;
 import de.evoila.cf.broker.service.availability.ServicePortAvailabilityVerifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +24,6 @@ import java.util.Map;
  * @author Christian Brinker, evoila.
  *
  */
-
-@Service
 public abstract class ExistingServiceFactory implements PlatformService {
 	
 	private List<String> hosts = new ArrayList<String>();
@@ -46,7 +42,6 @@ public abstract class ExistingServiceFactory implements PlatformService {
 	private PlatformRepository platformRepository;
 
 	@Autowired
-
 	private ServicePortAvailabilityVerifier portAvailabilityVerifier;
 	
 	@Autowired
@@ -54,7 +49,6 @@ public abstract class ExistingServiceFactory implements PlatformService {
 
 	@PostConstruct
 	public void registerCustomPlatformService () {
-
 
 		hosts = existingServiceBean.getHosts();
 		port = existingServiceBean.getPort();

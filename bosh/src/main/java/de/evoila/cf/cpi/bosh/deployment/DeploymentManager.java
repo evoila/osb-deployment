@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-
 import de.evoila.cf.broker.bean.BoshProperties;
 import de.evoila.cf.broker.model.Plan;
 import de.evoila.cf.broker.model.ServiceInstance;
@@ -14,40 +13,39 @@ import de.evoila.cf.cpi.bosh.deployment.manifest.Stemcell;
 import io.bosh.client.deployments.Deployment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.Assert;
 
-import java.io.*;
-import java.net.URISyntaxException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public class DeploymentManager {
+    
     public static final String STEMCELL_VERSION = "stemcell_version";
     private final ObjectReader reader;
     private final ObjectMapper mapper;
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final BoshProperties boshProperties;
 
-
     public DeploymentManager(BoshProperties properties) {
         Assert.notNull(properties, "Bosh Properties cant be null");
         this.mapper = new ObjectMapper(new YAMLFactory());
         mapper.setSerializationInclusion(JsonInclude.Include.NON_DEFAULT);
         this.boshProperties = properties;
-
         this.reader = mapper.readerFor(Manifest.class);
     }
 
-    protected void replaceParameters (ServiceInstance instance, Manifest manifest, Plan plan, Map<String, String> customParameters) {
+    private void replaceParameters(ServiceInstance instance, Manifest manifest, Plan plan, Map<String, String> customParameters) {
         manifest.getProperties().putAll(plan.getMetadata());
     }
 
-    public Deployment createDeployment (ServiceInstance instance, Plan plan, Map<String, String> customParameters) throws IOException, URISyntaxException {
-        Deployment deployment = new Deployment();
-        deployment.setName("sb-" + instance.getInternalId());
+    public Deployment createDeployment(ServiceInstance instance, Plan plan, Map<String, String> customParameters) throws IOException {
+        Deployment deployment = getDeployment(instance);
         Manifest manifest = readTemplate("bosh/manifest.yml");
         manifest.setName("sb-" + instance.getId());
         addStemcell(manifest);
@@ -56,7 +54,7 @@ public class DeploymentManager {
         return deployment;
     }
 
-    private void addStemcell (Manifest manifest) {
+    private void addStemcell(Manifest manifest) {
         Optional<Stemcell> stemcellOptional = manifest.getStemcells().stream().filter(s -> s.getAlias().equals("default")).findFirst();
         Stemcell defaultStemcell;
         if(stemcellOptional.isPresent()){
@@ -67,10 +65,9 @@ public class DeploymentManager {
             defaultStemcell = new Stemcell("default", boshProperties.getStemcellVersion(), boshProperties.getStemcellOs());
             manifest.getStemcells().add(defaultStemcell);
         }
-
     }
 
-    public Manifest readTemplate(String path) throws IOException, URISyntaxException {
+    public Manifest readTemplate(String path) throws IOException {
         String manifest = accessTemplate(path);
         return mapper.readValue(manifest,Manifest.class);
     }
@@ -86,12 +83,12 @@ public class DeploymentManager {
         return deployment;
     }
 
-    private String accessTemplate(final String templatePath) throws IOException, URISyntaxException {
+    private String accessTemplate(final String templatePath) throws IOException {
         InputStream inputStream = new ClassPathResource(templatePath).getInputStream();
         return this.readTemplateFile(inputStream);
     }
 
-    private String readTemplateFile(InputStream inputStream) throws IOException, URISyntaxException {
+    private String readTemplateFile(InputStream inputStream) throws IOException {
         BufferedReader reader =new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -101,9 +98,12 @@ public class DeploymentManager {
             stringBuilder.append("\n");
             line = reader.readLine();
         }
-
         return stringBuilder.toString();
     }
 
-
+    public Deployment getDeployment (ServiceInstance instance) {
+        Deployment deployment = new Deployment();
+        deployment.setName("sb-" + instance.getId());
+        return deployment;
+    }
 }

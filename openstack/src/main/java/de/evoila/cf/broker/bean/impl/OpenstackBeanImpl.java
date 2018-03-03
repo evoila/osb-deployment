@@ -6,11 +6,6 @@ import org.springframework.stereotype.Service;
 
 import de.evoila.cf.broker.bean.OpenstackBean;
 
-
-import java.util.ArrayList;
-import java.util.List;
-
-
 @Service
 @ConfigurationProperties(prefix="openstack")
 @ConditionalOnProperty(prefix="openstack",
@@ -37,7 +32,6 @@ public class OpenstackBeanImpl implements OpenstackBean {
 	private String keypair;
 	
 	private Cinder cinder;
-	private String publicNetworkId;
 	
 	public static class User {
 		private String username;
@@ -137,8 +131,6 @@ public class OpenstackBeanImpl implements OpenstackBean {
 		return cinder;
 	}
 
-	public String getPublicNetworkId() { return publicNetworkId; }
-
 	public void setEndpoint(String endpoint) {
 		this.endpoint = endpoint;
 	}
@@ -155,9 +147,9 @@ public class OpenstackBeanImpl implements OpenstackBean {
 		this.networkId = networkId;
 	}
 
-
-	public void setSubnetId(String subnetId) { this.subnetId = subnetId; }
-
+	public void setSubnetId(String subnetId) {
+		this.subnetId = subnetId;
+	}
 
 	public void setImageId(String imageId) {
 		this.imageId = imageId;
@@ -167,8 +159,7 @@ public class OpenstackBeanImpl implements OpenstackBean {
 		this.keypair = keypair;
 	}
 
-	public void setCinder(Cinder cinder) { this.cinder = cinder; }
-
-	public void setPublicNetworkId(String publicNetworkId) { this.publicNetworkId = publicNetworkId; }
-
+	public void setCinder(Cinder cinder) {
+		this.cinder = cinder;
+	}
 }
