@@ -51,7 +51,7 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
                                ServicePortAvailabilityVerifier availabilityVerifier,
                                BoshProperties boshProperties,
                                Optional<DashboardClient> dashboardClient,
-                               DeploymentManager deploymentManager) throws PlatformException {
+                               DeploymentManager deploymentManager) {
 
         Assert.notNull(repository, "The platform repository can not be null");
         Assert.notNull(availabilityVerifier, "The ServicePortAvailabilityVerifier can not be null");
@@ -68,8 +68,8 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
         connection = new BoshConnection(boshProperties.getUsername(),
                                         boshProperties.getPassword(),
                                         boshProperties.getHost(),
-                                        boshProperties.getAuthentication()
-                ).authenticate();
+                                        boshProperties.getPort(),
+                                        boshProperties.getAuthentication()).authenticate();
     }
 
     @Override
@@ -206,10 +206,9 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
                 instance.getDashboardUrl(), instance.getInternalId());
     }
 
-    protected abstract void updateHosts(ServiceInstance instance, Plan plan, Deployment deployment) throws PlatformException;
+    protected abstract void updateHosts(ServiceInstance instance, Plan plan, Deployment deployment);
 
-
-    protected List<Vm> getVms(ServiceInstance instance) throws PlatformException {
+    protected List<Vm> getVms(ServiceInstance instance) {
         return this.connection
                 .connection().vms()
                 .listDetails(deploymentManager.getDeployment(instance)

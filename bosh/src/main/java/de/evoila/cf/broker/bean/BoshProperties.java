@@ -1,6 +1,6 @@
 package de.evoila.cf.broker.bean;
 
-import io.bosh.client.authentication.Authentication;
+import io.bosh.client.Authentication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
@@ -10,10 +10,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @ConfigurationProperties(prefix = "bosh")
-@ConditionalOnProperty(prefix = "bosh", name = {"host", "username", "password", "stemcellVersion", "stemcellOs", "authentication"}, havingValue = "")
+@ConditionalOnProperty(prefix = "bosh", name = {"host", "port", "username", "password", "stemcellVersion", "stemcellOs", "authentication"}, havingValue = "")
 public class BoshProperties {
 
     private String host;
+
+    private int port = 25555;
 
     private String username;
 
@@ -32,6 +34,10 @@ public class BoshProperties {
     public void setHost(String host) {
         this.host = host;
     }
+
+    public int getPort() { return port; }
+
+    public void setPort(int port) { this.port = port;  }
 
     public String getUsername() {
         return username;
