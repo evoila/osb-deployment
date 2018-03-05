@@ -27,6 +27,7 @@ import java.util.Optional;
 public class DeploymentManager {
     
     public static final String STEMCELL_VERSION = "stemcell_version";
+    private static final String DEPLOYMENT_PREFIX = "sb-";
     private final ObjectReader reader;
     private final ObjectMapper mapper;
     private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -47,7 +48,7 @@ public class DeploymentManager {
     public Deployment createDeployment(ServiceInstance instance, Plan plan, Map<String, String> customParameters) throws IOException {
         Deployment deployment = getDeployment(instance);
         Manifest manifest = readTemplate("bosh/manifest.yml");
-        manifest.setName("sb-" + instance.getId());
+        manifest.setName(DEPLOYMENT_PREFIX + instance.getId());
         addStemcell(manifest);
         replaceParameters(instance, manifest,plan, customParameters);
         deployment.setRawManifest(generateManifest(manifest));
@@ -101,9 +102,13 @@ public class DeploymentManager {
         return stringBuilder.toString();
     }
 
-    public Deployment getDeployment (ServiceInstance instance) {
+    public Deployment getDeployment(ServiceInstance serviceInstance) {
         Deployment deployment = new Deployment();
-        deployment.setName("sb-" + instance.getId());
+        deployment.setName(DeploymentManager.deploymentName(serviceInstance));
         return deployment;
+    }
+
+    public static String deploymentName(ServiceInstance instance) {
+        return DEPLOYMENT_PREFIX + instance.getId();
     }
 }

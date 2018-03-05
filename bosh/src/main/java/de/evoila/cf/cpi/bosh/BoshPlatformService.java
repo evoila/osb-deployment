@@ -148,7 +148,6 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
         }
     }
 
-
     public ServiceInstance createServiceInstanceObject(ServiceInstance instance, Plan plan) {
         if(dashboardClient.isPresent()) {
             return new ServiceInstance(instance,
@@ -185,7 +184,6 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
             throw new PlatformException("Could not delete failed service instance", e);
         }
     }
-
 
     @Override
     public ServiceInstance updateInstance(ServiceInstance instance, Plan plan) throws PlatformException {
