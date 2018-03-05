@@ -91,9 +91,9 @@ public class InstanceGroup {
 
     public void setJobs (List<JobV2> jobs) { this.jobs = jobs; }
 
-    public int getPersistent_diks() { return persistent_disk; }
+    public int getPersistent_disk() { return persistent_disk; }
 
-    public void setPersistent_diks(int persistent_diks) { this.persistent_disk = persistent_diks; }
+    public void setPersistent_disk(int persistent_disk) { this.persistent_disk = persistent_disk; }
 
     public HashMap<String, Object> getProperties() { return properties;     }
 
