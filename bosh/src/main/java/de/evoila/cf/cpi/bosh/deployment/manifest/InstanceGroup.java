@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup.JobV2;
 import de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup.NetworkV2;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,12 +13,11 @@ public class InstanceGroup {
 
     private String name;
     private int instances;
-
     private String vm_type;
     private String stemcell;
-
     private String lifecycle;
     private String persistent_disk_type;
+    private int persistent_disk;
     private List<String> azs;
     private List<NetworkV2> networks;
     private List<JobV2> jobs;
@@ -67,7 +67,9 @@ public class InstanceGroup {
         return persistent_disk_type;
     }
 
-    public void setPersistent_disk_type (String persistent_disk_type) {  this.persistent_disk_type = persistent_disk_type; }
+    public void setPersistent_disk_type (String persistent_disk_type) { 
+        this.persistent_disk_type = persistent_disk_type; 
+    }
 
     public List<String> getAzs () {
         return azs;

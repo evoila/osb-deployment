@@ -35,7 +35,7 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
     private static final String ERROR = "error";
     private static final String PROCESSING = "processing";
     private static final String DONE = "done";
-    private static final String DEPLOYMENT_NAME_PREFIX = "sb-";
+    public static final String DEPLOYMENT_NAME_PREFIX = "sb-";
 
     protected final BoshConnection connection;
 

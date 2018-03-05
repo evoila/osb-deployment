@@ -41,8 +41,9 @@ public class DeploymentManager {
         this.reader = mapper.readerFor(Manifest.class);
     }
 
-    private void replaceParameters(ServiceInstance instance, Manifest manifest, Plan plan, Map<String, String> customParameters) {
+    protected void replaceParameters(ServiceInstance instance, Manifest manifest, Plan plan, Map<String, String> customParameters) {
         manifest.getProperties().putAll(plan.getMetadata());
+        manifest.getProperties().putAll(customParameters);
     }
 
     public Deployment createDeployment(ServiceInstance instance, Plan plan, Map<String, String> customParameters) throws IOException {
