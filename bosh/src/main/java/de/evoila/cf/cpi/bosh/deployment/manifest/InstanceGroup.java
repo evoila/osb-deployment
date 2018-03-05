@@ -3,8 +3,8 @@ package de.evoila.cf.cpi.bosh.deployment.manifest;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup.JobV2;
 import de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup.NetworkV2;
-import io.bosh.client.releases.Job;
 
+import java.util.HashMap;
 import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InstanceGroup {
@@ -17,9 +17,11 @@ public class InstanceGroup {
 
     private String lifecycle;
     private String persistent_disk_type;
+    private int persistent_disk;
     private List<String> azs;
     private List<NetworkV2> networks;
     private List<JobV2> jobs;
+    private HashMap<String, Object> properties;
 
     public String getName () {
         return name;
@@ -65,9 +67,7 @@ public class InstanceGroup {
         return persistent_disk_type;
     }
 
-    public void setPersistent_disk_type (String persistent_disk_type) {
-        this.persistent_disk_type = persistent_disk_type;
-    }
+    public void setPersistent_disk_type (String persistent_disk_type) { this.persistent_disk_type = persistent_disk_type; }
 
     public List<String> getAzs () {
         return azs;
@@ -89,7 +89,13 @@ public class InstanceGroup {
         return jobs;
     }
 
-    public void setJobs (List<JobV2> jobs) {
-        this.jobs = jobs;
-    }
+    public void setJobs (List<JobV2> jobs) { this.jobs = jobs; }
+
+    public int getPersistent_diks() { return persistent_disk; }
+
+    public void setPersistent_diks(int persistent_diks) { this.persistent_disk = persistent_diks; }
+
+    public HashMap<String, Object> getProperties() { return properties;     }
+
+    public void setProperties(HashMap<String, Object> properties) { this.properties = properties; }
 }
