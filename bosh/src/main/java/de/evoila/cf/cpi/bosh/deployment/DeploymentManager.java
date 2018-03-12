@@ -8,6 +8,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import de.evoila.cf.broker.bean.BoshProperties;
 import de.evoila.cf.broker.model.Plan;
 import de.evoila.cf.broker.model.ServiceInstance;
+import de.evoila.cf.cpi.bosh.deployment.manifest.InstanceGroup;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Manifest;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Stemcell;
 import io.bosh.client.deployments.Deployment;
@@ -21,11 +22,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public class DeploymentManager {
-    
+
+    public static final String NODES = "nodes";
+    public static final String VM_TYPE = "vm_type";
+    public static final String NETWORKS = "networks";
+    public static final String DISK_TYPE = "disk_type";
     public static final String STEMCELL_VERSION = "stemcell_version";
     private static final String DEPLOYMENT_PREFIX = "sb-";
     private final ObjectReader reader;
@@ -101,6 +107,37 @@ public class DeploymentManager {
             line = reader.readLine();
         }
         return stringBuilder.toString();
+    }
+
+    protected void updateInstanceGroupConfiguration(Manifest manifest, Plan plan) {
+        Map<String, Object> metadata = plan.getMetadata();
+
+        for(InstanceGroup instanceGroup : manifest.getInstance_groups()) {
+            if(metadata.containsKey(instanceGroup.getName())) {
+                updateSpecificInstanceGroupConfiguration(instanceGroup,
+                        (Map<String, Object>) metadata.get(instanceGroup.getName()));
+            } else {
+                updateSpecificInstanceGroupConfiguration(instanceGroup, metadata);
+            }
+        }
+    }
+
+    private void updateSpecificInstanceGroupConfiguration(InstanceGroup instanceGroup, Map<String, Object> instanceGroupData) {
+        if(instanceGroupData.containsKey(NODES)) {
+            instanceGroup.setInstances((Integer) instanceGroupData.get(NODES));
+        }
+
+        if(instanceGroupData.containsKey(VM_TYPE)) {
+            instanceGroup.setVm_type((String) instanceGroupData.get(VM_TYPE));
+        }
+
+        if(instanceGroupData.containsKey(NETWORKS)) {
+            instanceGroup.setNetworksFromMap((LinkedHashMap<String, String>) instanceGroupData.get(NETWORKS));
+        }
+
+        if(instanceGroupData.containsKey(DISK_TYPE)) {
+            instanceGroup.setPersistent_disk_type((String) instanceGroupData.get(DISK_TYPE));
+        }
     }
 
     public Deployment getDeployment(ServiceInstance serviceInstance) {

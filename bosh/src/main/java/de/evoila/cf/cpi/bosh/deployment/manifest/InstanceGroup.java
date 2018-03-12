@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup.JobV2;
 import de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup.NetworkV2;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -104,5 +106,12 @@ public class InstanceGroup {
 
     public void setPersistent_disk(int persistent_disk) {
         this.persistent_disk = persistent_disk;
+    }
+
+    public void setNetworksFromMap(LinkedHashMap<String, String> networks) {
+        this.networks = new ArrayList<>();
+
+        for (String network : networks.values())
+            this.networks.add(new NetworkV2(network));
     }
 }

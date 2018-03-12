@@ -1,8 +1,6 @@
 package de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +11,12 @@ import java.util.List;
 public class NetworkV2 {
     String name;
     List<String> static_ips;
+
+    public NetworkV2() {}
+
+    public NetworkV2(String network) {
+        this.name = network;
+    }
 
     public String getName () {
         return name;
