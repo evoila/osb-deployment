@@ -113,11 +113,11 @@ public class DeploymentManager {
         Map<String, Object> metadata = plan.getMetadata();
 
         for(InstanceGroup instanceGroup : manifest.getInstance_groups()) {
+            updateSpecificInstanceGroupConfiguration(instanceGroup, metadata);
+
             if(metadata.containsKey(instanceGroup.getName())) {
                 updateSpecificInstanceGroupConfiguration(instanceGroup,
                         (Map<String, Object>) metadata.get(instanceGroup.getName()));
-            } else {
-                updateSpecificInstanceGroupConfiguration(instanceGroup, metadata);
             }
         }
     }
