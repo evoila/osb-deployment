@@ -59,4 +59,13 @@
         </dependency>
     </dependencies>
 
+    <repositories>
+        <!-- This repository import is for the snapshot release of OpenStack4j -->
+        <repository>
+            <id>st-snapshots</id>
+            <name>sonatype-snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
+
 </project>
