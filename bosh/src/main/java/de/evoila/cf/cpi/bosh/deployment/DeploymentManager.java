@@ -31,7 +31,7 @@ public class DeploymentManager {
     public static final String NODES = "nodes";
     public static final String VM_TYPE = "vm_type";
     public static final String NETWORKS = "networks";
-    public static final String DISK_TYPE = "disk_type";
+    public static final String DISK_TYPE = "persistent_disk_type";
     public static final String STEMCELL_VERSION = "stemcell_version";
     private static final String DEPLOYMENT_PREFIX = "sb-";
     private final ObjectReader reader;
