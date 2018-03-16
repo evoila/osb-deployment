@@ -1,26 +1,26 @@
 package de.evoila.cf.cpi.bosh.deployment.manifest;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import de.evoila.cf.broker.model.NetworkReference;
 import de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup.JobV2;
-import de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup.NetworkV2;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InstanceGroup {
-
     private String name;
     private int instances;
+    private int connections;
     private String vm_type;
     private String stemcell;
     private String lifecycle;
     private String persistent_disk_type;
     private int persistent_disk;
     private List<String> azs;
-    private List<NetworkV2> networks;
+    private List<NetworkReference> networks;
     private List<JobV2> jobs;
     private Map<String, Object> properties;
 
@@ -38,6 +38,14 @@ public class InstanceGroup {
 
     public void setInstances(int instances) {
         this.instances = instances;
+    }
+
+    public int getConnections() {
+        return connections;
+    }
+
+    public void setConnections(int connections) {
+        this.connections = connections;
     }
 
     public String getVm_type() {
@@ -80,13 +88,11 @@ public class InstanceGroup {
         this.azs = azs;
     }
 
-    public List<NetworkV2> getNetworks() {
+    public List<NetworkReference> getNetworks() {
         return networks;
     }
 
-    public void setNetworks(List<NetworkV2> networks) {
-        this.networks = networks;
-    }
+    public void setNetworks(List<NetworkReference> networks) { this.networks = networks; }
 
     public List<JobV2> getJobs() {
         return jobs;
@@ -108,10 +114,7 @@ public class InstanceGroup {
         this.persistent_disk = persistent_disk;
     }
 
-    public void setNetworksFromMap(LinkedHashMap<String, String> networks) {
-        this.networks = new ArrayList<>();
-
-        for (String network : networks.values())
-            this.networks.add(new NetworkV2(network));
+    public void setNetworksFromMap(HashMap<String, NetworkReference> networks) {
+        this.networks = new ArrayList<>(networks.values());
     }
 }

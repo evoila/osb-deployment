@@ -3,15 +3,15 @@
  */
 package de.evoila.cf.cpi.openstack.custom;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.PostConstruct;
-import javax.ws.rs.NotAcceptableException;
-import javax.ws.rs.NotSupportedException;
-
+import de.evoila.cf.broker.bean.OpenstackBean;
+import de.evoila.cf.broker.exception.PlatformException;
+import de.evoila.cf.broker.model.Plan;
+import de.evoila.cf.broker.model.Platform;
+import de.evoila.cf.broker.model.ServiceInstance;
+import de.evoila.cf.broker.model.VolumeUnit;
+import de.evoila.cf.broker.repository.PlatformRepository;
+import de.evoila.cf.broker.service.availability.ServicePortAvailabilityVerifier;
+import de.evoila.cf.cpi.openstack.OpenstackServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,18 +20,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Lists;
-
-import de.evoila.cf.broker.bean.OpenstackBean;
-import de.evoila.cf.broker.exception.PlatformException;
-import de.evoila.cf.broker.model.Plan;
-import de.evoila.cf.broker.model.Platform;
-import de.evoila.cf.broker.model.ServerAddress;
-import de.evoila.cf.broker.model.ServiceInstance;
-import de.evoila.cf.broker.model.VolumeUnit;
-import de.evoila.cf.broker.repository.PlatformRepository;
-import de.evoila.cf.broker.service.availability.ServicePortAvailabilityVerifier;
-import de.evoila.cf.cpi.openstack.OpenstackServiceFactory;
+import javax.annotation.PostConstruct;
+import javax.ws.rs.NotAcceptableException;
+import javax.ws.rs.NotSupportedException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -128,7 +121,7 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
 		Map<String, String> platformParameters = new HashMap<String, String>();
 		platformParameters.put(FLAVOR, plan.getFlavorId());
 		platformParameters.put(VOLUME_SIZE, volumeSize(plan.getVolumeSize(), plan.getVolumeUnit()));
-		if(plan.getMetadata().containsKey(CLUSTER)) {
+		/*if(plan.getMetadata().containsKey(CLUSTER)) {
 			platformParameters.put(SECURITY_GROUPS, plan.getMetadata().get(SECURITY_GROUPS).toString());
 			platformParameters.put(CLUSTER, plan.getMetadata().get(CLUSTER).toString());
 			platformParameters.put(NODE_NUMBER, plan.getMetadata().containsKey(NODE_NUMBER) ? plan.getMetadata().get(NODE_NUMBER).toString() : "1");
@@ -160,7 +153,7 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
 					serverAddresses);
 		} catch (Exception e) {
 			throw new PlatformException(e);
-		}
+		}*/
 		return serviceInstance;
 	}
 

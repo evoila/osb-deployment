@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import de.evoila.cf.broker.bean.BoshProperties;
+import de.evoila.cf.broker.model.Metadata;
 import de.evoila.cf.broker.model.Plan;
 import de.evoila.cf.broker.model.ServiceInstance;
 import de.evoila.cf.cpi.bosh.deployment.manifest.InstanceGroup;
@@ -22,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -48,7 +48,7 @@ public class DeploymentManager {
     }
 
     protected void replaceParameters(ServiceInstance instance, Manifest manifest, Plan plan, Map<String, String> customParameters) {
-        manifest.getProperties().putAll(plan.getMetadata());
+        //manifest.getProperties().putAll(plan.getMetadata());
         manifest.getProperties().putAll(customParameters);
     }
 
@@ -57,7 +57,7 @@ public class DeploymentManager {
         Manifest manifest = readTemplate("bosh/manifest.yml");
         manifest.setName(DEPLOYMENT_PREFIX + instance.getId());
         addStemcell(manifest);
-        replaceParameters(instance, manifest,plan, customParameters);
+        replaceParameters(instance, manifest, plan, customParameters);
         deployment.setRawManifest(generateManifest(manifest));
         return deployment;
     }
@@ -110,33 +110,39 @@ public class DeploymentManager {
     }
 
     protected void updateInstanceGroupConfiguration(Manifest manifest, Plan plan) {
-        Map<String, Object> metadata = plan.getMetadata();
+        Metadata metadata = plan.getMetadata();
 
         for(InstanceGroup instanceGroup : manifest.getInstance_groups()) {
-            updateSpecificInstanceGroupConfiguration(instanceGroup, metadata);
+            if(metadata != null) {
+                updateSpecificInstanceGroupConfiguration(instanceGroup, metadata);
 
-            if(metadata.containsKey(instanceGroup.getName())) {
-                updateSpecificInstanceGroupConfiguration(instanceGroup,
-                        (Map<String, Object>) metadata.get(instanceGroup.getName()));
+                if(metadata.getInstanceGroupMetadata() != null && metadata.getInstanceGroupMetadata().containsKey(instanceGroup.getName())) {
+                    updateSpecificInstanceGroupConfiguration(instanceGroup,
+                            metadata.getInstanceGroupMetadata().get(instanceGroup.getName()));
+                }
             }
         }
     }
 
-    private void updateSpecificInstanceGroupConfiguration(InstanceGroup instanceGroup, Map<String, Object> instanceGroupData) {
-        if(instanceGroupData.containsKey(NODES)) {
-            instanceGroup.setInstances((Integer) instanceGroupData.get(NODES));
+    private void updateSpecificInstanceGroupConfiguration(InstanceGroup instanceGroup, Metadata instanceGroupData) {
+        if(instanceGroupData.getConnections() != 0) {
+            instanceGroup.setConnections(instanceGroupData.getConnections());
         }
 
-        if(instanceGroupData.containsKey(VM_TYPE)) {
-            instanceGroup.setVm_type((String) instanceGroupData.get(VM_TYPE));
+        if(instanceGroupData.getNodes() != 0) {
+            instanceGroup.setInstances(instanceGroupData.getNodes());
         }
 
-        if(instanceGroupData.containsKey(NETWORKS)) {
-            instanceGroup.setNetworksFromMap((LinkedHashMap<String, String>) instanceGroupData.get(NETWORKS));
+        if(instanceGroupData.getVm_type() != null) {
+            instanceGroup.setVm_type(instanceGroupData.getVm_type());
         }
 
-        if(instanceGroupData.containsKey(DISK_TYPE)) {
-            instanceGroup.setPersistent_disk_type((String) instanceGroupData.get(DISK_TYPE));
+        if(instanceGroupData.getPersistent_disk_type() != null) {
+            instanceGroup.setPersistent_disk_type(instanceGroupData.getPersistent_disk_type());
+        }
+
+        if(instanceGroupData.getNetworks() != null) {
+            instanceGroup.setNetworks(instanceGroupData.getNetworks());
         }
     }
 
@@ -148,5 +154,9 @@ public class DeploymentManager {
 
     public static String deploymentName(ServiceInstance instance) {
         return DEPLOYMENT_PREFIX + instance.getId();
+    }
+
+    public ObjectMapper getMapper() {
+        return mapper;
     }
 }

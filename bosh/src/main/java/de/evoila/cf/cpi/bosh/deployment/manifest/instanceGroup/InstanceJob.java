@@ -1,7 +1,7 @@
 package de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup;
 
-import ch.qos.logback.core.spi.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import de.evoila.cf.broker.model.NetworkReference;
 import de.evoila.cf.broker.model.VolumeUnit;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Update;
 
@@ -24,7 +24,7 @@ public class InstanceJob {
     private int instances;
     private List<JobV2> jobs;
     private String stemcell;
-    private List<NetworkV2> networks;
+    private List<NetworkReference> networks;
     private Update update;
     private ch.qos.logback.core.spi.LifeCycle lifecycle;
     private Map<String, Object> properties;
@@ -77,13 +77,13 @@ public class InstanceJob {
         this.stemcell = stemcell;
     }
 
-    public List<NetworkV2> getNetworks () {
+    public List<NetworkReference> getNetworks () {
         if(networks == null)
             networks = new ArrayList<>();
         return networks;
     }
 
-    public void setNetworks (List<NetworkV2> networks) {
+    public void setNetworks (List<NetworkReference> networks) {
         this.networks = networks;
     }
 

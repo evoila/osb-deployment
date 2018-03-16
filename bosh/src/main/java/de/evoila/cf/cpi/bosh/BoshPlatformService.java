@@ -10,6 +10,7 @@ import de.evoila.cf.broker.service.PlatformServiceAdapter;
 import de.evoila.cf.broker.service.availability.ServicePortAvailabilityVerifier;
 import de.evoila.cf.cpi.bosh.connection.BoshConnection;
 import de.evoila.cf.cpi.bosh.deployment.DeploymentManager;
+import de.evoila.cf.cpi.openstack.fluent.connection.OpenstackConnectionFactory;
 import io.bosh.client.deployments.Deployment;
 import io.bosh.client.errands.ErrandSummary;
 import io.bosh.client.tasks.Task;
@@ -174,6 +175,7 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
     public void deleteServiceInstance(ServiceInstance serviceInstance) throws PlatformException {
         Observable<Deployment> obs = connection.connection().deployments().get(deploymentManager.getDeployment(serviceInstance).getName());
         try {
+            releaseFloatingIp(serviceInstance.getFloatingIpId());
             Deployment deployment = obs.toBlocking().first();
             Observable<List<ErrandSummary>> errands = connection.connection().errands().list(deployment.getName());
             runDeleteErrands(serviceInstance, deployment, errands);
@@ -217,7 +219,13 @@ public abstract class BoshPlatformService extends PlatformServiceAdapter {
         return new ServerAddress(namePrefix + vm.getIndex(), vm.getIps().get(0), port);
     }
 
+    public void releaseFloatingIp(String id) {
+        OpenstackConnectionFactory.connection().compute().floatingIps().deallocateIP(id);
+    }
+
     protected ServerAddress toServerAddress(Vm vm, int port) {
         return toServerAddress(vm.getJobName(), vm, port);
     }
+
+    public BoshConnection getConnection() { return connection; }
 }

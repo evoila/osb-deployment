@@ -56,6 +56,11 @@
             <artifactId>jackson-dataformat-yaml</artifactId>
             <version>RELEASE</version>
         </dependency>
+        <dependency>
+            <groupId>de.evoila.cf.broker</groupId>
+            <artifactId>openstack</artifactId>
+            <version>1.2.0</version>
+        </dependency>
     </dependencies>
 
     <repositories>
