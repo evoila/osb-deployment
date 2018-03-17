@@ -55,10 +55,24 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
 
 	@Autowired
 	private ServicePortAvailabilityVerifier portAvailabilityVerifier;
-	
 
 	@Autowired
 	private IpAccessor ipAccessor;
+
+    @Override
+    public boolean isSyncPossibleOnCreate(Plan plan) {
+        return false;
+    }
+
+    @Override
+    public boolean isSyncPossibleOnDelete(ServiceInstance instance) {
+        return false;
+    }
+
+    @Override
+    public boolean isSyncPossibleOnUpdate(ServiceInstance instance, Plan plan) {
+        return false;
+    }
 
 	@Autowired(required = false)
 	private void setStackHandler(CustomStackHandler customStackHandler) {
@@ -71,7 +85,7 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
 
 	@Override
 	@PostConstruct
-	public void registerCustomPlatformService () {
+	public void registerCustomPlatformService() {
 		if (platformRepository != null)
 			platformRepository.addPlatform(Platform.OPENSTACK, this);
 
@@ -81,37 +95,9 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
 	}
 
 	@Override
-	public boolean isSyncPossibleOnCreate(Plan plan) {
-		return false;
-	}
-
-	@Override
-	public boolean isSyncPossibleOnDelete(ServiceInstance instance) {
-		return false;
-	}
-
-	@Override
-	public boolean isSyncPossibleOnUpdate(ServiceInstance instance, Plan plan) {
-		return false;
-	}
-
-	@Override
-	public ServiceInstance postProvisioning(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
-
-		boolean available;
-		try {
-			available = portAvailabilityVerifier.verifyServiceAvailability(serviceInstance, true);
-		} catch (Exception e) {
-			throw new PlatformException("Service instance is not reachable. Service may not be started on instance.",
-					e);
-		}
-
-		if (!available) {
-			throw new PlatformException("Service instance is not reachable. Service may not be started on instance.");
-		}
-
-		return serviceInstance;
-	}
+    public ServiceInstance preCreateInstance(ServiceInstance serviceInstance, Plan plan) {
+        return serviceInstance;
+    }
 
 	@Override
 	public ServiceInstance createInstance(ServiceInstance serviceInstance, Plan plan,
@@ -157,6 +143,28 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
 		return serviceInstance;
 	}
 
+	@Override
+    public ServiceInstance getCreateInstancePromise(ServiceInstance serviceInstance, Plan plan) {
+        return serviceInstance;
+    }
+
+    @Override
+    public ServiceInstance postCreateInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
+        boolean available;
+        try {
+            available = portAvailabilityVerifier.verifyServiceAvailability(serviceInstance, true);
+        } catch (Exception e) {
+            throw new PlatformException("Service instance is not reachable. Service may not be started on instance.",
+                    e);
+        }
+
+        if (!available) {
+            throw new PlatformException("Service instance is not reachable. Service may not be started on instance.");
+        }
+
+        return serviceInstance;
+    }
+
 	private String volumeSize(int volumeSize, VolumeUnit volumeUnit) {
 		if (volumeUnit.equals(VolumeUnit.M))
 			throw new NotAcceptableException("Volumes in openstack may not be smaller than 1 GB");
@@ -167,21 +175,18 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
 		return String.valueOf(volumeSize);
 	}
 
-	@Override
-	public ServiceInstance getCreateInstancePromise(ServiceInstance instance, Plan plan) {
-		return new ServiceInstance(instance, null, null);
-	}
+    @Override
+    public void preDeleteInstance(ServiceInstance serviceInstance) { }
 
 	@Override
-	public void preDeprovisionServiceInstance(ServiceInstance serviceInstance) {
-	}
-
-	@Override
-	public void deleteServiceInstance(ServiceInstance serviceInstance) throws PlatformException {
+	public void deleteInstance(ServiceInstance serviceInstance) throws PlatformException {
 		stackHandler.delete(serviceInstance.getInternalId());
 	}
 
-	@Override
+    @Override
+    public void postDeleteInstance(ServiceInstance serviceInstance) { }
+
+    @Override
 	public ServiceInstance updateInstance(ServiceInstance instance, Plan plan) {
 		throw new NotSupportedException("Updating Service Instances is currently not supported");
 	}

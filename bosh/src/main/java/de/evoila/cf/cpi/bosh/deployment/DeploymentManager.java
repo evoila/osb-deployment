@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import de.evoila.cf.broker.bean.BoshProperties;
 import de.evoila.cf.broker.model.Metadata;
+import de.evoila.cf.broker.model.NetworkReference;
 import de.evoila.cf.broker.model.Plan;
 import de.evoila.cf.broker.model.ServiceInstance;
 import de.evoila.cf.cpi.bosh.deployment.manifest.InstanceGroup;
@@ -23,21 +24,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class DeploymentManager {
 
-    public static final String NODES = "nodes";
-    public static final String VM_TYPE = "vm_type";
-    public static final String NETWORKS = "networks";
-    public static final String DISK_TYPE = "persistent_disk_type";
-    public static final String STEMCELL_VERSION = "stemcell_version";
+    protected final Logger log = LoggerFactory.getLogger(this.getClass());
+
     private static final String DEPLOYMENT_PREFIX = "sb-";
+
+    protected static final String NODES = "nodes";
+    protected static final String VM_TYPE = "vm_type";
+    protected static final String NETWORKS = "networks";
+    protected static final String DISK_TYPE = "persistent_disk_type";
+    protected static final String STEMCELL_VERSION = "stemcell_version";
+
     private final ObjectReader reader;
     private final ObjectMapper mapper;
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
-    private final BoshProperties boshProperties;
+
+    protected final BoshProperties boshProperties;
 
     public DeploymentManager(BoshProperties properties) {
         Assert.notNull(properties, "Bosh Properties cant be null");
@@ -48,23 +55,28 @@ public class DeploymentManager {
     }
 
     protected void replaceParameters(ServiceInstance instance, Manifest manifest, Plan plan, Map<String, String> customParameters) {
-        //manifest.getProperties().putAll(plan.getMetadata());
         manifest.getProperties().putAll(customParameters);
     }
 
     public Deployment createDeployment(ServiceInstance instance, Plan plan, Map<String, String> customParameters) throws IOException {
         Deployment deployment = getDeployment(instance);
+
         Manifest manifest = readTemplate("bosh/manifest.yml");
         manifest.setName(DEPLOYMENT_PREFIX + instance.getId());
         addStemcell(manifest);
         replaceParameters(instance, manifest, plan, customParameters);
+
         deployment.setRawManifest(generateManifest(manifest));
         return deployment;
     }
 
     private void addStemcell(Manifest manifest) {
-        Optional<Stemcell> stemcellOptional = manifest.getStemcells().stream().filter(s -> s.getAlias().equals("default")).findFirst();
+        Optional<Stemcell> stemcellOptional = manifest.getStemcells()
+                .stream()
+                .filter(s -> s.getAlias().equals("default")).findFirst();
+
         Stemcell defaultStemcell;
+
         if(stemcellOptional.isPresent()){
             defaultStemcell = stemcellOptional.get();
             defaultStemcell.setVersion(boshProperties.getStemcellVersion());
@@ -86,7 +98,11 @@ public class DeploymentManager {
 
     public Deployment updateDeployment (ServiceInstance instance, Deployment deployment, Plan plan) throws IOException {
         Manifest manifest = mapper.readValue(deployment.getRawManifest(), Manifest.class);
+
+        log.debug("Updating deployment: " + deployment.getRawManifest());
+
         replaceParameters(instance, manifest, plan, new HashMap<>());
+
         deployment.setRawManifest(generateManifest(manifest));
         return deployment;
     }
@@ -124,25 +140,44 @@ public class DeploymentManager {
         }
     }
 
-    private void updateSpecificInstanceGroupConfiguration(InstanceGroup instanceGroup, Metadata instanceGroupData) {
-        if(instanceGroupData.getConnections() != 0) {
-            instanceGroup.setConnections(instanceGroupData.getConnections());
+    private void updateSpecificInstanceGroupConfiguration(InstanceGroup instanceGroup, Metadata customInstanceGroupMetadata) {
+        if(customInstanceGroupMetadata.getConnections() != 0) {
+            instanceGroup.setConnections(customInstanceGroupMetadata.getConnections());
         }
 
-        if(instanceGroupData.getNodes() != 0) {
-            instanceGroup.setInstances(instanceGroupData.getNodes());
+        if(customInstanceGroupMetadata.getNodes() != 0) {
+            instanceGroup.setInstances(customInstanceGroupMetadata.getNodes());
         }
 
-        if(instanceGroupData.getVm_type() != null) {
-            instanceGroup.setVm_type(instanceGroupData.getVm_type());
+        if(customInstanceGroupMetadata.getVm_type() != null) {
+            instanceGroup.setVm_type(customInstanceGroupMetadata.getVm_type());
         }
 
-        if(instanceGroupData.getPersistent_disk_type() != null) {
-            instanceGroup.setPersistent_disk_type(instanceGroupData.getPersistent_disk_type());
+        if(customInstanceGroupMetadata.getPersistent_disk_type() != null) {
+            instanceGroup.setPersistent_disk_type(customInstanceGroupMetadata.getPersistent_disk_type());
         }
 
-        if(instanceGroupData.getNetworks() != null) {
-            instanceGroup.setNetworks(instanceGroupData.getNetworks());
+        /**
+         * Note: it is really important to understand the behaviour of the following method. It only
+         * replaces networks, that are NOT a floating network (see bosh cloud-config type VIP). The only
+         * exception is, if the manifests does not yet contain a Static IP. Then it is set.
+         */
+        if(customInstanceGroupMetadata.getNetworks() != null) {
+            List<NetworkReference> newNetworks = instanceGroup
+                    .getNetworks()
+                    .stream()
+                    .map(n -> {
+                        for (NetworkReference networkReference : customInstanceGroupMetadata.getNetworks()) {
+                            if (n.getName().equals(networkReference.getName()) && !networkReference.getName()
+                                    .equals(boshProperties.getVipNetwork())) {
+                                return networkReference;
+                            } else if (networkReference.getName().equals(boshProperties.getVipNetwork()) &&
+                                    n.getStaticIps().isEmpty())
+                                return networkReference;
+                        }
+                        return n;
+                    }).collect(Collectors.toList());
+            instanceGroup.setNetworks(newNetworks);
         }
     }
 

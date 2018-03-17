@@ -59,7 +59,7 @@ public abstract class ExistingServiceFactory implements PlatformService {
 		platformRepository.addPlatform(Platform.EXISTING_SERVICE, this);
 		log.info("Added Platform-Service " + this.getClass().toString() + " of type " + Platform.EXISTING_SERVICE 
 				+ " with host: " + getHosts().stream().reduce((l,r) -> (l + ", " + r)).orElse("none") + " and port: " + getPort());
-		
+
 	}
 
 	@Override
@@ -78,27 +78,6 @@ public abstract class ExistingServiceFactory implements PlatformService {
 	}
 
 	@Override
-	public ServiceInstance postProvisioning(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
-		boolean available = false;
-		try {
-			available = portAvailabilityVerifier.verifyServiceAvailability(serviceInstance, false);
-		} catch (Exception e) {
-			throw new PlatformException("Service instance is not reachable. Service may not be started on instance.",
-					e);
-		}
-
-		if (!available) {
-			throw new PlatformException("Service instance is not reachable. Service may not be started on instance.");
-		}
-
-		return serviceInstance;
-	}
-
-	@Override
-	public void preDeprovisionServiceInstance(ServiceInstance serviceInstance) {
-	}
-
-	@Override
 	public ServiceInstance getCreateInstancePromise(ServiceInstance instance, Plan plan) {
 		return new ServiceInstance(instance, null, null);
 	}
@@ -107,6 +86,11 @@ public abstract class ExistingServiceFactory implements PlatformService {
 	public ServiceInstance updateInstance(ServiceInstance instance, Plan plan) {
 		return null;
 	}
+
+	@Override
+    public ServiceInstance preCreateInstance(ServiceInstance serviceInstance, Plan plan) {
+	    return serviceInstance;
+    }
 
 	@Override
 	public ServiceInstance createInstance(ServiceInstance serviceInstance, Plan plan,
@@ -120,6 +104,40 @@ public abstract class ExistingServiceFactory implements PlatformService {
 
 		return serviceInstance;
 	}
+
+    protected void provisionServiceInstance(ServiceInstance serviceInstance, Plan plan,
+                                            Map<String, String> customProperties) throws PlatformException {
+        try {
+            CustomExistingServiceConnection connection = getCustomExistingService().connection(getHosts(), getPort(),
+                    getDatabase(), getUsername(), getPassword());
+
+            String instanceId = serviceInstance.getId();
+            createInstance(connection, instanceId);
+            getCustomExistingService().bindRoleToInstanceWithPassword(connection, instanceId, instanceId, instanceId);
+        } catch (Exception e) {
+            log.error(e.toString());
+            throw new PlatformException("Could not create service instance in existing instance server", e);
+        }
+    }
+
+    protected abstract void createInstance(CustomExistingServiceConnection connection, String instanceId)  throws PlatformException;
+
+    @Override
+    public ServiceInstance postCreateInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
+        boolean available;
+        try {
+            available = portAvailabilityVerifier.verifyServiceAvailability(serviceInstance, false);
+        } catch (Exception e) {
+            throw new PlatformException("Service instance is not reachable. Service may not be started on instance.",
+                    e);
+        }
+
+        if (!available) {
+            throw new PlatformException("Service instance is not reachable. Service may not be started on instance.");
+        }
+
+        return serviceInstance;
+    }
 
 	/*
 	 * (non-Javadoc)
@@ -138,7 +156,11 @@ public abstract class ExistingServiceFactory implements PlatformService {
 		return serverAddresses;
 	}
 
-	public void deleteServiceInstance(ServiceInstance serviceInstance) throws PlatformException {
+    @Override
+    public void preDeleteInstance(ServiceInstance serviceInstance) {}
+
+
+    public void deleteInstance(ServiceInstance serviceInstance) throws PlatformException {
 		try {
 			CustomExistingServiceConnection connection = getCustomExistingService().connection(getHosts(), getPort(),
 					getDatabase(), getUsername(), getPassword());
@@ -151,26 +173,12 @@ public abstract class ExistingServiceFactory implements PlatformService {
 		}
 	}
 
+    @Override
+    public void postDeleteInstance(ServiceInstance serviceInstance) {}
+
 	protected abstract void deleteInstance(CustomExistingServiceConnection connection, String instanceId) throws PlatformException;
 
 	protected abstract CustomExistingService getCustomExistingService();
-
-	protected void provisionServiceInstance(ServiceInstance serviceInstance, Plan plan,
-			Map<String, String> customProperties) throws PlatformException {
-		try {
-			CustomExistingServiceConnection connection = getCustomExistingService().connection(getHosts(), getPort(),
-					getDatabase(), getUsername(), getPassword());
-
-			String instanceId = serviceInstance.getId();
-			createInstance(connection, instanceId);
-			getCustomExistingService().bindRoleToInstanceWithPassword(connection, instanceId, instanceId, instanceId);
-		} catch (Exception e) {
-			log.error(e.toString());
-			throw new PlatformException("Could not create service instance in existing instance server", e);
-		}
-	}
-
-	protected abstract void createInstance(CustomExistingServiceConnection connection, String instanceId)  throws PlatformException;;
 
 	public List<String> getHosts() {
 		return hosts;
