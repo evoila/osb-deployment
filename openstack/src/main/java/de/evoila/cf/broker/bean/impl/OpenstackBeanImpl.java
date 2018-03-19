@@ -1,10 +1,9 @@
 package de.evoila.cf.broker.bean.impl;
 
+import de.evoila.cf.broker.bean.OpenstackBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
-
-import de.evoila.cf.broker.bean.OpenstackBean; 
 
 @Service
 @ConfigurationProperties(prefix="openstack")
@@ -13,7 +12,7 @@ import de.evoila.cf.broker.bean.OpenstackBean;
 				"user.username", "user.password", "user.domainName",
 				"project.domainName", "project.projectName",
 				"networkId", "subnetId", "imageId", "keypair",
-				"cinder.az"
+				"cinder.az", "pool"
 		}, havingValue="")
 public class OpenstackBeanImpl implements OpenstackBean {
 
@@ -34,6 +33,8 @@ public class OpenstackBeanImpl implements OpenstackBean {
 	private Cinder cinder;
 
 	private String publicNetworkId;
+
+	private String pool;
 
 	public static class User {
 		private String username;
@@ -135,6 +136,10 @@ public class OpenstackBeanImpl implements OpenstackBean {
 
 	public String getPublicNetworkId() { return publicNetworkId; }
 
+	public String getPool() { return pool; }
+
+	public void setPool(String pool) { this.pool = pool; }
+
 	public void setEndpoint(String endpoint) {
 		this.endpoint = endpoint;
 	}
@@ -164,5 +169,7 @@ public class OpenstackBeanImpl implements OpenstackBean {
 	public void setCinder(Cinder cinder) { this.cinder = cinder; }
 
 	public void setPublicNetworkId(String publicNetworkId) { this.publicNetworkId = publicNetworkId; }
+
+
 
 }

@@ -15,4 +15,5 @@ public interface OpenstackBean {
 	public String getKeypair();
 	public Cinder getCinder();
 	public String getPublicNetworkId();
+	public String getPool();
 }

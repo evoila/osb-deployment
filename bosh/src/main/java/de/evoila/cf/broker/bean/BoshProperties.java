@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @ConfigurationProperties(prefix = "bosh")
-@ConditionalOnProperty(prefix = "bosh", name = {"host", "username", "password", "stemcellVersion", "stemcellOs", "authentication"}, havingValue = "")
+@ConditionalOnProperty(prefix = "bosh", name = {"host", "username",
+        "password", "stemcellVersion", "stemcellOs", "authentication"}, havingValue = "")
 public class BoshProperties {
 
     private String host;
@@ -27,55 +28,38 @@ public class BoshProperties {
 
     private Authentication authentication;
 
-    public String getHost() {
-        return host;
-    }
+    private String vipNetwork = "not-defined";
 
-    public void setHost(String host) {
-        this.host = host;
-    }
+    public String getHost() { return host; }
+
+    public void setHost(String host) { this.host = host; }
 
     public int getPort() { return port; }
 
     public void setPort(int port) { this.port = port;  }
 
-    public String getUsername() {
-        return username;
-    }
+    public String getUsername() { return username; }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public void setUsername(String username) { this.username = username; }
 
-    public String getPassword() {
-        return password;
-    }
+    public String getPassword() { return password; }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public void setPassword(String password) { this.password = password; }
 
-    public String getStemcellVersion() {
-        return stemcellVersion;
-    }
+    public String getStemcellVersion() { return stemcellVersion; }
 
-    public void setStemcellVersion(String stemcellVersion) {
-        this.stemcellVersion = stemcellVersion;
-    }
+    public void setStemcellVersion(String stemcellVersion) { this.stemcellVersion = stemcellVersion; }
 
-    public String getStemcellOs() {
-        return stemcellOs;
-    }
+    public String getStemcellOs() { return stemcellOs; }
 
-    public void setStemcellOs(String stemcellOs) {
-        this.stemcellOs = stemcellOs;
-    }
+    public void setStemcellOs(String stemcellOs) { this.stemcellOs = stemcellOs; }
 
-    public Authentication getAuthentication() {
-        return authentication;
-    }
+    public Authentication getAuthentication() { return authentication; }
 
-    public void setAuthentication(Authentication authentication) {
-        this.authentication = authentication;
+    public void setAuthentication(Authentication authentication) { this.authentication = authentication; }
+
+    public String getVipNetwork() { return vipNetwork; }
+
+    public void setVipNetwork(String vipNetwork) { this.vipNetwork = vipNetwork;
     }
 }
