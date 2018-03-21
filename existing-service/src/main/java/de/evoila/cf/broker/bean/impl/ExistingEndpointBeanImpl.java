@@ -3,6 +3,7 @@ package de.evoila.cf.broker.bean.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.evoila.cf.broker.model.ServerAddress;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,14 @@ public class ExistingEndpointBeanImpl implements ExistingEndpointBean {
 	public List<String> getHosts() {
 		return hosts;
 	}
+
+	public List<ServerAddress> getHostsWithServerAddress() {
+	    List<ServerAddress> serverAddresses = new ArrayList<>();
+	    for (String host: hosts) {
+	        serverAddresses.add(new ServerAddress("host-" + host, host, this.port));
+        }
+        return serverAddresses;
+    }
 
 	public int getPort() {
 		return port;

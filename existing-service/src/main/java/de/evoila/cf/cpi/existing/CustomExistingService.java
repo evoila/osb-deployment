@@ -11,7 +11,8 @@ import java.util.List;
  */
 public interface CustomExistingService {
 
-	CustomExistingServiceConnection connection(List<String> hosts, int port, String database, String username, String password) throws Exception;
+	CustomExistingServiceConnection connection(List<String> hosts, int port, String database,
+            String username, String password) throws Exception;
 
 	void bindRoleToInstanceWithPassword(CustomExistingServiceConnection connection, String database,
 			String username, String password) throws Exception;
