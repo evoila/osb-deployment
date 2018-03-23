@@ -204,7 +204,7 @@ public abstract class BoshPlatformService implements PlatformService {
     public void preDeleteInstance(ServiceInstance serviceInstance) {}
 
     @Override
-    public void deleteInstance(ServiceInstance serviceInstance) throws PlatformException {
+    public void deleteInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
         try {
             Deployment deployment = connection
                     .connection()

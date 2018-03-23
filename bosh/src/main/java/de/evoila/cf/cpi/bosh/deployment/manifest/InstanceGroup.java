@@ -11,6 +11,7 @@ import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InstanceGroup {
+    
     private String name;
     private int instances;
     private int connections;

@@ -1,23 +1,20 @@
 package de.evoila.cf.broker.bean.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import de.evoila.cf.broker.bean.ExistingEndpointBean;
 import de.evoila.cf.broker.model.ServerAddress;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 
-import de.evoila.cf.broker.bean.ExistingEndpointBean;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @ConfigurationProperties(prefix="existing.endpoint")
 public class ExistingEndpointBeanImpl implements ExistingEndpointBean {
 
-	private List<String> hosts = new ArrayList<String>();
+	private List<ServerAddress> hosts = new ArrayList<>();
 
 	private int port;
-	
-	private int adminport;
 
 	private String username;
 
@@ -25,59 +22,48 @@ public class ExistingEndpointBeanImpl implements ExistingEndpointBean {
 
 	private String database;
 
-	public List<String> getHosts() {
-		return hosts;
-	}
-
-	public List<ServerAddress> getHostsWithServerAddress() {
-	    List<ServerAddress> serverAddresses = new ArrayList<>();
-	    for (String host: hosts) {
-	        serverAddresses.add(new ServerAddress("host-" + host, host, this.port));
-        }
-        return serverAddresses;
+    @Override
+    public List<ServerAddress> getHosts() {
+        return hosts;
     }
 
-	public int getPort() {
-		return port;
-	}
-	
-	public int getAdminport() {
-		return adminport;
-	}
-	
-	public String getUsername() {
-		return username;
-	}
+    public void setHosts(List<ServerAddress> hosts) {
+        this.hosts = hosts;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    @Override
+    public int getPort() {
+        return port;
+    }
 
-	public String getDatabase() {
-		return database;
-	}
-	
-	public void setHosts(List<String> hosts) {
-		this.hosts = hosts;
-	}
+    public void setPort(int port) {
+        this.port = port;
+    }
 
-	public void setPort(int port) {
-		this.port = port;
-	}
-	
-	public void setAdminport(int adminport) {
-		this.adminport = adminport;
-	}
+    @Override
+    public String getUsername() {
+        return username;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    @Override
+    public String getPassword() {
+        return password;
+    }
 
-	public void setDatabase(String database) {
-		this.database = database;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public String getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(String database) {
+        this.database = database;
+    }
 }

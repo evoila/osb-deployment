@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import de.evoila.cf.broker.bean.BoshProperties;
-import de.evoila.cf.broker.model.Metadata;
-import de.evoila.cf.broker.model.NetworkReference;
-import de.evoila.cf.broker.model.Plan;
-import de.evoila.cf.broker.model.ServiceInstance;
+import de.evoila.cf.broker.model.*;
 import de.evoila.cf.cpi.bosh.deployment.manifest.InstanceGroup;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Manifest;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Stemcell;
@@ -132,29 +129,36 @@ public class DeploymentManager {
             if(metadata != null) {
                 updateSpecificInstanceGroupConfiguration(instanceGroup, metadata);
 
-                if(metadata.getInstanceGroupMetadata() != null && metadata.getInstanceGroupMetadata().containsKey(instanceGroup.getName())) {
-                    updateSpecificInstanceGroupConfiguration(instanceGroup,
-                            metadata.getInstanceGroupMetadata().get(instanceGroup.getName()));
+
+                InstanceGroupConfig instanceGroupConfig = metadata.getInstanceGroupConfig().stream()
+                        .filter(i -> i.getName() != null && i.getName().equals(instanceGroup.getName()))
+                        .findFirst()
+                        .orElse(null);
+
+                if(metadata.getInstanceGroupConfig() != null && instanceGroupConfig != null) {
+                    updateSpecificInstanceGroupConfiguration(instanceGroup, instanceGroupConfig);
                 }
             }
         }
     }
 
-    private void updateSpecificInstanceGroupConfiguration(InstanceGroup instanceGroup, Metadata customInstanceGroupMetadata) {
-        if(customInstanceGroupMetadata.getConnections() != 0) {
-            instanceGroup.setConnections(customInstanceGroupMetadata.getConnections());
+
+
+    private void updateSpecificInstanceGroupConfiguration(InstanceGroup instanceGroup, InstanceGroupConfig instanceGroupConfig) {
+        if(instanceGroupConfig.getConnections() != 0) {
+            instanceGroup.setConnections(instanceGroupConfig.getConnections());
         }
 
-        if(customInstanceGroupMetadata.getNodes() != 0) {
-            instanceGroup.setInstances(customInstanceGroupMetadata.getNodes());
+        if(instanceGroupConfig.getNodes() != 0) {
+            instanceGroup.setInstances(instanceGroupConfig.getNodes());
         }
 
-        if(customInstanceGroupMetadata.getVm_type() != null) {
-            instanceGroup.setVm_type(customInstanceGroupMetadata.getVm_type());
+        if(instanceGroupConfig.getVmType() != null) {
+            instanceGroup.setVm_type(instanceGroupConfig.getVmType());
         }
 
-        if(customInstanceGroupMetadata.getPersistent_disk_type() != null) {
-            instanceGroup.setPersistent_disk_type(customInstanceGroupMetadata.getPersistent_disk_type());
+        if(instanceGroupConfig.getPersistentDiskType() != null) {
+            instanceGroup.setPersistent_disk_type(instanceGroupConfig.getPersistentDiskType());
         }
 
         /**
@@ -162,12 +166,12 @@ public class DeploymentManager {
          * replaces networks, that are NOT a floating network (see bosh cloud-config type VIP). The only
          * exception is, if the manifests does not yet contain a Static IP. Then it is set.
          */
-        if(customInstanceGroupMetadata.getNetworks() != null) {
+        if(instanceGroupConfig.getNetworks() != null) {
             List<NetworkReference> newNetworks = instanceGroup
                     .getNetworks()
                     .stream()
                     .map(n -> {
-                        for (NetworkReference networkReference : customInstanceGroupMetadata.getNetworks()) {
+                        for (NetworkReference networkReference : instanceGroupConfig.getNetworks()) {
                             if (n.getName().equals(networkReference.getName()) && !networkReference.getName()
                                     .equals(boshProperties.getVipNetwork())) {
                                 return networkReference;

@@ -6,10 +6,8 @@ import java.util.List;
 
 public interface ExistingEndpointBean {
 
-	List<String> getHosts();
-	List<ServerAddress> getHostsWithServerAddress();
+	List<ServerAddress> getHosts();
 	int getPort();
-	int getAdminport();
 	String getUsername();
 	String getPassword();
 	String getDatabase();

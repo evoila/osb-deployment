@@ -179,7 +179,7 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
     public void preDeleteInstance(ServiceInstance serviceInstance) { }
 
 	@Override
-	public void deleteInstance(ServiceInstance serviceInstance) throws PlatformException {
+	public void deleteInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
 		stackHandler.delete(serviceInstance.getInternalId());
 	}
 
