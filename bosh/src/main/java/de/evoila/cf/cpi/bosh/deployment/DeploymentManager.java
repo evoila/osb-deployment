@@ -86,7 +86,7 @@ public class DeploymentManager {
 
     public Manifest readTemplate(String path) throws IOException {
         String manifest = accessTemplate(path);
-        return mapper.readValue(manifest,Manifest.class);
+        return mapper.readValue(manifest, Manifest.class);
     }
 
     public String generateManifest(Manifest manifest) throws JsonProcessingException {
@@ -125,7 +125,7 @@ public class DeploymentManager {
     protected void updateInstanceGroupConfiguration(Manifest manifest, Plan plan) {
         Metadata metadata = plan.getMetadata();
 
-        for(InstanceGroup instanceGroup : manifest.getInstance_groups()) {
+        for(InstanceGroup instanceGroup : manifest.getInstanceGroups()) {
             if(metadata != null) {
                 updateSpecificInstanceGroupConfiguration(instanceGroup, metadata);
 
@@ -142,23 +142,21 @@ public class DeploymentManager {
         }
     }
 
-
-
     private void updateSpecificInstanceGroupConfiguration(InstanceGroup instanceGroup, InstanceGroupConfig instanceGroupConfig) {
-        if(instanceGroupConfig.getConnections() != 0) {
+        if(instanceGroupConfig.getConnections() != null) {
             instanceGroup.setConnections(instanceGroupConfig.getConnections());
         }
 
-        if(instanceGroupConfig.getNodes() != 0) {
+        if(instanceGroupConfig.getNodes() != null) {
             instanceGroup.setInstances(instanceGroupConfig.getNodes());
         }
 
         if(instanceGroupConfig.getVmType() != null) {
-            instanceGroup.setVm_type(instanceGroupConfig.getVmType());
+            instanceGroup.setVmType(instanceGroupConfig.getVmType());
         }
 
         if(instanceGroupConfig.getPersistentDiskType() != null) {
-            instanceGroup.setPersistent_disk_type(instanceGroupConfig.getPersistentDiskType());
+            instanceGroup.setPersistentDiskType(instanceGroupConfig.getPersistentDiskType());
         }
 
         /**

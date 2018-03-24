@@ -1,11 +1,11 @@
 package de.evoila.cf.cpi.bosh.deployment.manifest;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.evoila.cf.broker.model.NetworkReference;
 import de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup.JobV2;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,13 +13,23 @@ import java.util.Map;
 public class InstanceGroup {
     
     private String name;
-    private int instances;
-    private int connections;
-    private String vm_type;
+
+    @JsonInclude(JsonInclude.Include.ALWAYS)
+    private Integer instances;
+
+    @JsonInclude(JsonInclude.Include.ALWAYS)
+    private Integer connections;
+
+    @JsonProperty("vm_type")
+    private String vmType;
     private String stemcell;
     private String lifecycle;
-    private String persistent_disk_type;
-    private int persistent_disk;
+
+    @JsonProperty("persistent_disk_type")
+    private String persistentDiskType;
+
+    @JsonProperty("persistent_disk")
+    private int persistentDisk;
     private List<String> azs;
     private List<NetworkReference> networks;
     private List<JobV2> jobs;
@@ -33,28 +43,28 @@ public class InstanceGroup {
         this.name = name;
     }
 
-    public int getInstances() {
+    public Integer getInstances() {
         return instances;
     }
 
-    public void setInstances(int instances) {
+    public void setInstances(Integer instances) {
         this.instances = instances;
     }
 
-    public int getConnections() {
+    public Integer getConnections() {
         return connections;
     }
 
-    public void setConnections(int connections) {
+    public void setConnections(Integer connections) {
         this.connections = connections;
     }
 
-    public String getVm_type() {
-        return vm_type;
+    public String getVmType() {
+        return vmType;
     }
 
-    public void setVm_type(String vm_type) {
-        this.vm_type = vm_type;
+    public void setVmType(String vmType) {
+        this.vmType = vmType;
     }
 
     public String getStemcell() {
@@ -73,12 +83,20 @@ public class InstanceGroup {
         this.lifecycle = lifecycle;
     }
 
-    public String getPersistent_disk_type() {
-        return persistent_disk_type;
+    public String getPersistentDiskType() {
+        return persistentDiskType;
     }
 
-    public void setPersistent_disk_type(String persistent_disk_type) {
-        this.persistent_disk_type = persistent_disk_type; 
+    public void setPersistentDiskType(String persistentDiskType) {
+        this.persistentDiskType = persistentDiskType;
+    }
+
+    public int getPersistentDisk() {
+        return persistentDisk;
+    }
+
+    public void setPersistentDisk(int persistentDisk) {
+        this.persistentDisk = persistentDisk;
     }
 
     public List<String> getAzs() {
@@ -93,7 +111,9 @@ public class InstanceGroup {
         return networks;
     }
 
-    public void setNetworks(List<NetworkReference> networks) { this.networks = networks; }
+    public void setNetworks(List<NetworkReference> networks) {
+        this.networks = networks;
+    }
 
     public List<JobV2> getJobs() {
         return jobs;
@@ -103,19 +123,11 @@ public class InstanceGroup {
         this.jobs = jobs;
     }
 
-    public Map<String, Object> getProperties() { return properties; }
-
-    public void setProperties(Map<String, Object> properties) { this.properties = properties; }
-
-    public int getPersistent_disk() {
-        return persistent_disk;
+    public Map<String, Object> getProperties() {
+        return properties;
     }
 
-    public void setPersistent_disk(int persistent_disk) {
-        this.persistent_disk = persistent_disk;
-    }
-
-    public void setNetworksFromMap(HashMap<String, NetworkReference> networks) {
-        this.networks = new ArrayList<>(networks.values());
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
     }
 }

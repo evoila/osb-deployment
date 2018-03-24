@@ -39,7 +39,6 @@ public class ManifestParserTest extends ManifestTest {
 
     @Test 
     public void testManifestParameter() throws IOException, URISyntaxException {
-        assertEquals(DIRECTOR_UUID, manifest.getDirector_uuid());
         assertEquals(DEPLOYMENT_NAME, manifest.getName());
     }
 
@@ -54,7 +53,7 @@ public class ManifestParserTest extends ManifestTest {
 
     @Test 
     public void testResourcePoolParameter(){
-        ResourcePool pool = manifest.getResource_pools().get(0);
+        ResourcePool pool = manifest.getResourcePools().get(0);
         assertEquals(R_POOL_NAME, pool.getName());
         assertEquals(R_NETWORK_NAME, pool.getNetwork());
         assertEquals(STEMCELL_NAME, pool.getStemcell().getName());

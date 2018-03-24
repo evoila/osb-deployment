@@ -1,6 +1,7 @@
 package de.evoila.cf.cpi.bosh.deployment.manifest;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.evoila.cf.cpi.bosh.deployment.manifest.job.Job;
 import de.evoila.cf.cpi.bosh.deployment.manifest.network.Network;
 
@@ -12,25 +13,27 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Manifest {
 
-    private String director_uuid;
     private String name;
+
     private List<Release> releases = new ArrayList<>();
+
     private Update update;
+
     private List<Stemcell> stemcells = new ArrayList<>();
-    private List<InstanceGroup> instance_groups = new ArrayList<>();
+
+    @JsonProperty("instance_groups")
+    private List<InstanceGroup> instanceGroups = new ArrayList<>();
+
     private Map<String, Object> properties = new HashMap<>();
+
     private Compilation compilation;
+
     private List<Job> jobs = new ArrayList<>();
+
     private List<Network> networks = new ArrayList<>();
-    private List<ResourcePool> resource_pools = new ArrayList<>();
 
-    public String getDirector_uuid() {
-        return director_uuid;
-    }
-
-    public void setDirector_uuid(String director_uuid) {
-        this.director_uuid = director_uuid;
-    }
+    @JsonProperty("resource_pools")
+    private List<ResourcePool> resourcePools = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -64,12 +67,12 @@ public class Manifest {
         this.stemcells = stemcells;
     }
 
-    public List<InstanceGroup> getInstance_groups() {
-        return instance_groups;
+    public List<InstanceGroup> getInstanceGroups() {
+        return instanceGroups;
     }
 
-    public void setInstance_groups(List<InstanceGroup> instance_groups) {
-        this.instance_groups = instance_groups;
+    public void setInstanceGroups(List<InstanceGroup> instanceGroups) {
+        this.instanceGroups = instanceGroups;
     }
 
     public Map<String, Object> getProperties() {
@@ -88,9 +91,13 @@ public class Manifest {
 
     public void setNetworks(List<Network> networks) { this.networks = networks; }
 
-    public List<ResourcePool> getResource_pools() { return resource_pools; }
+    public List<ResourcePool> getResourcePools() {
+        return resourcePools;
+    }
 
-    public void setResource_pools(List<ResourcePool> resource_pools) { this.resource_pools = resource_pools; }
+    public void setResourcePools(List<ResourcePool> resourcePools) {
+        this.resourcePools = resourcePools;
+    }
 
     public Compilation getCompilation() { return compilation; }
 

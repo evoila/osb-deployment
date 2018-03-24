@@ -43,7 +43,6 @@ public class ManifestV2ParserTest extends ManifestTest {
 
     @Test 
     public void testManifestParameter() throws IOException, URISyntaxException {
-        assertEquals(DIRECTOR_UUID, manifest.getDirector_uuid());
         assertEquals(DEPLOYMENT_NAME, manifest.getName());
     }
 
@@ -58,19 +57,18 @@ public class ManifestV2ParserTest extends ManifestTest {
 
     @Test 
     public void testInstanceGroup(){
-        InstanceGroup job = manifest.getInstance_groups().get(0);
+        InstanceGroup job = manifest.getInstanceGroups().get(0);
         assertEquals(INST_GRP_NAME, job.getName());
-        assertEquals(INSTANCES, job.getInstances());
         assertEquals(AZ1, job.getAzs().get(0));
-        assertEquals(VMTYPE, job.getVm_type());
+        assertEquals(VMTYPE, job.getVmType());
         assertEquals(NETWORK_NAME, job.getNetworks().get(0).getName());
         assertEquals(STEMCELL, job.getStemcell());
-        assertEquals(PERSISTENT_DISK_TYPE, job.getPersistent_disk_type());
+        assertEquals(PERSISTENT_DISK_TYPE, job.getPersistentDiskType());
     }
 
     @Test 
     public void testJobs(){
-        InstanceGroup group = manifest.getInstance_groups().get(0);
+        InstanceGroup group = manifest.getInstanceGroups().get(0);
         JobV2 t = group.getJobs().get(0);
         assertEquals("mongodb3", t.getName());
         assertEquals("mongodb3", t.getRelease());

@@ -31,7 +31,6 @@ public class ManifestGeneratorTest extends ManifestTest {
     @Before 
     public void before() throws IOException, URISyntaxException {
         manifest = new Manifest();
-        manifest.setDirector_uuid(DIRECTOR_UUID);
         manifest.setName(DEPLOYMENT_NAME);
         manifest.getProperties().put("TEST", "TEST");
         Release release = new Release();
@@ -89,7 +88,7 @@ public class ManifestGeneratorTest extends ManifestTest {
 
         manifest.setCompilation(compilation);
         manifest.getNetworks().add(network);
-        manifest.getResource_pools().add(r);
+        manifest.getResourcePools().add(r);
         manifest.getJobs().add(job);
     }
 
