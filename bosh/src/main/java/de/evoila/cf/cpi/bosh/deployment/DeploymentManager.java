@@ -86,6 +86,10 @@ public class DeploymentManager {
 
     public Manifest readTemplate(String path) throws IOException {
         String manifest = accessTemplate(path);
+        return readManifestFromString(manifest);
+    }
+
+    public Manifest readManifestFromString(String manifest) throws IOException {
         return mapper.readValue(manifest, Manifest.class);
     }
 
@@ -94,7 +98,7 @@ public class DeploymentManager {
     }
 
     public Deployment updateDeployment (ServiceInstance instance, Deployment deployment, Plan plan) throws IOException {
-        Manifest manifest = mapper.readValue(deployment.getRawManifest(), Manifest.class);
+        Manifest manifest = readManifestFromString(deployment.getRawManifest());
 
         log.debug("Updating deployment: " + deployment.getRawManifest());
 
