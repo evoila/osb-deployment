@@ -101,7 +101,7 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
 
 	@Override
 	public ServiceInstance createInstance(ServiceInstance serviceInstance, Plan plan,
-			Map<String, String> customProperties) throws PlatformException {
+			Map<String, Object> customProperties) throws PlatformException {
 		String instanceId = serviceInstance.getId();
 			
 		Map<String, String> platformParameters = new HashMap<String, String>();
@@ -187,7 +187,7 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
     public void postDeleteInstance(ServiceInstance serviceInstance) { }
 
     @Override
-	public ServiceInstance updateInstance(ServiceInstance instance, Plan plan) {
+	public ServiceInstance updateInstance(ServiceInstance instance, Plan plan, Map<String, Object> customParameters) {
 		throw new NotSupportedException("Updating Service Instances is currently not supported");
 	}
 

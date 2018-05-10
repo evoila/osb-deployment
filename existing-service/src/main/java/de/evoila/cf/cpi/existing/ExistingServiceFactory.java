@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
+import java.util.Map;
 
 /**
  *
@@ -59,7 +60,7 @@ public abstract class ExistingServiceFactory implements PlatformService {
 	}
 
 	@Override
-	public ServiceInstance updateInstance(ServiceInstance instance, Plan plan) {
+	public ServiceInstance updateInstance(ServiceInstance instance, Plan plan, Map<String, Object> customParameters) {
 		return null;
 	}
 

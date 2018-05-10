@@ -51,11 +51,11 @@ public class DeploymentManager {
         this.reader = mapper.readerFor(Manifest.class);
     }
 
-    protected void replaceParameters(ServiceInstance instance, Manifest manifest, Plan plan, Map<String, String> customParameters) {
+    protected void replaceParameters(ServiceInstance instance, Manifest manifest, Plan plan, Map<String, Object> customParameters) {
         manifest.getProperties().putAll(customParameters);
     }
 
-    public Deployment createDeployment(ServiceInstance instance, Plan plan, Map<String, String> customParameters) throws IOException {
+    public Deployment createDeployment(ServiceInstance instance, Plan plan, Map<String, Object> customParameters) throws IOException {
         Deployment deployment = getDeployment(instance);
 
         Manifest manifest = readTemplate("bosh/manifest.yml");
@@ -93,12 +93,12 @@ public class DeploymentManager {
         return mapper.writeValueAsString(manifest);
     }
 
-    public Deployment updateDeployment (ServiceInstance instance, Deployment deployment, Plan plan) throws IOException {
+    public Deployment updateDeployment (ServiceInstance instance, Deployment deployment, Plan plan, Map<String, Object> customParameters) throws IOException {
         Manifest manifest = mapper.readValue(deployment.getRawManifest(), Manifest.class);
 
         log.debug("Updating deployment: " + deployment.getRawManifest());
 
-        replaceParameters(instance, manifest, plan, new HashMap<>());
+        replaceParameters(instance, manifest, plan, customParameters);
 
         deployment.setRawManifest(generateManifest(manifest));
         return deployment;

@@ -101,7 +101,7 @@ public abstract class BoshPlatformService implements PlatformService {
     }
 
     @Override
-    public ServiceInstance createInstance(ServiceInstance in, Plan plan, Map<String, String> customParameters) throws PlatformException {
+    public ServiceInstance createInstance(ServiceInstance in, Plan plan, Map<String, Object> customParameters) throws PlatformException {
         ServiceInstance instance = createServiceInstanceObject(in, plan);
         try {
             Deployment deployment = deploymentManager.createDeployment(instance, plan, customParameters);
@@ -231,7 +231,7 @@ public abstract class BoshPlatformService implements PlatformService {
     }
 
     @Override
-    public ServiceInstance updateInstance(ServiceInstance instance, Plan plan) throws PlatformException {
+    public ServiceInstance updateInstance(ServiceInstance instance, Plan plan, Map<String, Object> customParameters) throws PlatformException {
         Deployment deployment = connection.connection().deployments()
                 .get(deploymentManager.getDeployment(instance).getName())
                 .toBlocking().first();
@@ -243,7 +243,7 @@ public abstract class BoshPlatformService implements PlatformService {
 
         runUpdateErrands(instance, plan, deployment, errands);
         try {
-            deployment = deploymentManager.updateDeployment(instance, deployment, plan);
+            deployment = deploymentManager.updateDeployment(instance, deployment, plan, customParameters);
 
             Observable<Task> taskObservable = connection
                     .connection()
