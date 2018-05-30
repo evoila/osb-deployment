@@ -1,5 +1,6 @@
 package de.evoila.cf.cpi.bosh;
 
+import com.jcraft.jsch.Session;
 import de.evoila.cf.broker.bean.BoshProperties;
 import de.evoila.cf.broker.controller.utils.DashboardUtils;
 import de.evoila.cf.broker.exception.PlatformException;
@@ -10,7 +11,10 @@ import de.evoila.cf.broker.service.PlatformService;
 import de.evoila.cf.broker.service.availability.ServicePortAvailabilityVerifier;
 import de.evoila.cf.cpi.bosh.connection.BoshConnection;
 import de.evoila.cf.cpi.bosh.deployment.DeploymentManager;
+import de.evoila.cf.cpi.bosh.deployment.manifest.InstanceGroup;
+import de.evoila.cf.cpi.bosh.deployment.manifest.Manifest;
 import io.bosh.client.deployments.Deployment;
+import io.bosh.client.deployments.SSHConfig;
 import io.bosh.client.errands.ErrandSummary;
 import io.bosh.client.tasks.Task;
 import io.bosh.client.vms.Vm;
@@ -21,6 +25,9 @@ import rx.Observable;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -278,4 +285,27 @@ public abstract class BoshPlatformService implements PlatformService {
         return toServerAddress(vm.getJobName(), vm, port);
     }
 
+    protected Deployment getDeployment(ServiceInstance instance){
+        return deploymentManager.getDeployment(instance);
+    }
+
+    protected Observable<Session> getSshSession(ServiceInstance instance,
+                                                InstanceGroup instanceGroup,
+                                                int index) throws NoSuchAlgorithmException {
+
+        Deployment deployment = this.getDeployment(instance);
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(512);
+        KeyPair keyPair = keyGen.genKeyPair();
+
+        SSHConfig config = new SSHConfig(deployment.getName(), instance.getUsername(), new String(keyPair.getPublic().getEncoded()), instanceGroup.getName(), index);
+
+        return this.connection.connection().vms().ssh(config,
+                                               new String(keyPair.getPublic().getEncoded()));
+    }
+
+
+    public Manifest getManifest(Deployment deployment) throws IOException {
+        return deploymentManager.readManifestFromString(deployment.getRawManifest());
+    }
 }

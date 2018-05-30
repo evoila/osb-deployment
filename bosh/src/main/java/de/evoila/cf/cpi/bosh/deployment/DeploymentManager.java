@@ -86,6 +86,10 @@ public class DeploymentManager {
 
     public Manifest readTemplate(String path) throws IOException {
         String manifest = accessTemplate(path);
+        return readManifestFromString(manifest);
+    }
+
+    public Manifest readManifestFromString(String manifest) throws IOException {
         return mapper.readValue(manifest, Manifest.class);
     }
 
