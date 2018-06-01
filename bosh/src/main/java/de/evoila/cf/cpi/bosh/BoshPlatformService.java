@@ -231,6 +231,11 @@ public abstract class BoshPlatformService implements PlatformService {
     }
 
     @Override
+    public ServiceInstance preUpdateInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
+        return serviceInstance;
+    }
+
+    @Override
     public ServiceInstance updateInstance(ServiceInstance instance, Plan plan, Map<String, Object> customParameters) throws PlatformException {
         Deployment deployment = connection.connection().deployments()
                 .get(deploymentManager.getDeployment(instance).getName())
@@ -259,6 +264,11 @@ public abstract class BoshPlatformService implements PlatformService {
         return new ServiceInstance(instance.getId(), instance.getServiceDefinitionId(), plan.getId(),
                 instance.getOrganizationGuid(), instance.getSpaceGuid(), instance.getParameters(),
                 instance.getDashboardUrl(), instance.getInternalId());
+    }
+
+    @Override
+    public ServiceInstance postUpdateInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
+        return serviceInstance;
     }
 
     protected abstract void updateHosts(ServiceInstance instance, Plan plan, Deployment deployment);

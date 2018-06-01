@@ -59,14 +59,9 @@ public abstract class ExistingServiceFactory implements PlatformService {
 		return new ServiceInstance(instance, null, null);
 	}
 
-	@Override
-	public ServiceInstance updateInstance(ServiceInstance instance, Plan plan, Map<String, Object> customParameters) {
-		return null;
-	}
-
-	@Override
+    @Override
     public ServiceInstance preCreateInstance(ServiceInstance serviceInstance, Plan plan) {
-	    return serviceInstance;
+        return serviceInstance;
     }
 
     @Override
@@ -85,6 +80,21 @@ public abstract class ExistingServiceFactory implements PlatformService {
             throw new PlatformException("Service instance is not reachable. Service may not be started on instance.");
         }
 
+        return serviceInstance;
+    }
+
+    @Override
+    public ServiceInstance preUpdateInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
+        return serviceInstance;
+    }
+
+	@Override
+	public ServiceInstance updateInstance(ServiceInstance serviceInstance, Plan plan, Map<String, Object> customParameters) {
+		return serviceInstance;
+	}
+
+    @Override
+    public ServiceInstance postUpdateInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
         return serviceInstance;
     }
 

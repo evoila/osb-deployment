@@ -187,6 +187,16 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
     public void postDeleteInstance(ServiceInstance serviceInstance) { }
 
     @Override
+    public ServiceInstance preUpdateInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
+        return serviceInstance;
+    }
+
+    @Override
+    public ServiceInstance postUpdateInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
+        return serviceInstance;
+    }
+
+    @Override
 	public ServiceInstance updateInstance(ServiceInstance instance, Plan plan, Map<String, Object> customParameters) {
 		throw new NotSupportedException("Updating Service Instances is currently not supported");
 	}
