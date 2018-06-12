@@ -54,7 +54,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>RELEASE</version>
+            
         </dependency>
         <dependency>
             <groupId>de.evoila.cf.broker</groupId>
