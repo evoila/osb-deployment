@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import de.evoila.cf.broker.bean.BoshProperties;
 import de.evoila.cf.broker.model.*;
+import de.evoila.cf.broker.util.MapUtils;
 import de.evoila.cf.cpi.bosh.deployment.manifest.InstanceGroup;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Manifest;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Stemcell;
@@ -20,7 +21,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -126,6 +126,13 @@ public class DeploymentManager {
         return stringBuilder.toString();
     }
 
+    protected InstanceGroup getInstanceGroup(Manifest manifest, String name) {
+        return manifest.getInstanceGroups()
+                .stream()
+                .filter(i -> i.getName().equals(name))
+                .findAny().get();
+    }
+
     protected void updateInstanceGroupConfiguration(Manifest manifest, Plan plan) {
         Metadata metadata = plan.getMetadata();
 
@@ -147,21 +154,20 @@ public class DeploymentManager {
     }
 
     private void updateSpecificInstanceGroupConfiguration(InstanceGroup instanceGroup, InstanceGroupConfig instanceGroupConfig) {
-        if(instanceGroupConfig.getConnections() != null) {
+        if (instanceGroupConfig.getConnections() != null)
             instanceGroup.setConnections(instanceGroupConfig.getConnections());
-        }
 
-        if(instanceGroupConfig.getNodes() != null) {
+        if (instanceGroupConfig.getNodes() != null)
             instanceGroup.setInstances(instanceGroupConfig.getNodes());
-        }
 
-        if(instanceGroupConfig.getVmType() != null) {
+        if (instanceGroupConfig.getVmType() != null)
             instanceGroup.setVmType(instanceGroupConfig.getVmType());
-        }
 
-        if(instanceGroupConfig.getPersistentDiskType() != null) {
+        if (instanceGroupConfig.getPersistentDiskType() != null)
             instanceGroup.setPersistentDiskType(instanceGroupConfig.getPersistentDiskType());
-        }
+
+        if (instanceGroupConfig.getProperties() != null && instanceGroupConfig.getProperties().size() > 0)
+            MapUtils.deepMerge(instanceGroup.getProperties(), instanceGroupConfig.getProperties());
 
         /**
          * Note: it is really important to understand the behaviour of the following method. It only
