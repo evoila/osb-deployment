@@ -318,4 +318,14 @@ public abstract class BoshPlatformService implements PlatformService {
     public Manifest getManifest(Deployment deployment) throws IOException {
         return deploymentManager.readManifestFromString(deployment.getRawManifest());
     }
+
+    protected Manifest getDeployedManifest(String deploymentName) throws IOException {
+        String manifest = this.connection
+                .connection()
+                .deployments()
+                .get(deploymentName)
+                .toBlocking().first().getRawManifest();
+
+        return deploymentManager.readManifestFromString(manifest);
+    }
 }
