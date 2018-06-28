@@ -1,5 +1,8 @@
 package de.evoila.cf.cpi.bosh;
 
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.KeyPair;
 import com.jcraft.jsch.Session;
 import de.evoila.cf.broker.bean.BoshProperties;
 import de.evoila.cf.broker.controller.utils.DashboardUtils;
@@ -9,6 +12,7 @@ import de.evoila.cf.broker.repository.PlatformRepository;
 import de.evoila.cf.broker.service.CatalogService;
 import de.evoila.cf.broker.service.PlatformService;
 import de.evoila.cf.broker.service.availability.ServicePortAvailabilityVerifier;
+import de.evoila.cf.broker.util.RandomString;
 import de.evoila.cf.cpi.bosh.connection.BoshConnection;
 import de.evoila.cf.cpi.bosh.deployment.DeploymentManager;
 import de.evoila.cf.cpi.bosh.deployment.manifest.InstanceGroup;
@@ -24,10 +28,8 @@ import org.springframework.util.Assert;
 import rx.Observable;
 
 import javax.annotation.PostConstruct;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -301,17 +303,27 @@ public abstract class BoshPlatformService implements PlatformService {
 
     protected Observable<Session> getSshSession(ServiceInstance instance,
                                                 InstanceGroup instanceGroup,
-                                                int index) throws NoSuchAlgorithmException {
+                                                int index) throws JSchException {
 
         Deployment deployment = this.getDeployment(instance);
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-        keyGen.initialize(512);
-        KeyPair keyPair = keyGen.genKeyPair();
+        JSch jsch = new JSch();
+        KeyPair keyPair = KeyPair.genKeyPair(jsch, KeyPair.RSA);
+        ByteArrayOutputStream privateKeyBuff = new ByteArrayOutputStream(2048);
+        ByteArrayOutputStream publicKeyBuff = new ByteArrayOutputStream(2048);
 
-        SSHConfig config = new SSHConfig(deployment.getName(), instance.getUsername(), new String(keyPair.getPublic().getEncoded()), instanceGroup.getName(), index);
+        keyPair.writePublicKey(publicKeyBuff, "SSHCerts");
+        keyPair.writePrivateKey(privateKeyBuff);
 
-        return this.connection.connection().vms().ssh(config,
-                                               new String(keyPair.getPublic().getEncoded()));
+        RandomString usernameRandomString = new RandomString(10);
+
+        SSHConfig config = new SSHConfig(deployment.getName(),
+                usernameRandomString.nextString(), publicKeyBuff.toString(),
+                instanceGroup.getName(), index);
+
+        return this.connection
+                .connection()
+                .vms()
+                .ssh(config, privateKeyBuff.toString());
     }
 
 
