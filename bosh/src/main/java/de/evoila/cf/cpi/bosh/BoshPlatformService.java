@@ -49,7 +49,7 @@ public abstract class BoshPlatformService implements PlatformService {
     protected final BoshConnection connection;
 
     private final PlatformRepository platformRepository;
-    private final ServicePortAvailabilityVerifier portAvailabilityVerifier;
+    protected final ServicePortAvailabilityVerifier portAvailabilityVerifier;
     private final DeploymentManager deploymentManager;
     private final Optional<DashboardClient> dashboardClient;
     private final BoshProperties boshProperties;
