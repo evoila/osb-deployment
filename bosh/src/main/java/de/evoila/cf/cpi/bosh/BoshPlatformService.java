@@ -237,7 +237,7 @@ public abstract class BoshPlatformService implements PlatformService {
                         .list(deployment.getName());
                 
                 runDeleteErrands(serviceInstance, deployment, errands);
-                log.debug("Using deployment and errands given by the bosh director.");
+                log.debug("Using the deployment and errands given by the bosh director.");
         	} catch (NullPointerException | DirectorException e) {
         		log.debug("Could not get the deployment from bosh. Creating an empty temporary one to delete the remaining VMs and the failed deployment.");
         		deployment = new Deployment();
@@ -249,7 +249,6 @@ public abstract class BoshPlatformService implements PlatformService {
                     .delete(deployment);
             waitForTaskCompletion(task.toBlocking().first());
         } catch (Exception e) {
-        	log.error("Could not delete failed service instance", e);
             throw new PlatformException("Could not delete failed service instance", e);
         }
     }
