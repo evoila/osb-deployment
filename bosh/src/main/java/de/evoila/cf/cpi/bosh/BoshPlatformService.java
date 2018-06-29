@@ -49,7 +49,7 @@ public abstract class BoshPlatformService implements PlatformService {
     protected final BoshConnection connection;
 
     private final PlatformRepository platformRepository;
-    private final ServicePortAvailabilityVerifier portAvailabilityVerifier;
+    protected final ServicePortAvailabilityVerifier portAvailabilityVerifier;
     private final DeploymentManager deploymentManager;
     private final Optional<DashboardClient> dashboardClient;
     private final BoshProperties boshProperties;
@@ -140,7 +140,7 @@ public abstract class BoshPlatformService implements PlatformService {
     public ServiceInstance postCreateInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
         boolean available;
         try {
-            available = portAvailabilityVerifier.verifyServiceAvailability(serviceInstance, true);
+            available = portAvailabilityVerifier.verifyServiceAvailability(serviceInstance, false);
         } catch (Exception e) {
             throw new PlatformException("Service instance is not reachable. Service may not be started on instance.",
                     e);
