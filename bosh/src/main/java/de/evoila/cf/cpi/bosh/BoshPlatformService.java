@@ -239,8 +239,7 @@ public abstract class BoshPlatformService implements PlatformService {
                 runDeleteErrands(serviceInstance, deployment, errands);
                 log.debug("Using deployment and errands given by the bosh director.");
         	} catch (NullPointerException | DirectorException e) {
-        		log.debug(e.getMessage());
-        		log.debug("Could not get Deployment from bosh. Creating an empty temporary one to delete the remaining VMs.");
+        		log.debug("Could not get the deployment from bosh. Creating an empty temporary one to delete the remaining VMs and the failed deployment.");
         		deployment = new Deployment();
         		deployment.setName(DeploymentManager.deploymentName(serviceInstance));
         	}
