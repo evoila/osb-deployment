@@ -74,7 +74,7 @@ public class ExistingEndpointBeanImpl implements ExistingEndpointBean {
         return deployment;
     }
 
-    public void setDeploymentName(String deployment) {
+    public void setDeployment(String deployment) {
         this.deployment = deployment;
     }
 }
