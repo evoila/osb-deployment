@@ -140,7 +140,7 @@ public abstract class BoshPlatformService implements PlatformService {
     public ServiceInstance postCreateInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
         boolean available;
         try {
-            available = portAvailabilityVerifier.verifyServiceAvailability(serviceInstance, false);
+            available = portAvailabilityVerifier.verifyServiceAvailability(serviceInstance, true);
         } catch (Exception e) {
             throw new PlatformException("Service instance is not reachable. Service may not be started on instance.",
                     e);
