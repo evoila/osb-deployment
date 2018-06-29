@@ -11,5 +11,5 @@ public interface ExistingEndpointBean {
 	String getUsername();
 	String getPassword();
 	String getDatabase();
-	String getDeploymentName();
+	String getDeployment();
 }

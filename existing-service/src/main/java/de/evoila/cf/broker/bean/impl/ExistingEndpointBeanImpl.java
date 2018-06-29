@@ -22,7 +22,7 @@ public class ExistingEndpointBeanImpl implements ExistingEndpointBean {
 
 	private String database;
 
-    private String deploymentName;
+    private String deployment;
 
     @Override
     public List<ServerAddress> getHosts() {
@@ -70,12 +70,12 @@ public class ExistingEndpointBeanImpl implements ExistingEndpointBean {
     }
 
     @Override
-    public String getDeploymentName() {
-        return deploymentName;
+    public String getDeployment() {
+        return deployment;
     }
 
-    public void setDeploymentName(String deploymentName) {
-        this.deploymentName = deploymentName;
+    public void setDeploymentName(String deployment) {
+        this.deployment = deployment;
     }
 }
 
