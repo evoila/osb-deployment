@@ -326,6 +326,28 @@ public abstract class BoshPlatformService implements PlatformService {
                 .ssh(config, privateKeyBuff.toString());
     }
 
+    protected Observable<Session> getSshSession(String deploymentName, String instanceName,
+                                                int index) throws JSchException {
+
+        JSch jsch = new JSch();
+        KeyPair keyPair = KeyPair.genKeyPair(jsch, KeyPair.RSA);
+        ByteArrayOutputStream privateKeyBuff = new ByteArrayOutputStream(2048);
+        ByteArrayOutputStream publicKeyBuff = new ByteArrayOutputStream(2048);
+
+        keyPair.writePublicKey(publicKeyBuff, "SSHCerts");
+        keyPair.writePrivateKey(privateKeyBuff);
+
+        RandomString usernameRandomString = new RandomString(10);
+
+        SSHConfig config = new SSHConfig(deploymentName,
+                usernameRandomString.nextString(), publicKeyBuff.toString(),
+                instanceName, index);
+
+        return this.connection
+                .connection()
+                .vms()
+                .ssh(config, privateKeyBuff.toString());
+    }
 
     public Manifest getManifest(Deployment deployment) throws IOException {
         return deploymentManager.readManifestFromString(deployment.getRawManifest());

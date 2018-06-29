@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import de.evoila.cf.broker.bean.BoshProperties;
 import de.evoila.cf.broker.model.*;
-import de.evoila.cf.broker.util.GlobalConstants;
 import de.evoila.cf.broker.util.MapUtils;
 import de.evoila.cf.cpi.bosh.deployment.manifest.InstanceGroup;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Manifest;
@@ -15,7 +14,6 @@ import de.evoila.cf.cpi.bosh.deployment.manifest.Stemcell;
 import io.bosh.client.deployments.Deployment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.Assert;
 
@@ -23,29 +21,21 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * @author Yannic Remmet, Johannes Hiemer.
- */
 public class DeploymentManager {
 
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private static String DEPLOYMENT_PREFIX = "sb-";
+    private static final String DEPLOYMENT_PREFIX = "sb-";
 
     protected static final String NODES = "nodes";
-
     protected static final String VM_TYPE = "vm_type";
-
     protected static final String NETWORKS = "networks";
-
     protected static final String DISK_TYPE = "persistent_disk_type";
-
     protected static final String STEMCELL_VERSION = "stemcell_version";
 
     private final ObjectReader reader;
@@ -53,19 +43,12 @@ public class DeploymentManager {
 
     protected final BoshProperties boshProperties;
 
-    public DeploymentManager(BoshProperties properties, Environment environment) {
+    public DeploymentManager(BoshProperties properties) {
         Assert.notNull(properties, "Bosh Properties cant be null");
         this.mapper = new ObjectMapper(new YAMLFactory());
-        this.mapper.setSerializationInclusion(JsonInclude.Include.NON_DEFAULT);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_DEFAULT);
         this.boshProperties = properties;
         this.reader = mapper.readerFor(Manifest.class);
-
-        if (environment != null) {
-            if (Arrays.stream(environment.getActiveProfiles()).anyMatch(
-                    env -> (env.equalsIgnoreCase(GlobalConstants.TEST_PROFILE)))) {
-                this.DEPLOYMENT_PREFIX = "sb-test-";
-            }
-        }
     }
 
     protected void replaceParameters(ServiceInstance instance, Manifest manifest, Plan plan, Map<String, Object> customParameters) {
