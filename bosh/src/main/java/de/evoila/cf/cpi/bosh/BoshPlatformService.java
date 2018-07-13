@@ -110,6 +110,7 @@ public abstract class BoshPlatformService implements PlatformService {
     @PostConstruct
     public void registerCustomPlatformService() {
         this.platformRepository.addPlatform(Platform.BOSH, this);
+        log.info("Added Platform-Service " + this.getClass().toString() + " of type " + Platform.BOSH);
     }
 
     @Override
