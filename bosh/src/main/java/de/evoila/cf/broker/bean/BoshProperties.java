@@ -3,12 +3,13 @@ package de.evoila.cf.broker.bean;
 import io.bosh.client.Authentication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
 /**
  * Created by reneschollmeyer, evoila on 09.10.17.
  */
-@Service
+@Configuration
 @ConfigurationProperties(prefix = "bosh")
 @ConditionalOnProperty(prefix = "bosh", name = {"host", "username",
         "password", "stemcellVersion", "stemcellOs", "authentication"}, havingValue = "")

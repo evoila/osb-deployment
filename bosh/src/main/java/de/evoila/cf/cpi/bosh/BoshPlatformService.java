@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
+import de.evoila.cf.broker.service.CatalogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -27,7 +28,6 @@ import de.evoila.cf.broker.model.Platform;
 import de.evoila.cf.broker.model.ServerAddress;
 import de.evoila.cf.broker.model.ServiceInstance;
 import de.evoila.cf.broker.repository.PlatformRepository;
-import de.evoila.cf.broker.service.CatalogService;
 import de.evoila.cf.broker.service.PlatformService;
 import de.evoila.cf.broker.service.availability.ServicePortAvailabilityVerifier;
 import de.evoila.cf.broker.util.RandomString;
