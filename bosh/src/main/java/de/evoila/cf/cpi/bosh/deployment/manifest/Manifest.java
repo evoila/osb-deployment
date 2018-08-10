@@ -105,4 +105,12 @@ public class Manifest {
     public Compilation getCompilation() { return compilation; }
 
     public void setCompilation(Compilation compilation) { this.compilation = compilation; }
+
+    public List<Addon> getAddons() {
+        return addons;
+    }
+
+    public void setAddons(List<Addon> addons) {
+        this.addons = addons;
+    }
 }
