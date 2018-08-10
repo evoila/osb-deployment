@@ -9,11 +9,6 @@ public class Addon {
     private String name;
     private List<JobV2> jobs;
 
-    public Addon(String name, List<JobV2> jobs) {
-        this.name = name;
-        this.jobs = jobs;
-    }
-
     public String getName() {
         return name;
     }
