@@ -206,6 +206,9 @@ public class DeploymentManager {
                     }).collect(Collectors.toList());
             instanceGroup.setNetworks(newNetworks);
         }
+
+        if (instanceGroupConfig.getAzs() != null && instanceGroupConfig.getAzs().size() > 0)
+            instanceGroup.setAzs(instanceGroupConfig.getAzs());
     }
 
     public Deployment getDeployment(ServiceInstance serviceInstance) {

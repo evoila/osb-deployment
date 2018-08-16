@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import de.evoila.cf.broker.model.NetworkReference;
 import de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup.JobV2;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +24,9 @@ public class InstanceGroup {
 
     @JsonProperty("vm_type")
     private String vmType;
+
     private String stemcell;
+
     private String lifecycle;
 
     @JsonProperty("persistent_disk_type")
@@ -30,10 +34,14 @@ public class InstanceGroup {
 
     @JsonProperty("persistent_disk")
     private int persistentDisk;
-    private List<String> azs;
-    private List<NetworkReference> networks;
-    private List<JobV2> jobs;
-    private Map<String, Object> properties;
+
+    private List<String> azs = new ArrayList<>();
+
+    private List<NetworkReference> networks = new ArrayList<>();
+
+    private List<JobV2> jobs = new ArrayList<>();
+
+    private Map<String, Object> properties = new HashMap<>();
 
     public String getName() {
         return name;
