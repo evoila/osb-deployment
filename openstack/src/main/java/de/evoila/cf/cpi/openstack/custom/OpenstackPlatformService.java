@@ -105,8 +105,6 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
 		String instanceId = serviceInstance.getId();
 			
 		Map<String, String> platformParameters = new HashMap<String, String>();
-		platformParameters.put(FLAVOR, plan.getFlavorId());
-		platformParameters.put(VOLUME_SIZE, volumeSize(plan.getVolumeSize(), plan.getVolumeUnit()));
 		/*if(plan.getMetadata().containsKey(CLUSTER)) {
 			platformParameters.put(SECURITY_GROUPS, plan.getMetadata().get(SECURITY_GROUPS).toString());
 			platformParameters.put(CLUSTER, plan.getMetadata().get(CLUSTER).toString());
