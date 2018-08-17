@@ -33,6 +33,7 @@ public abstract class ExistingServiceFactory implements PlatformService {
 	@Autowired
     private ExistingEndpointBean existingEndpointBean;
 
+	@Override
 	@PostConstruct
 	public void registerCustomPlatformService () {
 	    platformRepository.addPlatform(Platform.EXISTING_SERVICE, this);

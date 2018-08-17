@@ -2,6 +2,7 @@ package de.evoila.cf.cpi.bosh.deployment.manifest;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.evoila.cf.cpi.bosh.deployment.manifest.addon.Addon;
 import de.evoila.cf.cpi.bosh.deployment.manifest.job.Job;
 import de.evoila.cf.cpi.bosh.deployment.manifest.network.Network;
 
@@ -36,6 +37,8 @@ public class Manifest {
 
     @JsonProperty("resource_pools")
     private List<ResourcePool> resourcePools = new ArrayList<>();
+
+    private List<Addon> addons = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -113,4 +116,11 @@ public class Manifest {
         this.variables = variables;
     }
 
+    public List<Addon> getAddons() {
+        return addons;
+    }
+
+    public void setAddons(List<Addon> addons) {
+        this.addons = addons;
+    }
 }

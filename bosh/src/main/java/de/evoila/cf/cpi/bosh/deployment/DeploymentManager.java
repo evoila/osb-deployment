@@ -186,7 +186,8 @@ public class DeploymentManager {
         /**
          * Note: it is really important to understand the behaviour of the following method. It only
          * replaces networks, that are NOT a floating network (see bosh cloud-config type VIP). The only
-         * exception is, if the manifests does not yet contain a Static IP. Then it is set.
+         * exception for a replacement of VIP network is, if the manifests does not yet contain a Static IP.
+         * Then it is set.
          */
         if(instanceGroupConfig.getNetworks() != null) {
             List<NetworkReference> newNetworks = instanceGroup
@@ -194,8 +195,8 @@ public class DeploymentManager {
                     .stream()
                     .map(n -> {
                         for (NetworkReference networkReference : instanceGroupConfig.getNetworks()) {
-                            if (n.getName().equals(networkReference.getName()) && !networkReference.getName()
-                                    .equals(boshProperties.getVipNetwork())) {
+                            if (!n.getName().equals(boshProperties.getVipNetwork()) &&
+                                    !networkReference.getName().equals(boshProperties.getVipNetwork())) {
                                 return networkReference;
                             } else if (networkReference.getName().equals(boshProperties.getVipNetwork()) &&
                                     n.getStaticIps().isEmpty())
@@ -205,6 +206,9 @@ public class DeploymentManager {
                     }).collect(Collectors.toList());
             instanceGroup.setNetworks(newNetworks);
         }
+
+        if (instanceGroupConfig.getAzs() != null && instanceGroupConfig.getAzs().size() > 0)
+            instanceGroup.setAzs(instanceGroupConfig.getAzs());
     }
 
     public Deployment getDeployment(ServiceInstance serviceInstance) {
