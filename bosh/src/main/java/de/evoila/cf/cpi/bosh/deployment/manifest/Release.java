@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class Release {
     private String name;
     private String version;
+    private String url;
+    private String sha1;
 
     public String getName () {
         return name;
@@ -23,5 +25,21 @@ public class Release {
 
     public void setVersion (String version) {
         this.version = version;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getSha1() {
+        return sha1;
+    }
+
+    public void setSha1(String sha1) {
+        this.sha1 = sha1;
     }
 }

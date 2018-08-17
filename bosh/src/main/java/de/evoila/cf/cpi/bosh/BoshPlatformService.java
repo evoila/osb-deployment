@@ -1,37 +1,47 @@
 package de.evoila.cf.cpi.bosh;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
+import javax.annotation.PostConstruct;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
+
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.KeyPair;
 import com.jcraft.jsch.Session;
+
 import de.evoila.cf.broker.bean.BoshProperties;
 import de.evoila.cf.broker.controller.utils.DashboardUtils;
 import de.evoila.cf.broker.exception.PlatformException;
-import de.evoila.cf.broker.model.*;
+import de.evoila.cf.broker.model.DashboardClient;
+import de.evoila.cf.broker.model.Plan;
+import de.evoila.cf.broker.model.Platform;
+import de.evoila.cf.broker.model.ServerAddress;
+import de.evoila.cf.broker.model.ServiceInstance;
 import de.evoila.cf.broker.repository.PlatformRepository;
 import de.evoila.cf.broker.service.CatalogService;
 import de.evoila.cf.broker.service.PlatformService;
 import de.evoila.cf.broker.service.availability.ServicePortAvailabilityVerifier;
+import de.evoila.cf.broker.util.RandomString;
 import de.evoila.cf.cpi.bosh.connection.BoshConnection;
 import de.evoila.cf.cpi.bosh.deployment.DeploymentManager;
 import de.evoila.cf.cpi.bosh.deployment.manifest.InstanceGroup;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Manifest;
+import io.bosh.client.DirectorException;
 import io.bosh.client.deployments.Deployment;
 import io.bosh.client.deployments.SSHConfig;
 import io.bosh.client.errands.ErrandSummary;
 import io.bosh.client.tasks.Task;
 import io.bosh.client.vms.Vm;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 import rx.Observable;
-
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 
 public abstract class BoshPlatformService implements PlatformService {
 
@@ -47,7 +57,7 @@ public abstract class BoshPlatformService implements PlatformService {
     protected final BoshConnection connection;
 
     private final PlatformRepository platformRepository;
-    private final ServicePortAvailabilityVerifier portAvailabilityVerifier;
+    protected final ServicePortAvailabilityVerifier portAvailabilityVerifier;
     private final DeploymentManager deploymentManager;
     private final Optional<DashboardClient> dashboardClient;
     private final BoshProperties boshProperties;
@@ -213,24 +223,30 @@ public abstract class BoshPlatformService implements PlatformService {
     @Override
     public void deleteInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
         try {
-            Deployment deployment = connection
-                    .connection()
-                    .deployments()
-                    .get(deploymentManager.getDeployment(serviceInstance).getName())
-                    .toBlocking().first();
-
-            Observable<List<ErrandSummary>> errands = connection
-                    .connection()
-                    .errands()
-                    .list(deployment.getName());
-
-            runDeleteErrands(serviceInstance, deployment, errands);
-
+        	Deployment deployment = null;
+        	Observable<List<ErrandSummary>> errands = null;
+        	try {
+        		deployment = connection
+                        .connection()
+                        .deployments()
+                        .get(deploymentManager.getDeployment(serviceInstance).getName())
+                        .toBlocking().first();
+                errands = connection
+                        .connection()
+                        .errands()
+                        .list(deployment.getName());
+                
+                runDeleteErrands(serviceInstance, deployment, errands);
+                log.debug("Using the deployment and errands given by the bosh director.");
+        	} catch (NullPointerException | DirectorException e) {
+        		log.debug("Could not get the deployment from bosh. Creating an empty temporary one to delete the remaining VMs and the failed deployment.");
+        		deployment = new Deployment();
+        		deployment.setName(DeploymentManager.deploymentName(serviceInstance));
+        	}
             Observable<Task> task = connection
                     .connection()
                     .deployments()
                     .delete(deployment);
-
             waitForTaskCompletion(task.toBlocking().first());
         } catch (Exception e) {
             throw new PlatformException("Could not delete failed service instance", e);
@@ -301,21 +317,63 @@ public abstract class BoshPlatformService implements PlatformService {
 
     protected Observable<Session> getSshSession(ServiceInstance instance,
                                                 InstanceGroup instanceGroup,
-                                                int index) throws NoSuchAlgorithmException {
+                                                int index) throws JSchException {
 
         Deployment deployment = this.getDeployment(instance);
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-        keyGen.initialize(512);
-        KeyPair keyPair = keyGen.genKeyPair();
+        JSch jsch = new JSch();
+        KeyPair keyPair = KeyPair.genKeyPair(jsch, KeyPair.RSA);
+        ByteArrayOutputStream privateKeyBuff = new ByteArrayOutputStream(2048);
+        ByteArrayOutputStream publicKeyBuff = new ByteArrayOutputStream(2048);
 
-        SSHConfig config = new SSHConfig(deployment.getName(), instance.getUsername(), new String(keyPair.getPublic().getEncoded()), instanceGroup.getName(), index);
+        keyPair.writePublicKey(publicKeyBuff, "SSHCerts");
+        keyPair.writePrivateKey(privateKeyBuff);
 
-        return this.connection.connection().vms().ssh(config,
-                                               new String(keyPair.getPublic().getEncoded()));
+        RandomString usernameRandomString = new RandomString(10);
+
+        SSHConfig config = new SSHConfig(deployment.getName(),
+                usernameRandomString.nextString(), publicKeyBuff.toString(),
+                instanceGroup.getName(), index);
+
+        return this.connection
+                .connection()
+                .vms()
+                .ssh(config, privateKeyBuff.toString());
     }
 
+    protected Observable<Session> getSshSession(String deploymentName, String instanceName,
+                                                int index) throws JSchException {
+
+        JSch jsch = new JSch();
+        KeyPair keyPair = KeyPair.genKeyPair(jsch, KeyPair.RSA);
+        ByteArrayOutputStream privateKeyBuff = new ByteArrayOutputStream(2048);
+        ByteArrayOutputStream publicKeyBuff = new ByteArrayOutputStream(2048);
+
+        keyPair.writePublicKey(publicKeyBuff, "SSHCerts");
+        keyPair.writePrivateKey(privateKeyBuff);
+
+        RandomString usernameRandomString = new RandomString(10);
+
+        SSHConfig config = new SSHConfig(deploymentName,
+                usernameRandomString.nextString(), publicKeyBuff.toString(),
+                instanceName, index);
+
+        return this.connection
+                .connection()
+                .vms()
+                .ssh(config, privateKeyBuff.toString());
+    }
 
     public Manifest getManifest(Deployment deployment) throws IOException {
         return deploymentManager.readManifestFromString(deployment.getRawManifest());
+    }
+
+    protected Manifest getDeployedManifest(String deploymentName) throws IOException {
+        String manifest = this.connection
+                .connection()
+                .deployments()
+                .get(deploymentName)
+                .toBlocking().first().getRawManifest();
+
+        return deploymentManager.readManifestFromString(manifest);
     }
 }

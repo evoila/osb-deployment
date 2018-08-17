@@ -22,6 +22,8 @@ public class ExistingEndpointBeanImpl implements ExistingEndpointBean {
 
 	private String database;
 
+    private String deployment;
+
     @Override
     public List<ServerAddress> getHosts() {
         return hosts;
@@ -66,4 +68,14 @@ public class ExistingEndpointBeanImpl implements ExistingEndpointBean {
     public void setDatabase(String database) {
         this.database = database;
     }
+
+    @Override
+    public String getDeployment() {
+        return deployment;
+    }
+
+    public void setDeployment(String deployment) {
+        this.deployment = deployment;
+    }
 }
+
