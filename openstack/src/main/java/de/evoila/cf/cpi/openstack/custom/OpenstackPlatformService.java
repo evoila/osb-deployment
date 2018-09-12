@@ -4,6 +4,7 @@
 package de.evoila.cf.cpi.openstack.custom;
 
 import de.evoila.cf.broker.bean.OpenstackBean;
+import de.evoila.cf.broker.cpi.endpoint.EndpointAvailabilityService;
 import de.evoila.cf.broker.exception.PlatformException;
 import de.evoila.cf.broker.model.Plan;
 import de.evoila.cf.broker.model.Platform;
@@ -56,7 +57,8 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
 	private IpAccessor ipAccessor;
 
 	public OpenstackPlatformService(StackHandler defaultStackHandler, PlatformRepository platformRepository, ServicePortAvailabilityVerifier portAvailabilityVerifier,
-									IpAccessor ipAccessor) {
+									IpAccessor ipAccessor, EndpointAvailabilityService endpointAvailabilityService, OpenstackBean openstackBean) {
+		super(endpointAvailabilityService, openstackBean);
 		this.defaultStackHandler = defaultStackHandler;
 		this.platformRepository = platformRepository;
 		this.portAvailabilityVerifier = portAvailabilityVerifier;

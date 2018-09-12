@@ -43,9 +43,6 @@ public abstract class OpenstackServiceFactory implements PlatformService {
 
 	private OpenstackBean openstackBean;
 
-	protected OpenstackServiceFactory() {
-	}
-
 	public OpenstackServiceFactory(EndpointAvailabilityService endpointAvailabilityService, OpenstackBean openstackBean) {
 		this.endpointAvailabilityService = endpointAvailabilityService;
 		this.openstackBean = openstackBean;
