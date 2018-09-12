@@ -46,18 +46,22 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
 
 	private StackHandler stackHandler;
 
-	@Autowired
 	@Qualifier(value = "defaultStackHandler")
 	private StackHandler defaultStackHandler;
 
-	@Autowired(required = false)
 	private PlatformRepository platformRepository;
 
-	@Autowired
 	private ServicePortAvailabilityVerifier portAvailabilityVerifier;
 
-	@Autowired
 	private IpAccessor ipAccessor;
+
+	public OpenstackPlatformService(StackHandler defaultStackHandler, PlatformRepository platformRepository, ServicePortAvailabilityVerifier portAvailabilityVerifier,
+									IpAccessor ipAccessor) {
+		this.defaultStackHandler = defaultStackHandler;
+		this.platformRepository = platformRepository;
+		this.portAvailabilityVerifier = portAvailabilityVerifier;
+		this.ipAccessor = ipAccessor;
+	}
 
     @Override
     public boolean isSyncPossibleOnCreate(Plan plan) {

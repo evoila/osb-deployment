@@ -10,7 +10,6 @@ import de.evoila.cf.broker.service.PlatformService;
 import de.evoila.cf.broker.service.availability.ServicePortAvailabilityVerifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
@@ -24,14 +23,18 @@ public abstract class ExistingServiceFactory implements PlatformService {
 
 	protected Logger log = LoggerFactory.getLogger(getClass());
 
-	@Autowired
 	private PlatformRepository platformRepository;
 
-	@Autowired
 	private ServicePortAvailabilityVerifier portAvailabilityVerifier;
 
-	@Autowired
     private ExistingEndpointBean existingEndpointBean;
+
+    public ExistingServiceFactory(PlatformRepository platformRepository, ServicePortAvailabilityVerifier portAvailabilityVerifier,
+								  ExistingEndpointBean existingEndpointBean) {
+    	this.platformRepository = platformRepository;
+    	this.portAvailabilityVerifier = portAvailabilityVerifier;
+    	this.existingEndpointBean = existingEndpointBean;
+	}
 
 	@Override
 	@PostConstruct

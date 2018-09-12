@@ -3,14 +3,12 @@
  */
 package de.evoila.cf.cpi.openstack.util;
 
-import org.openstack4j.model.heat.Stack;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.stereotype.Service;
-
 import de.evoila.cf.broker.bean.OpenstackBean;
 import de.evoila.cf.broker.exception.PlatformException;
 import de.evoila.cf.cpi.openstack.fluent.HeatFluent;
+import org.openstack4j.model.heat.Stack;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Christian Mueller, evoila
@@ -24,10 +22,12 @@ public class StackProgressObserver {
 	public static final String CREATE_FAILED = "CREATE_FAILED";
 	public static final String DELETE_FAILED = "DELETE_FAILED";
 	public static final String DELETE_IN_PROGRESS = "DELETE_IN_PROGRESS";
-	
 
-	@Autowired
 	private HeatFluent heatFluent;
+
+	public StackProgressObserver(HeatFluent heatFluent) {
+		this.heatFluent = heatFluent;
+	}
 	
 	/**
 	 * @param name
