@@ -3,10 +3,10 @@
  */
 package de.evoila.cf.cpi.openstack.custom;
 
-import java.util.List;
-
 import de.evoila.cf.broker.exception.PlatformException;
 import de.evoila.cf.broker.model.ServerAddress;
+
+import java.util.List;
 
 /**
  * @author Christian Brinker, evoila.

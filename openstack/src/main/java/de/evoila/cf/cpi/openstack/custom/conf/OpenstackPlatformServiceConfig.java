@@ -3,20 +3,15 @@
  */
 package de.evoila.cf.cpi.openstack.custom.conf;
 
-import javax.annotation.PostConstruct;
-
+import de.evoila.cf.broker.bean.OpenstackBean;
+import de.evoila.cf.cpi.openstack.custom.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import de.evoila.cf.broker.bean.OpenstackBean;
-import de.evoila.cf.cpi.openstack.custom.CustomIpAccessor;
-import de.evoila.cf.cpi.openstack.custom.CustomStackHandler;
-import de.evoila.cf.cpi.openstack.custom.DefaultIpAccessor;
-import de.evoila.cf.cpi.openstack.custom.IpAccessor;
-import de.evoila.cf.cpi.openstack.custom.StackHandler;
+import javax.annotation.PostConstruct;
 
 /**
  * @author Christian Brinker, evoila.
