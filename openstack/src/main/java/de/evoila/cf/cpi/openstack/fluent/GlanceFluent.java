@@ -3,12 +3,11 @@
  */
 package de.evoila.cf.cpi.openstack.fluent;
 
-import java.util.List;
-
+import de.evoila.cf.cpi.openstack.fluent.connection.OpenstackConnectionFactory;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.image.Image;
 
-import de.evoila.cf.cpi.openstack.fluent.connection.OpenstackConnectionFactory;
+import java.util.List;
 
 /**
  * @author Johannes Hiemer.

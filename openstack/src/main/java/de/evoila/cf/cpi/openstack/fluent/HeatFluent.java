@@ -3,10 +3,9 @@
  */
 package de.evoila.cf.cpi.openstack.fluent;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import de.evoila.cf.broker.bean.OpenstackBean;
+import de.evoila.cf.broker.exception.PlatformException;
+import de.evoila.cf.cpi.openstack.fluent.connection.OpenstackConnectionFactory;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.api.heat.StackService;
@@ -16,9 +15,9 @@ import org.openstack4j.model.heat.Stack;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 
-import de.evoila.cf.broker.bean.OpenstackBean;
-import de.evoila.cf.broker.exception.PlatformException;
-import de.evoila.cf.cpi.openstack.fluent.connection.OpenstackConnectionFactory;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Johannes Hiemer.

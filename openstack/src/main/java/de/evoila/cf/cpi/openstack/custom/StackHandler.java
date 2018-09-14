@@ -73,7 +73,7 @@ public class StackHandler {
 
 	@Autowired
 	private ApplicationContext appContext;
-	
+
 	@Autowired
 	private OpenstackBean openstackBean;
 

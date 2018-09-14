@@ -3,20 +3,18 @@
  */
 package de.evoila.cf.cpi.openstack.custom;
 
-import java.util.List;
-
-import org.openstack4j.model.compute.Server;
-import org.openstack4j.model.heat.Stack;
-import org.openstack4j.model.network.Network;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.google.common.collect.Lists;
-
 import de.evoila.cf.broker.exception.PlatformException;
 import de.evoila.cf.broker.model.ServerAddress;
 import de.evoila.cf.cpi.openstack.fluent.HeatFluent;
 import de.evoila.cf.cpi.openstack.fluent.NeutronFluent;
 import de.evoila.cf.cpi.openstack.fluent.NovaFluent;
+import org.openstack4j.model.compute.Server;
+import org.openstack4j.model.heat.Stack;
+import org.openstack4j.model.network.Network;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 /**
  * @author Christian Brinker, evoila.

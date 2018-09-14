@@ -4,6 +4,7 @@
 package de.evoila.cf.cpi.openstack.custom;
 
 import de.evoila.cf.broker.bean.OpenstackBean;
+import de.evoila.cf.broker.cpi.endpoint.EndpointAvailabilityService;
 import de.evoila.cf.broker.exception.PlatformException;
 import de.evoila.cf.broker.model.Plan;
 import de.evoila.cf.broker.model.Platform;
@@ -46,18 +47,23 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
 
 	private StackHandler stackHandler;
 
-	@Autowired
 	@Qualifier(value = "defaultStackHandler")
 	private StackHandler defaultStackHandler;
 
-	@Autowired(required = false)
 	private PlatformRepository platformRepository;
 
-	@Autowired
 	private ServicePortAvailabilityVerifier portAvailabilityVerifier;
 
-	@Autowired
 	private IpAccessor ipAccessor;
+
+	public OpenstackPlatformService(StackHandler defaultStackHandler, PlatformRepository platformRepository, ServicePortAvailabilityVerifier portAvailabilityVerifier,
+									IpAccessor ipAccessor, EndpointAvailabilityService endpointAvailabilityService, OpenstackBean openstackBean) {
+		super(endpointAvailabilityService, openstackBean);
+		this.defaultStackHandler = defaultStackHandler;
+		this.platformRepository = platformRepository;
+		this.portAvailabilityVerifier = portAvailabilityVerifier;
+		this.ipAccessor = ipAccessor;
+	}
 
     @Override
     public boolean isSyncPossibleOnCreate(Plan plan) {
