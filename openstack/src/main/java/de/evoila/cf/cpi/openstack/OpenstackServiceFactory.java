@@ -3,20 +3,17 @@
  */
 package de.evoila.cf.cpi.openstack;
 
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import de.evoila.cf.broker.bean.OpenstackBean;
 import de.evoila.cf.broker.cpi.endpoint.EndpointAvailabilityService;
 import de.evoila.cf.broker.model.cpi.AvailabilityState;
 import de.evoila.cf.broker.model.cpi.EndpointServiceState;
 import de.evoila.cf.broker.service.PlatformService;
 import de.evoila.cf.cpi.openstack.fluent.connection.OpenstackConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.PostConstruct;
+import java.util.Map;
 
 /**
  * @author Johannes Hiemer.
@@ -42,11 +39,14 @@ public abstract class OpenstackServiceFactory implements PlatformService {
 	
 	protected Map<String, Integer> ports;
 
-	@Autowired
 	private EndpointAvailabilityService endpointAvailabilityService;
-	
-	@Autowired
+
 	private OpenstackBean openstackBean;
+
+	public OpenstackServiceFactory(EndpointAvailabilityService endpointAvailabilityService, OpenstackBean openstackBean) {
+		this.endpointAvailabilityService = endpointAvailabilityService;
+		this.openstackBean = openstackBean;
+	}
 
 	@PostConstruct
 	public void initialize() {

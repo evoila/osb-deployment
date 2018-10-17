@@ -6,7 +6,6 @@ package de.evoila.cf.cpi.openstack.fluent;
 import de.evoila.cf.cpi.openstack.fluent.connection.OpenstackConnectionFactory;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
-
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.storage.block.Volume;
 

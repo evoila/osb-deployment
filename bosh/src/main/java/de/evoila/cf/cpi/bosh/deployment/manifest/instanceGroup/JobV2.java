@@ -1,7 +1,6 @@
 package de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import de.evoila.cf.cpi.bosh.deployment.manifest.Stemcell;
 
 import java.util.Map;
 

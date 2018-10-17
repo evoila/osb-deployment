@@ -3,8 +3,8 @@
  */
 package de.evoila.cf.cpi.openstack.fluent;
 
-import java.util.List;
-
+import de.evoila.cf.broker.bean.OpenstackBean;
+import de.evoila.cf.cpi.openstack.fluent.connection.OpenstackConnectionFactory;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.compute.Flavor;
 import org.openstack4j.model.compute.Keypair;
@@ -14,8 +14,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import de.evoila.cf.broker.bean.OpenstackBean;
-import de.evoila.cf.cpi.openstack.fluent.connection.OpenstackConnectionFactory;
+import java.util.List;
 
 
 /**
