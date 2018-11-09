@@ -248,6 +248,9 @@ public abstract class BoshPlatformService implements PlatformService {
     }
 
     @Override
+    public void postDeleteInstance(ServiceInstance serviceInstance) throws PlatformException {};
+
+    @Override
     public ServiceInstance preUpdateInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
         return serviceInstance;
     }
