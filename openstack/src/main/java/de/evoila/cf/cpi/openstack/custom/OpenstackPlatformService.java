@@ -80,6 +80,13 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
         return false;
     }
 
+	@Override
+	public boolean isSyncPossibleOnBind(){return false;}
+
+	@Override
+	public boolean isSyncPossibleOnUnbind(){return false;}
+
+
 	@Autowired(required = false)
 	private void setStackHandler(CustomStackHandler customStackHandler) {
 		if (customStackHandler != null) {

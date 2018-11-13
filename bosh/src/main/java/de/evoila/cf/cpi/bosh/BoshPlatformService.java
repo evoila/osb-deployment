@@ -90,6 +90,12 @@ public abstract class BoshPlatformService implements PlatformService {
     }
 
     @Override
+    public boolean isSyncPossibleOnBind(){return true;}
+
+    @Override
+    public boolean isSyncPossibleOnUnbind(){return true;}
+
+    @Override
     public boolean isSyncPossibleOnDelete(ServiceInstance instance) {
         return false;
     }
