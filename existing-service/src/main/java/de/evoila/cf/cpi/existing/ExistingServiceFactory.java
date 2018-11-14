@@ -51,12 +51,12 @@ public abstract class ExistingServiceFactory implements PlatformService {
 
 	@Override
 	public boolean isSyncPossibleOnCreate(Plan plan) {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isSyncPossibleOnDelete(ServiceInstance instance) {
-		return false;
+		return true;
 	}
 
 	@Override
