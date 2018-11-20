@@ -6,7 +6,7 @@ package de.evoila.cf.cpi.openstack.custom;
 import de.evoila.cf.broker.bean.OpenstackBean;
 import de.evoila.cf.broker.cpi.endpoint.EndpointAvailabilityService;
 import de.evoila.cf.broker.exception.PlatformException;
-import de.evoila.cf.broker.model.Plan;
+import de.evoila.cf.broker.model.catalog.plan.Plan;
 import de.evoila.cf.broker.model.Platform;
 import de.evoila.cf.broker.model.ServiceInstance;
 import de.evoila.cf.broker.model.VolumeUnit;

@@ -3,7 +3,7 @@ package de.evoila.cf.cpi.bosh.deployment.manifest;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.evoila.cf.broker.model.NetworkReference;
+import de.evoila.cf.broker.model.catalog.plan.NetworkReference;
 import de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup.JobV2;
 
 import java.util.ArrayList;
