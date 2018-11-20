@@ -8,6 +8,8 @@ import de.evoila.cf.broker.bean.BoshProperties;
 import de.evoila.cf.broker.controller.utils.DashboardUtils;
 import de.evoila.cf.broker.exception.PlatformException;
 import de.evoila.cf.broker.model.*;
+import de.evoila.cf.broker.model.catalog.plan.Plan;
+import de.evoila.cf.broker.model.catalog.ServerAddress;
 import de.evoila.cf.broker.repository.PlatformRepository;
 import de.evoila.cf.broker.service.CatalogService;
 import de.evoila.cf.broker.service.PlatformService;
@@ -306,6 +308,15 @@ public abstract class BoshPlatformService implements PlatformService {
 
     protected ServerAddress toServerAddress(Vm vm, int port) {
         return toServerAddress(vm.getJobName(), vm, port);
+    }
+
+    protected ServerAddress toServerAddress(Vm vm, int port, Plan plan) {
+        ServerAddress serverAddress = toServerAddress(vm.getJobName(), vm, port);
+
+        if (plan != null && plan.getMetadata() != null && plan.getMetadata().getBackup() != null)
+            serverAddress.setBackup(plan.getMetadata().getBackup().isEnabled());
+
+        return serverAddress;
     }
 
     protected Deployment getDeployment(ServiceInstance instance){

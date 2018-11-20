@@ -2,7 +2,7 @@ package de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup;
 
 import ch.qos.logback.core.spi.LifeCycle;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import de.evoila.cf.broker.model.NetworkReference;
+import de.evoila.cf.broker.model.catalog.plan.NetworkReference;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Update;
 
 import java.util.ArrayList;
