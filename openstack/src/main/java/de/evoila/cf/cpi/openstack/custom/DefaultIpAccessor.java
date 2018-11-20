@@ -5,7 +5,7 @@ package de.evoila.cf.cpi.openstack.custom;
 
 import com.google.common.collect.Lists;
 import de.evoila.cf.broker.exception.PlatformException;
-import de.evoila.cf.broker.model.ServerAddress;
+import de.evoila.cf.broker.model.catalog.ServerAddress;
 import de.evoila.cf.cpi.openstack.fluent.HeatFluent;
 import de.evoila.cf.cpi.openstack.fluent.NeutronFluent;
 import de.evoila.cf.cpi.openstack.fluent.NovaFluent;

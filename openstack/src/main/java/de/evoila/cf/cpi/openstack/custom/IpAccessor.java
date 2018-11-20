@@ -4,7 +4,7 @@
 package de.evoila.cf.cpi.openstack.custom;
 
 import de.evoila.cf.broker.exception.PlatformException;
-import de.evoila.cf.broker.model.ServerAddress;
+import de.evoila.cf.broker.model.catalog.ServerAddress;
 
 import java.util.List;
 

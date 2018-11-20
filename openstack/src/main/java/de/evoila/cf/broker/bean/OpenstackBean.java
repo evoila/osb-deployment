@@ -1,19 +1,17 @@
 package de.evoila.cf.broker.bean;
 
-import de.evoila.cf.broker.bean.impl.OpenstackBeanImpl.Cinder;
-import de.evoila.cf.broker.bean.impl.OpenstackBeanImpl.Project;
-import de.evoila.cf.broker.bean.impl.OpenstackBeanImpl.User;
+import de.evoila.cf.broker.bean.impl.OpenstackBeanImpl;
 
 public interface OpenstackBean {
 
 	public String getEndpoint();
-	public User getUser();
-	public Project getProject();
+	public OpenstackBeanImpl.User getUser();
+	public OpenstackBeanImpl.Project getProject();
 	public String getNetworkId();
 	public String getSubnetId();
 	public String getImageId();
 	public String getKeypair();
-	public Cinder getCinder();
+	public OpenstackBeanImpl.Cinder getCinder();
 	public String getPublicNetworkId();
 	public String getPool();
 }

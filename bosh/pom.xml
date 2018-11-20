@@ -17,7 +17,6 @@
         <version>1.2.0</version>
     </parent>
 
-
     <dependencies>
         <!-- Project dependencies -->
         <dependency>
@@ -54,7 +53,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
-            
         </dependency>
         <dependency>
             <groupId>de.evoila.cf.broker</groupId>

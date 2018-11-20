@@ -2,7 +2,7 @@ package de.evoila.cf.broker.bean.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import de.evoila.cf.broker.bean.ExistingEndpointBean;
-import de.evoila.cf.broker.model.ServerAddress;
+import de.evoila.cf.broker.model.catalog.ServerAddress;
 import de.evoila.cf.broker.util.ObjectMapperUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
