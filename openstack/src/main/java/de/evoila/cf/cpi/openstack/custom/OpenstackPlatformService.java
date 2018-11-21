@@ -6,7 +6,7 @@ package de.evoila.cf.cpi.openstack.custom;
 import de.evoila.cf.broker.bean.OpenstackBean;
 import de.evoila.cf.broker.cpi.endpoint.EndpointAvailabilityService;
 import de.evoila.cf.broker.exception.PlatformException;
-import de.evoila.cf.broker.model.Plan;
+import de.evoila.cf.broker.model.catalog.plan.Plan;
 import de.evoila.cf.broker.model.Platform;
 import de.evoila.cf.broker.model.ServiceInstance;
 import de.evoila.cf.broker.model.VolumeUnit;
@@ -79,6 +79,13 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
     public boolean isSyncPossibleOnUpdate(ServiceInstance instance, Plan plan) {
         return false;
     }
+
+	@Override
+	public boolean isSyncPossibleOnBind(){return false;}
+
+	@Override
+	public boolean isSyncPossibleOnUnbind(){return false;}
+
 
 	@Autowired(required = false)
 	private void setStackHandler(CustomStackHandler customStackHandler) {

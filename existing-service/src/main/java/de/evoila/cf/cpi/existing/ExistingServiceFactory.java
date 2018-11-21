@@ -2,7 +2,7 @@ package de.evoila.cf.cpi.existing;
 
 import de.evoila.cf.broker.bean.ExistingEndpointBean;
 import de.evoila.cf.broker.exception.PlatformException;
-import de.evoila.cf.broker.model.Plan;
+import de.evoila.cf.broker.model.catalog.plan.Plan;
 import de.evoila.cf.broker.model.Platform;
 import de.evoila.cf.broker.model.ServiceInstance;
 import de.evoila.cf.broker.repository.PlatformRepository;
@@ -42,6 +42,12 @@ public abstract class ExistingServiceFactory implements PlatformService {
 	    platformRepository.addPlatform(Platform.EXISTING_SERVICE, this);
 		log.info("Added Platform-Service " + this.getClass().toString() + " of type " + Platform.EXISTING_SERVICE);
 	}
+
+	@Override
+	public boolean isSyncPossibleOnBind(){return true;}
+
+	@Override
+	public boolean isSyncPossibleOnUnbind(){return true;}
 
 	@Override
 	public boolean isSyncPossibleOnCreate(Plan plan) {

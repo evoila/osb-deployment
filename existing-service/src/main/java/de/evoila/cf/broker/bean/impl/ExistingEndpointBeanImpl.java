@@ -1,7 +1,7 @@
 package de.evoila.cf.broker.bean.impl;
 
 import de.evoila.cf.broker.bean.ExistingEndpointBean;
-import de.evoila.cf.broker.model.ServerAddress;
+import de.evoila.cf.broker.model.catalog.ServerAddress;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
