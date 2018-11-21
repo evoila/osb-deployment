@@ -11,7 +11,7 @@ import de.evoila.cf.broker.model.catalog.plan.InstanceGroupConfig;
 import de.evoila.cf.broker.model.catalog.plan.Metadata;
 import de.evoila.cf.broker.model.catalog.plan.NetworkReference;
 import de.evoila.cf.broker.model.catalog.plan.Plan;
-import de.evoila.cf.broker.util.GlobalConstants;
+import de.evoila.cf.broker.model.GlobalConstants;
 import de.evoila.cf.broker.util.MapUtils;
 import de.evoila.cf.cpi.bosh.deployment.manifest.InstanceGroup;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Manifest;
