@@ -1,10 +1,10 @@
 package de.evoila.cf.cpi.existing;
 
-import de.evoila.cf.broker.bean.ExistingEndpointBean;
+import de.evoila.cf.broker.bean.impl.ExistingEndpoints;
 import de.evoila.cf.broker.exception.PlatformException;
-import de.evoila.cf.broker.model.catalog.plan.Plan;
 import de.evoila.cf.broker.model.Platform;
 import de.evoila.cf.broker.model.ServiceInstance;
+import de.evoila.cf.broker.model.catalog.plan.Plan;
 import de.evoila.cf.broker.repository.PlatformRepository;
 import de.evoila.cf.broker.service.PlatformService;
 import de.evoila.cf.broker.service.availability.ServicePortAvailabilityVerifier;
@@ -27,13 +27,13 @@ public abstract class ExistingServiceFactory implements PlatformService {
 
 	private ServicePortAvailabilityVerifier portAvailabilityVerifier;
 
-    private ExistingEndpointBean existingEndpointBean;
+    private ExistingEndpoints existingEndpoints;
 
     public ExistingServiceFactory(PlatformRepository platformRepository, ServicePortAvailabilityVerifier portAvailabilityVerifier,
-								  ExistingEndpointBean existingEndpointBean) {
+								  ExistingEndpoints existingEndpoints) {
     	this.platformRepository = platformRepository;
     	this.portAvailabilityVerifier = portAvailabilityVerifier;
-    	this.existingEndpointBean = existingEndpointBean;
+    	this.existingEndpoints = existingEndpoints;
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public abstract class ExistingServiceFactory implements PlatformService {
 
     @Override
     public ServiceInstance postCreateInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
-        serviceInstance.setHosts(existingEndpointBean.getHosts());
+        serviceInstance.setHosts(existingEndpoints.getEndpoints().get(0).getHosts());
 
         boolean available;
         try {
