@@ -114,6 +114,8 @@ public abstract class ExistingServiceFactory implements PlatformService {
     public void preDeleteInstance(ServiceInstance serviceInstance) {}
 
     @Override
-    public void postDeleteInstance(ServiceInstance serviceInstance) {credhubClient.deleteCredentials(serviceInstance.getId(), "instancePassword");}
+    public void postDeleteInstance(ServiceInstance serviceInstance) {
+    	//credhubClient.deleteCredentials(serviceInstance.getId(), "instancePassword");
+		}
 
 }
