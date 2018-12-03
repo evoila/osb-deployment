@@ -8,6 +8,7 @@ import de.evoila.cf.broker.model.catalog.plan.Plan;
 import de.evoila.cf.broker.repository.PlatformRepository;
 import de.evoila.cf.broker.service.PlatformService;
 import de.evoila.cf.broker.service.availability.ServicePortAvailabilityVerifier;
+import de.evoila.cf.security.credhub.CredhubClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,9 +16,7 @@ import javax.annotation.PostConstruct;
 import java.util.Map;
 
 /**
- *
  * @author Christian Brinker, evoila.
- *
  */
 public abstract class ExistingServiceFactory implements PlatformService {
 
@@ -29,11 +28,14 @@ public abstract class ExistingServiceFactory implements PlatformService {
 
     private ExistingEndpoints existingEndpoints;
 
+    private CredhubClient credhubClient;
+
     public ExistingServiceFactory(PlatformRepository platformRepository, ServicePortAvailabilityVerifier portAvailabilityVerifier,
-								  ExistingEndpoints existingEndpoints) {
+								  ExistingEndpoints existingEndpoints, CredhubClient credhubClient) {
     	this.platformRepository = platformRepository;
     	this.portAvailabilityVerifier = portAvailabilityVerifier;
     	this.existingEndpoints = existingEndpoints;
+    	this.credhubClient = credhubClient;
 	}
 
 	@Override
@@ -44,10 +46,10 @@ public abstract class ExistingServiceFactory implements PlatformService {
 	}
 
 	@Override
-	public boolean isSyncPossibleOnBind(){return true;}
+	public boolean isSyncPossibleOnBind() {return true;}
 
 	@Override
-	public boolean isSyncPossibleOnUnbind(){return true;}
+	public boolean isSyncPossibleOnUnbind() {return true;}
 
 	@Override
 	public boolean isSyncPossibleOnCreate(Plan plan) {
@@ -112,6 +114,6 @@ public abstract class ExistingServiceFactory implements PlatformService {
     public void preDeleteInstance(ServiceInstance serviceInstance) {}
 
     @Override
-    public void postDeleteInstance(ServiceInstance serviceInstance) {}
+    public void postDeleteInstance(ServiceInstance serviceInstance) {credhubClient.deleteCredentials(serviceInstance.getId(), "instancePassword");}
 
 }
