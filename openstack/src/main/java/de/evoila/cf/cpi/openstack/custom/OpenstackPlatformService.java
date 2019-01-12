@@ -56,8 +56,8 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
 
 	private IpAccessor ipAccessor;
 
-	public OpenstackPlatformService(StackHandler defaultStackHandler, PlatformRepository platformRepository, ServicePortAvailabilityVerifier portAvailabilityVerifier,
-									IpAccessor ipAccessor, EndpointAvailabilityService endpointAvailabilityService, OpenstackBean openstackBean) {
+    public OpenstackPlatformService(StackHandler defaultStackHandler, PlatformRepository platformRepository, ServicePortAvailabilityVerifier portAvailabilityVerifier,
+                                    IpAccessor ipAccessor, EndpointAvailabilityService endpointAvailabilityService, OpenstackBean openstackBean) {
 		super(endpointAvailabilityService, openstackBean);
 		this.defaultStackHandler = defaultStackHandler;
 		this.platformRepository = platformRepository;
@@ -211,5 +211,10 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
 	public ServiceInstance updateInstance(ServiceInstance instance, Plan plan, Map<String, Object> customParameters) {
 		throw new NotSupportedException("Updating Service Instances is currently not supported");
 	}
+
+    @Override
+    public ServiceInstance getInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
+        return serviceInstance;
+    }
 
 }

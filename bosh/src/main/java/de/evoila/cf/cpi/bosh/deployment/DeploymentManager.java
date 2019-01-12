@@ -49,12 +49,15 @@ public class DeploymentManager {
     protected static final String STEMCELL_VERSION = "stemcell_version";
 
     private final ObjectReader reader;
+
     private final ObjectMapper mapper;
 
     protected final BoshProperties boshProperties;
 
     public DeploymentManager(BoshProperties properties, Environment environment) {
-        Assert.notNull(properties, "Bosh Properties cant be null");
+        Assert.notNull(properties, "BoshProperties cant be null");
+        Assert.notNull(environment, "Environment cant be null");
+
         this.mapper = new ObjectMapper(new YAMLFactory());
         this.mapper.setSerializationInclusion(JsonInclude.Include.NON_DEFAULT);
         this.boshProperties = properties;
@@ -68,17 +71,30 @@ public class DeploymentManager {
         }
     }
 
-    protected void replaceParameters(ServiceInstance instance, Manifest manifest, Plan plan, Map<String, Object> customParameters) {
+    protected void replaceParameters(ServiceInstance serviceInstance, Manifest manifest, Plan plan, Map<String, Object> customParameters) {
         manifest.getProperties().putAll(customParameters);
     }
 
-    public Deployment createDeployment(ServiceInstance instance, Plan plan, Map<String, Object> customParameters) throws IOException {
-        Deployment deployment = getDeployment(instance);
+    public Deployment createDeployment(ServiceInstance serviceInstance, Plan plan, Map<String, Object> customParameters) throws IOException {
+        Deployment deployment = new Deployment();
+        deployment.setName(this.deploymentName(serviceInstance));
 
         Manifest manifest = readTemplate("bosh/manifest.yml");
-        manifest.setName(DEPLOYMENT_PREFIX + instance.getId());
+        manifest.setName(DEPLOYMENT_PREFIX + serviceInstance.getId());
         addStemcell(manifest);
-        replaceParameters(instance, manifest, plan, customParameters);
+        replaceParameters(serviceInstance, manifest, plan, customParameters);
+
+        deployment.setRawManifest(generateManifest(manifest));
+        return deployment;
+    }
+
+    public Deployment updateDeployment (ServiceInstance serviceInstance, Deployment deployment, Plan plan,
+                                        Map<String, Object> customParameters) throws IOException {
+        Manifest manifest = mapper.readValue(deployment.getRawManifest(), Manifest.class);
+
+        log.debug("Updating deployment: " + deployment.getRawManifest());
+
+        replaceParameters(serviceInstance, manifest, plan, customParameters);
 
         deployment.setRawManifest(generateManifest(manifest));
         return deployment;
@@ -106,30 +122,6 @@ public class DeploymentManager {
         return readManifestFromString(manifest);
     }
 
-    public Manifest readManifestFromString(String manifest) throws IOException {
-        return mapper.readValue(manifest, Manifest.class);
-    }
-
-    public String generateManifest(Manifest manifest) throws JsonProcessingException {
-        return mapper.writeValueAsString(manifest);
-    }
-
-    public Deployment updateDeployment (ServiceInstance instance, Deployment deployment, Plan plan, Map<String, Object> customParameters) throws IOException {
-        Manifest manifest = mapper.readValue(deployment.getRawManifest(), Manifest.class);
-
-        log.debug("Updating deployment: " + deployment.getRawManifest());
-
-        replaceParameters(instance, manifest, plan, customParameters);
-
-        deployment.setRawManifest(generateManifest(manifest));
-        return deployment;
-    }
-
-    private String accessTemplate(final String templatePath) throws IOException {
-        InputStream inputStream = new ClassPathResource(templatePath).getInputStream();
-        return this.readTemplateFile(inputStream);
-    }
-
     private String readTemplateFile(InputStream inputStream) throws IOException {
         BufferedReader reader =new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder stringBuilder = new StringBuilder();
@@ -141,6 +133,19 @@ public class DeploymentManager {
             line = reader.readLine();
         }
         return stringBuilder.toString();
+    }
+
+    private String accessTemplate(final String templatePath) throws IOException {
+        InputStream inputStream = new ClassPathResource(templatePath).getInputStream();
+        return this.readTemplateFile(inputStream);
+    }
+
+    public String generateManifest(Manifest manifest) throws JsonProcessingException {
+        return mapper.writeValueAsString(manifest);
+    }
+
+    public Manifest readManifestFromString(String manifest) throws IOException {
+        return mapper.readValue(manifest, Manifest.class);
     }
 
     protected InstanceGroup getInstanceGroup(Manifest manifest, String name) {
@@ -212,12 +217,6 @@ public class DeploymentManager {
 
         if (instanceGroupConfig.getAzs() != null && instanceGroupConfig.getAzs().size() > 0)
             instanceGroup.setAzs(instanceGroupConfig.getAzs());
-    }
-
-    public Deployment getDeployment(ServiceInstance serviceInstance) {
-        Deployment deployment = new Deployment();
-        deployment.setName(DeploymentManager.deploymentName(serviceInstance));
-        return deployment;
     }
 
     public static String deploymentName(ServiceInstance instance) {
