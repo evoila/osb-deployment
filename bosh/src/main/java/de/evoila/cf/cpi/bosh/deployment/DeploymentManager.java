@@ -71,7 +71,8 @@ public class DeploymentManager {
         }
     }
 
-    protected void replaceParameters(ServiceInstance serviceInstance, Manifest manifest, Plan plan, Map<String, Object> customParameters) {
+    protected void replaceParameters(ServiceInstance serviceInstance, Manifest manifest, Plan plan, Map
+            <String, Object> customParameters, boolean isUpdate) {
         manifest.getProperties().putAll(customParameters);
     }
 
@@ -82,19 +83,19 @@ public class DeploymentManager {
         Manifest manifest = readTemplate("bosh/manifest.yml");
         manifest.setName(DEPLOYMENT_PREFIX + serviceInstance.getId());
         addStemcell(manifest);
-        replaceParameters(serviceInstance, manifest, plan, customParameters);
+        replaceParameters(serviceInstance, manifest, plan, customParameters, false);
 
         deployment.setRawManifest(generateManifest(manifest));
         return deployment;
     }
 
-    public Deployment updateDeployment (ServiceInstance serviceInstance, Deployment deployment, Plan plan,
+    public Deployment updateDeployment(ServiceInstance serviceInstance, Deployment deployment, Plan plan,
                                         Map<String, Object> customParameters) throws IOException {
         Manifest manifest = mapper.readValue(deployment.getRawManifest(), Manifest.class);
 
         log.debug("Updating deployment: " + deployment.getRawManifest());
 
-        replaceParameters(serviceInstance, manifest, plan, customParameters);
+        replaceParameters(serviceInstance, manifest, plan, customParameters, true);
 
         deployment.setRawManifest(generateManifest(manifest));
         return deployment;
