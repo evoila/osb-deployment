@@ -322,7 +322,8 @@ public abstract class BoshPlatformService implements PlatformService {
     protected ServerAddress toServerAddress(Vm vm, int port, Plan plan) {
         ServerAddress serverAddress = toServerAddress(vm.getJobName(), vm, port);
 
-        if (plan != null && plan.getMetadata() != null && plan.getMetadata().getBackup() != null)
+        if (plan != null && plan.getMetadata() != null && plan.getMetadata().getBackup() != null
+                && serverAddress.getName().contains(plan.getMetadata().getBackup().getInstanceGroup()))
             serverAddress.setBackup(plan.getMetadata().getBackup().isEnabled());
 
         return serverAddress;
