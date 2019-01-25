@@ -1,5 +1,6 @@
 package de.evoila.cf.cpi.bosh;
 
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.KeyPair;
@@ -7,9 +8,13 @@ import com.jcraft.jsch.Session;
 import de.evoila.cf.broker.bean.BoshProperties;
 import de.evoila.cf.broker.controller.utils.DashboardUtils;
 import de.evoila.cf.broker.exception.PlatformException;
-import de.evoila.cf.broker.model.*;
-import de.evoila.cf.broker.model.catalog.plan.Plan;
+import de.evoila.cf.broker.model.DashboardClient;
+import de.evoila.cf.broker.model.Platform;
+import de.evoila.cf.broker.model.ServiceInstance;
 import de.evoila.cf.broker.model.catalog.ServerAddress;
+import de.evoila.cf.broker.model.catalog.plan.Plan;
+import de.evoila.cf.broker.model.json.schema.JsonSchema;
+import de.evoila.cf.broker.model.json.schema.utils.JsonSchemaUtils;
 import de.evoila.cf.broker.repository.PlatformRepository;
 import de.evoila.cf.broker.service.CatalogService;
 import de.evoila.cf.broker.service.PlatformService;
@@ -33,10 +38,7 @@ import rx.Observable;
 import javax.annotation.PostConstruct;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class BoshPlatformService implements PlatformService {
 
@@ -231,7 +233,7 @@ public abstract class BoshPlatformService implements PlatformService {
         		deployment = connection
                         .connection()
                         .deployments()
-                        .get(deploymentManager.getDeployment(serviceInstance).getName())
+                        .get(DeploymentManager.deploymentName(serviceInstance))
                         .toBlocking().first();
                 errands = connection
                         .connection()
@@ -264,9 +266,9 @@ public abstract class BoshPlatformService implements PlatformService {
     }
 
     @Override
-    public ServiceInstance updateInstance(ServiceInstance instance, Plan plan, Map<String, Object> customParameters) throws PlatformException {
+    public ServiceInstance updateInstance(ServiceInstance serviceInstance, Plan plan, Map<String, Object> customParameters) throws PlatformException {
         Deployment deployment = connection.connection().deployments()
-                .get(deploymentManager.getDeployment(instance).getName())
+                .get(DeploymentManager.deploymentName(serviceInstance))
                 .toBlocking().first();
 
         Observable<List<ErrandSummary>> errands = connection
@@ -274,9 +276,10 @@ public abstract class BoshPlatformService implements PlatformService {
                 .errands()
                 .list(deployment.getName());
 
-        runUpdateErrands(instance, plan, deployment, errands);
+        runUpdateErrands(serviceInstance, plan, deployment, errands);
+
         try {
-            deployment = deploymentManager.updateDeployment(instance, deployment, plan, customParameters);
+            deployment = deploymentManager.updateDeployment(serviceInstance, deployment, plan, customParameters);
 
             Observable<Task> taskObservable = connection
                     .connection()
@@ -284,14 +287,14 @@ public abstract class BoshPlatformService implements PlatformService {
                     .update(deployment);
 
             waitForTaskCompletion(taskObservable.toBlocking().first());
-            updateHosts(instance, plan, deployment);
+            updateHosts(serviceInstance, plan, deployment);
         } catch (IOException e) {
             throw new PlatformException("Could not update Service instance", e);
         }
 
-        return new ServiceInstance(instance.getId(), instance.getServiceDefinitionId(), plan.getId(),
-                instance.getOrganizationGuid(), instance.getSpaceGuid(), instance.getParameters(),
-                instance.getDashboardUrl(), instance.getInternalId());
+        return new ServiceInstance(serviceInstance.getId(), serviceInstance.getServiceDefinitionId(), plan.getId(),
+                serviceInstance.getOrganizationGuid(), serviceInstance.getSpaceGuid(), serviceInstance.getParameters(),
+                serviceInstance.getDashboardUrl(), serviceInstance.getInternalId());
     }
 
     @Override
@@ -299,13 +302,13 @@ public abstract class BoshPlatformService implements PlatformService {
         return serviceInstance;
     }
 
-    protected abstract void updateHosts(ServiceInstance instance, Plan plan, Deployment deployment);
+    protected abstract void updateHosts(ServiceInstance serviceInstance, Plan plan, Deployment deployment);
 
-    protected List<Vm> getVms(ServiceInstance instance) {
+    protected List<Vm> getVms(ServiceInstance serviceInstance) {
         return this.connection
                 .connection().vms()
-                .listDetails(deploymentManager.getDeployment(instance)
-                        .getName()).toBlocking().first();
+                .listDetails(DeploymentManager.deploymentName(serviceInstance))
+                .toBlocking().first();
     }
 
     protected ServerAddress toServerAddress(String namePrefix, Vm vm, int port) {
@@ -319,21 +322,17 @@ public abstract class BoshPlatformService implements PlatformService {
     protected ServerAddress toServerAddress(Vm vm, int port, Plan plan) {
         ServerAddress serverAddress = toServerAddress(vm.getJobName(), vm, port);
 
-        if (plan != null && plan.getMetadata() != null && plan.getMetadata().getBackup() != null)
+        if (plan != null && plan.getMetadata() != null && plan.getMetadata().getBackup() != null
+                && serverAddress.getName().contains(plan.getMetadata().getBackup().getInstanceGroup()))
             serverAddress.setBackup(plan.getMetadata().getBackup().isEnabled());
 
         return serverAddress;
     }
 
-    protected Deployment getDeployment(ServiceInstance instance){
-        return deploymentManager.getDeployment(instance);
-    }
-
-    protected Observable<Session> getSshSession(ServiceInstance instance,
+    protected Observable<Session> getSshSession(ServiceInstance serviceInstance,
                                                 InstanceGroup instanceGroup,
                                                 int index) throws JSchException {
 
-        Deployment deployment = this.getDeployment(instance);
         JSch jsch = new JSch();
         KeyPair keyPair = KeyPair.genKeyPair(jsch, KeyPair.RSA);
         ByteArrayOutputStream privateKeyBuff = new ByteArrayOutputStream(2048);
@@ -344,7 +343,7 @@ public abstract class BoshPlatformService implements PlatformService {
 
         RandomString usernameRandomString = new RandomString(10);
 
-        SSHConfig config = new SSHConfig(deployment.getName(),
+        SSHConfig config = new SSHConfig(DeploymentManager.deploymentName(serviceInstance),
                 usernameRandomString.nextString(), publicKeyBuff.toString(),
                 instanceGroup.getName(), index);
 
@@ -381,13 +380,51 @@ public abstract class BoshPlatformService implements PlatformService {
         return deploymentManager.readManifestFromString(deployment.getRawManifest());
     }
 
-    protected Manifest getDeployedManifest(String deploymentName) throws IOException {
+    public Manifest getDeployedManifest(ServiceInstance serviceInstance) throws IOException {
         String manifest = this.connection
                 .connection()
                 .deployments()
-                .get(deploymentName)
+                .get(DeploymentManager.deploymentName(serviceInstance))
                 .toBlocking().first().getRawManifest();
 
         return deploymentManager.readManifestFromString(manifest);
+    }
+
+    @Override
+    public ServiceInstance getInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
+        Manifest manifest;
+        try {
+            manifest = this.getDeployedManifest(serviceInstance);
+        } catch (IOException ex) {
+            throw new PlatformException("Cannot read HaProxy configuration", ex);
+        }
+
+        if (plan.getSchemas() != null && plan.getSchemas().getServiceInstance() != null
+            && plan.getSchemas().getServiceInstance().getUpdate() != null) {
+            JsonSchema jsonSchema = plan.getSchemas().getServiceInstance().getUpdate().getParameters();
+            if (jsonSchema != null && jsonSchema.getType().equals(JsonFormatTypes.OBJECT)) {
+                Map<String, JsonSchema> properties = jsonSchema.getProperties();
+
+                HashMap<String, Object> result = new HashMap<>();
+                for (Map.Entry<String, JsonSchema> property : properties.entrySet()) {
+                    HashMap<String, Object> instanceGroupResult = new HashMap<>();
+
+                    InstanceGroup instanceGroup = manifest.getInstanceGroups().stream().
+                            filter(g -> g.getName().equals(property.getKey())).
+                            findFirst().orElse(null);
+
+                    if (instanceGroup != null) {
+                        Map<String, Object> instanceGroupProperties = new HashMap<>();
+                        if (instanceGroup.getProperties().containsKey(property.getKey()))
+                            instanceGroupProperties = (Map<String, Object>) instanceGroup.getProperties().get(property.getKey());
+
+                        JsonSchemaUtils.mergeMaps(property.getValue().getProperties(), instanceGroupProperties, instanceGroupResult);
+                    }
+                    result.put(instanceGroup.getName(), instanceGroupResult);
+                }
+                serviceInstance.setParameters(result);
+            }
+        }
+        return serviceInstance;
     }
 }
