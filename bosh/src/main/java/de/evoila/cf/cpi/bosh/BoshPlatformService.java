@@ -302,7 +302,8 @@ public abstract class BoshPlatformService implements PlatformService {
         return serviceInstance;
     }
 
-    protected abstract void updateHosts(ServiceInstance serviceInstance, Plan plan, Deployment deployment);
+
+    protected abstract void updateHosts(ServiceInstance instance, Plan plan, Deployment deployment) throws PlatformException;
 
     protected List<Vm> getVms(ServiceInstance serviceInstance) {
         return this.connection
