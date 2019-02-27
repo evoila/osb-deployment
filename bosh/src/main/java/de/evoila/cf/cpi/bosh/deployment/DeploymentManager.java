@@ -32,6 +32,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * @author Yannic Remmet, Johannes Hiemer.
+ */
 public class DeploymentManager {
 
     protected final Logger log = LoggerFactory.getLogger(this.getClass());

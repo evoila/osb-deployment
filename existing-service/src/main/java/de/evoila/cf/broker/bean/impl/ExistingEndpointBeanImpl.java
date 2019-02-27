@@ -9,10 +9,15 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Yannic Remmet, Johannes Hiemer.
+ */
 @Service
 @Profile("!pcf")
-@ConfigurationProperties(prefix="existing.endpoint")
+@ConfigurationProperties(prefix = "existing.endpoint")
 public class ExistingEndpointBeanImpl implements ExistingEndpointBean {
+
+    private String name;
 
 	private List<ServerAddress> hosts = new ArrayList<>();
 
@@ -25,6 +30,15 @@ public class ExistingEndpointBeanImpl implements ExistingEndpointBean {
 	private String database;
 
     private String deployment;
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     @Override
     public List<ServerAddress> getHosts() {

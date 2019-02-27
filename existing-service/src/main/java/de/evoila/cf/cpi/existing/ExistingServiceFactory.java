@@ -44,10 +44,10 @@ public abstract class ExistingServiceFactory implements PlatformService {
 	}
 
 	@Override
-	public boolean isSyncPossibleOnBind(){return true;}
+	public boolean isSyncPossibleOnBind() { return true; }
 
 	@Override
-	public boolean isSyncPossibleOnUnbind(){return true;}
+	public boolean isSyncPossibleOnUnbind() { return true; }
 
 	@Override
 	public boolean isSyncPossibleOnCreate(Plan plan) {
