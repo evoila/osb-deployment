@@ -2,7 +2,7 @@ package de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.evoila.cf.broker.model.catalog.plan.NetworkReference;
-import de.evoila.cf.broker.model.VolumeUnit;
+import de.evoila.cf.broker.model.volume.VolumeUnit;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Update;
 
 import java.util.ArrayList;
