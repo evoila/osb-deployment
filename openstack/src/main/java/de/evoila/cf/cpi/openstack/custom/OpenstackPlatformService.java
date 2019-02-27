@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.evoila.cf.cpi.openstack.custom;
 
 import de.evoila.cf.broker.bean.OpenstackBean;
