@@ -5,12 +5,12 @@
     <artifactId>bosh</artifactId>
     <packaging>jar</packaging>
     <name>bosh</name>
+    <modelVersion>4.0.0</modelVersion>
 
     <properties>
         <core.version>1.2.0</core.version>
     </properties>
 
-    <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>deployment-parent</artifactId>
         <groupId>de.evoila.cf.broker</groupId>

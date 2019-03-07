@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Created by reneschollmeyer, evoila on 09.10.17.
+ * @author Rene Schollmeyer.
  */
 @Configuration
 @ConfigurationProperties(prefix = "bosh")

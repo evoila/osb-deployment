@@ -8,7 +8,7 @@ import de.evoila.cf.broker.model.catalog.plan.Plan;
 import de.evoila.cf.broker.repository.PlatformRepository;
 import de.evoila.cf.broker.service.PlatformService;
 import de.evoila.cf.broker.service.availability.ServicePortAvailabilityVerifier;
-import de.evoila.cf.security.credhub.CredhubClient;
+import de.evoila.cf.security.credentials.credhub.CredhubClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,10 +46,10 @@ public abstract class ExistingServiceFactory implements PlatformService {
 	}
 
 	@Override
-	public boolean isSyncPossibleOnBind() {return true;}
+	public boolean isSyncPossibleOnBind() { return true; }
 
 	@Override
-	public boolean isSyncPossibleOnUnbind() {return true;}
+	public boolean isSyncPossibleOnUnbind() { return true; }
 
 	@Override
 	public boolean isSyncPossibleOnCreate(Plan plan) {
