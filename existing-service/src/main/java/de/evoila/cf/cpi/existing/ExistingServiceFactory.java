@@ -1,5 +1,6 @@
 package de.evoila.cf.cpi.existing;
 
+import de.evoila.cf.broker.bean.impl.ExistingEndpoint;
 import de.evoila.cf.broker.bean.impl.ExistingEndpoints;
 import de.evoila.cf.broker.exception.PlatformException;
 import de.evoila.cf.broker.model.Platform;
@@ -13,7 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Christian Brinker, evoila.
@@ -78,7 +81,15 @@ public abstract class ExistingServiceFactory implements PlatformService {
 
     @Override
     public ServiceInstance postCreateInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
-        serviceInstance.setHosts(existingEndpoints.getEndpoints().get(0).getHosts());
+		List<ExistingEndpoint> hosts = existingEndpoints.getEndpoints().stream().filter(e -> {
+			if (e.getName().equals(plan.getMetadata().getEndpointName()))
+				return true;
+			else
+				return false;
+			}).collect(Collectors.toList());
+
+    	hosts.stream().forEach(endpoint -> serviceInstance.setHosts(endpoint.getHosts()));
+
 
         boolean available;
         try {
@@ -114,8 +125,6 @@ public abstract class ExistingServiceFactory implements PlatformService {
     public void preDeleteInstance(ServiceInstance serviceInstance) {}
 
     @Override
-    public void postDeleteInstance(ServiceInstance serviceInstance) {
-    	//credhubClient.deleteCredentials(serviceInstance.getId(), "instancePassword");
-		}
+    public void postDeleteInstance(ServiceInstance serviceInstance) {}
 
 }
