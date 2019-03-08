@@ -23,6 +23,7 @@
 		<module>openstack</module>
 		<module>bosh</module>
 		<module>existing-service</module>
+        <module>helm</module>
     </modules>
 
 	<dependencyManagement>

@@ -14,9 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author Yannic Remmet, Johannes Hiemer.
+ */
 @Profile("pcf")
 @Configuration
-@ConfigurationProperties(prefix="existing.endpoint")
+@ConfigurationProperties(prefix = "existing.endpoint")
 public class PcfExistingEndpointBeanImpl implements ExistingEndpointBean {
 
     private String name;

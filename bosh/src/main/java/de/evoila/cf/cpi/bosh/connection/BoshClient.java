@@ -9,21 +9,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 /**
- * Created by reneschollmeyer, evoila on 09.10.17.
+ * @author Rene Schollmeyer, Johannes Hiemer.
  */
-public class BoshConnection {
+public class BoshClient {
 
-    private final static Logger log = LoggerFactory.getLogger(BoshConnection.class);
+    private final static Logger log = LoggerFactory.getLogger(BoshClient.class);
 
     protected DirectorClient directorClient;
 
     private String host;
+
     private String username;
+
     private String password;
+
     private Authentication authentication;
+
     private Integer port;
 
-    public BoshConnection(String username, String password, String host, int port, Authentication authentication){
+    public BoshClient(String username, String password, String host, int port, Authentication authentication){
         Assert.notNull(host, "Bosh Director Host may not be empty, when initializing");
         Assert.notNull(username, "Bosh Director Username may not be empty, when initializing");
         Assert.notNull(password, "Bosh Director Password may not be empty, when initializing");
@@ -34,8 +38,7 @@ public class BoshConnection {
         this.port = port;
     }
 
-
-    public BoshConnection authenticate() {
+    public BoshClient authenticate() {
         directorClient = new SpringDirectorClientBuilder()
                 .withScheme(Scheme.https)
                 .withHost(host)
@@ -46,7 +49,7 @@ public class BoshConnection {
         return this;
     }
 
-    public DirectorClient connection() {
+    public DirectorClient client() {
         this.authenticate();
         Assert.notNull(directorClient, "Connection must be initialized before calling any methods on it");
         return directorClient;

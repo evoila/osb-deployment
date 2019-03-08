@@ -11,10 +11,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author Yannic Remmet, Johannes Hiemer.
+ */
 @Service
 @Profile("!pcf")
-@ConfigurationProperties(prefix="existing.endpoint")
+@ConfigurationProperties(prefix = "existing.endpoint")
 public class ExistingEndpointBeanImpl implements ExistingEndpointBean {
+
+    private String name;
 
 	private List<ServerAddress> hosts = new ArrayList<>();
 
@@ -29,6 +34,15 @@ public class ExistingEndpointBeanImpl implements ExistingEndpointBean {
     private String deployment;
 
     private Map<String, String> parameters = new HashMap();
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     @Override
     public List<ServerAddress> getHosts() {

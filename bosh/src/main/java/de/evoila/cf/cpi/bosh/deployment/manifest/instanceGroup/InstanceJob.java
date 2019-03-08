@@ -1,153 +1,161 @@
 package de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup;
 
+import ch.qos.logback.core.spi.LifeCycle;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.evoila.cf.broker.model.catalog.plan.NetworkReference;
-import de.evoila.cf.broker.model.VolumeUnit;
+import de.evoila.cf.broker.model.volume.VolumeUnit;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Update;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created by jannikheyl on 23.01.18.
- *
- * Alternative to Instancegroup when deploying a single Job
+ * @author Jannik Heyl, Johannes Hiemer.
  */
 @JsonIgnoreProperties(
         ignoreUnknown = true
 )
 public class InstanceJob {
+
     private String name;
+
     private List<String> azs;
+
     private int instances;
+
     private List<JobV2> jobs;
+
     private String stemcell;
+
     private List<NetworkReference> networks;
+
     private Update update;
+
     private ch.qos.logback.core.spi.LifeCycle lifecycle;
+
     private Map<String, Object> properties;
-    private String vm_type;
-    private String persistent_disk_type;
-    private Integer persistent_disk;
 
+    @JsonProperty(value = "vm_type")
+    private String vmType;
 
-    public String getName () {
+    @JsonProperty(value = "persistent_disk_type")
+    private String persistentDiskType;
+
+    @JsonProperty(value = "persistent_disk")
+    private Integer persistentDisk;
+
+    public String getName() {
         return name;
     }
 
-    public void setName (String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public List<String> getAzs () {
-        if(azs == null)
-            azs = new ArrayList<>();
+    public List<String> getAzs() {
         return azs;
     }
 
-    public void setAzs (List<String> azs) {
+    public void setAzs(List<String> azs) {
         this.azs = azs;
     }
 
-    public int getInstances () {
+    public int getInstances() {
         return instances;
     }
 
-    public void setInstances (int instances) {
+    public void setInstances(int instances) {
         this.instances = instances;
     }
 
-    public List<JobV2> getJobs () {
-        if(jobs == null)
-            jobs = new ArrayList<>();
+    public List<JobV2> getJobs() {
         return jobs;
     }
 
-    public void setJobs (List<JobV2> jobs) {
+    public void setJobs(List<JobV2> jobs) {
         this.jobs = jobs;
     }
 
-    public String getStemcell () {
+    public String getStemcell() {
         return stemcell;
     }
 
-    public void setStemcell (String stemcell) {
+    public void setStemcell(String stemcell) {
         this.stemcell = stemcell;
     }
 
-    public List<NetworkReference> getNetworks () {
-        if(networks == null)
-            networks = new ArrayList<>();
+    public List<NetworkReference> getNetworks() {
         return networks;
     }
 
-    public void setNetworks (List<NetworkReference> networks) {
+    public void setNetworks(List<NetworkReference> networks) {
         this.networks = networks;
     }
 
-    public Update getUpdate () {
+    public Update getUpdate() {
         return update;
     }
 
-    public void setUpdate (Update update) {
+    public void setUpdate(Update update) {
         this.update = update;
     }
 
-    public ch.qos.logback.core.spi.LifeCycle getLifecycle () {
+    public LifeCycle getLifecycle() {
         return lifecycle;
     }
 
-    public void setLifecycle (ch.qos.logback.core.spi.LifeCycle lifecycle) {
+    public void setLifecycle(LifeCycle lifecycle) {
         this.lifecycle = lifecycle;
     }
 
-    public Map<String, Object> getProperties () {
-        if(properties == null)
-            properties = new HashMap<>();
+    public Map<String, Object> getProperties() {
         return properties;
     }
 
-    public String getVm_type() {
-        return vm_type;
-    }
-
-    public void setVm_type(String vm_type) {
-        this.vm_type = vm_type;
-    }
-
-    public void setProperties (Map<String, Object> properties) {
+    public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
     }
 
-    public String getPersistent_disk_type() {
-        return persistent_disk_type;
+    public String getVmType() {
+        return vmType;
     }
 
-    public void setPersistent_disk_type(String persistent_disk_type) {
-        this.persistent_disk_type = persistent_disk_type;
+    public void setVmType(String vmType) {
+        this.vmType = vmType;
     }
 
-    public Integer getPersistent_disk() {
-        return persistent_disk;
+    public String getPersistentDiskType() {
+        return persistentDiskType;
     }
 
-    public void setPersistent_disk(Integer persistent_disk) {
-        this.persistent_disk = persistent_disk;
+    public void setPersistentDiskType(String persistentDiskType) {
+        this.persistentDiskType = persistentDiskType;
     }
-    public void setPersistent_disk(Integer persistent_disk, VolumeUnit volumeUnit){
+
+    public Integer getPersistentDisk() {
+        return persistentDisk;
+    }
+
+    public void setPersistentDisk(Integer persistentDisk) {
+        this.persistentDisk = persistentDisk;
+    }
+
+    public void getPersistentDisk(Integer persistent_disk) {
+        this.persistentDisk = persistentDisk;
+    }
+
+    public void setPersistentDisk(Integer persistent_disk, VolumeUnit volumeUnit){
         switch (volumeUnit){
             case M:
-                this.persistent_disk = persistent_disk;
+                this.persistentDisk = persistentDisk;
                 break;
             case G:
-                this.persistent_disk = persistent_disk *1000;
+                this.persistentDisk = persistentDisk *1000;
                 break;
             case T:
-                this.persistent_disk = persistent_disk *1000000;
+                this.persistentDisk = persistentDisk *1000000;
                 break;
-
         }
 
     }
