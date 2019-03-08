@@ -7,7 +7,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Profile("!pcf")
@@ -25,6 +27,8 @@ public class ExistingEndpointBeanImpl implements ExistingEndpointBean {
 	private String database;
 
     private String deployment;
+
+    private Map<String, String> parameters = new HashMap();
 
     @Override
     public List<ServerAddress> getHosts() {
@@ -78,6 +82,15 @@ public class ExistingEndpointBeanImpl implements ExistingEndpointBean {
 
     public void setDeployment(String deployment) {
         this.deployment = deployment;
+    }
+
+
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
     }
 }
 
