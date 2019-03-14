@@ -82,7 +82,7 @@ public abstract class ExistingServiceFactory implements PlatformService {
     @Override
     public ServiceInstance postCreateInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
 		List<ExistingEndpoint> hosts = existingEndpoints.getEndpoints().stream().filter(e -> {
-			if (e.getName().equals(plan.getMetadata().getEndpointName()))
+			if (e.getServerName().equals(plan.getMetadata().getEndpointName()))
 				return true;
 			else
 				return false;
