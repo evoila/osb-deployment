@@ -1,15 +1,11 @@
-/**
- * 
- */
 package de.evoila.cf.cpi.openstack.custom;
 
 import de.evoila.cf.broker.bean.OpenstackBean;
 import de.evoila.cf.broker.cpi.endpoint.EndpointAvailabilityService;
 import de.evoila.cf.broker.exception.PlatformException;
-import de.evoila.cf.broker.model.catalog.plan.Plan;
 import de.evoila.cf.broker.model.Platform;
 import de.evoila.cf.broker.model.ServiceInstance;
-import de.evoila.cf.broker.model.VolumeUnit;
+import de.evoila.cf.broker.model.catalog.plan.Plan;
 import de.evoila.cf.broker.repository.PlatformRepository;
 import de.evoila.cf.broker.service.availability.ServicePortAvailabilityVerifier;
 import de.evoila.cf.cpi.openstack.OpenstackServiceFactory;
@@ -22,7 +18,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.ws.rs.NotAcceptableException;
 import javax.ws.rs.NotSupportedException;
 import java.util.HashMap;
 import java.util.Map;
@@ -175,16 +170,6 @@ public class OpenstackPlatformService extends OpenstackServiceFactory {
 
         return serviceInstance;
     }
-
-	private String volumeSize(int volumeSize, VolumeUnit volumeUnit) {
-		if (volumeUnit.equals(VolumeUnit.M))
-			throw new NotAcceptableException("Volumes in openstack may not be smaller than 1 GB");
-		else if (volumeUnit.equals(VolumeUnit.G))
-			return String.valueOf(volumeSize);
-		else if (volumeUnit.equals(VolumeUnit.T))
-			return String.valueOf(volumeSize * 1024);
-		return String.valueOf(volumeSize);
-	}
 
     @Override
     public void preDeleteInstance(ServiceInstance serviceInstance) { }
