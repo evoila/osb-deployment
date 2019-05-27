@@ -264,9 +264,8 @@ public abstract class BoshPlatformService implements PlatformService {
             throw new PlatformException("Could not update Service instance", e);
         }
 
-        return new ServiceInstance(serviceInstance.getId(), serviceInstance.getServiceDefinitionId(), plan.getId(),
-                serviceInstance.getOrganizationGuid(), serviceInstance.getSpaceGuid(), serviceInstance.getParameters(),
-                serviceInstance.getDashboardUrl(), serviceInstance.getInternalId());
+        return new ServiceInstance(serviceInstance, serviceInstance.getDashboardUrl(),
+                serviceInstance.getInternalId(), serviceInstance.getHosts());
     }
 
     @Override
@@ -351,7 +350,7 @@ public abstract class BoshPlatformService implements PlatformService {
         return serviceInstance;
     }
 
-    protected abstract void updateHosts(ServiceInstance serviceInstance, Plan plan, Deployment deployment);
+    protected abstract void updateHosts(ServiceInstance serviceInstance, Plan plan, Deployment deployment) throws PlatformException;
 
     protected List<Vm> getVms(ServiceInstance serviceInstance) {
         return this.boshClient

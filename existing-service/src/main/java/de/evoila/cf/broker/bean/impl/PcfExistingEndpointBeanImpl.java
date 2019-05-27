@@ -10,7 +10,9 @@ import org.springframework.context.annotation.Profile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Yannic Remmet, Johannes Hiemer.
@@ -37,6 +39,8 @@ public class PcfExistingEndpointBeanImpl implements ExistingEndpointBean {
     private String deployment;
 
     private BackupCredentials backupCredentials;
+
+    private Map<String, String> parameters = new HashMap();
 
     public String getName() {
         return name;
@@ -120,5 +124,13 @@ public class PcfExistingEndpointBeanImpl implements ExistingEndpointBean {
 
     public void setBackupCredentials(BackupCredentials backupCredentials) {
         this.backupCredentials = backupCredentials;
+    }
+
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
     }
 }
