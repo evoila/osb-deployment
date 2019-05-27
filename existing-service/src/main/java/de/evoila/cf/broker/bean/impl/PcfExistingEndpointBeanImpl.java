@@ -36,6 +36,8 @@ public class PcfExistingEndpointBeanImpl implements ExistingEndpointBean {
 
     private String deployment;
 
+    private BackupCredentials backupCredentials;
+
     public String getName() {
         return name;
     }
@@ -109,5 +111,14 @@ public class PcfExistingEndpointBeanImpl implements ExistingEndpointBean {
 
     public void setDeployment(String deployment) {
         this.deployment = deployment;
+    }
+
+    @Override
+    public BackupCredentials getBackupCredentials() {
+        return backupCredentials;
+    }
+
+    public void setBackupCredentials(BackupCredentials backupCredentials) {
+        this.backupCredentials = backupCredentials;
     }
 }
