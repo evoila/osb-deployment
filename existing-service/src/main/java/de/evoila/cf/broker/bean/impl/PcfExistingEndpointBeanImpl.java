@@ -38,6 +38,8 @@ public class PcfExistingEndpointBeanImpl implements ExistingEndpointBean {
 
     private String deployment;
 
+    private BackupCredentials backupCredentials;
+
     private Map<String, String> parameters = new HashMap();
 
     public String getName() {
@@ -115,6 +117,14 @@ public class PcfExistingEndpointBeanImpl implements ExistingEndpointBean {
         this.deployment = deployment;
     }
 
+    @Override
+    public BackupCredentials getBackupCredentials() {
+        return backupCredentials;
+    }
+
+    public void setBackupCredentials(BackupCredentials backupCredentials) {
+        this.backupCredentials = backupCredentials;
+    }
 
     public Map<String, String> getParameters() {
         return parameters;

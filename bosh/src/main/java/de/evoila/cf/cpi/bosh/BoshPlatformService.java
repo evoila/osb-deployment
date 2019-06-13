@@ -264,9 +264,8 @@ public abstract class BoshPlatformService implements PlatformService {
             throw new PlatformException("Could not update Service instance", e);
         }
 
-        return new ServiceInstance(serviceInstance.getId(), serviceInstance.getServiceDefinitionId(), plan.getId(),
-                serviceInstance.getOrganizationGuid(), serviceInstance.getSpaceGuid(), serviceInstance.getParameters(),
-                serviceInstance.getDashboardUrl(), serviceInstance.getInternalId());
+        return new ServiceInstance(serviceInstance, serviceInstance.getDashboardUrl(),
+                serviceInstance.getInternalId(), serviceInstance.getHosts());
     }
 
     @Override
@@ -351,7 +350,7 @@ public abstract class BoshPlatformService implements PlatformService {
         return serviceInstance;
     }
 
-    protected abstract void updateHosts(ServiceInstance serviceInstance, Plan plan, Deployment deployment);
+    protected abstract void updateHosts(ServiceInstance serviceInstance, Plan plan, Deployment deployment) throws PlatformException;
 
     protected List<Vm> getVms(ServiceInstance serviceInstance) {
         return this.boshClient
@@ -378,8 +377,7 @@ public abstract class BoshPlatformService implements PlatformService {
         return serverAddress;
     }
 
-    protected Observable<Session> getSshSession(ServiceInstance serviceInstance,
-                                                InstanceGroup instanceGroup,
+    protected Observable<Session> getSshSession(String serviceInstanceName, String instanceGroupName,
                                                 int index) throws JSchException {
 
         JSch jsch = new JSch();
@@ -392,9 +390,9 @@ public abstract class BoshPlatformService implements PlatformService {
 
         RandomString usernameRandomString = new RandomString(10);
 
-        SSHConfig config = new SSHConfig(DeploymentManager.deploymentName(serviceInstance),
+        SSHConfig config = new SSHConfig(serviceInstanceName,
                 usernameRandomString.nextString(), publicKeyBuff.toString(),
-                instanceGroup.getName(), index);
+                instanceGroupName, index);
 
         return this.boshClient
                 .client()
@@ -402,27 +400,9 @@ public abstract class BoshPlatformService implements PlatformService {
                 .ssh(config, privateKeyBuff.toString());
     }
 
-    protected Observable<Session> getSshSession(String deploymentName, String instanceName,
+    protected Observable<Session> getSshSession(ServiceInstance serviceInstance, String instanceGroupName,
                                                 int index) throws JSchException {
-
-        JSch jsch = new JSch();
-        KeyPair keyPair = KeyPair.genKeyPair(jsch, KeyPair.RSA);
-        ByteArrayOutputStream privateKeyBuff = new ByteArrayOutputStream(2048);
-        ByteArrayOutputStream publicKeyBuff = new ByteArrayOutputStream(2048);
-
-        keyPair.writePublicKey(publicKeyBuff, "SSHCerts");
-        keyPair.writePrivateKey(privateKeyBuff);
-
-        RandomString usernameRandomString = new RandomString(10);
-
-        SSHConfig config = new SSHConfig(deploymentName,
-                usernameRandomString.nextString(), publicKeyBuff.toString(),
-                instanceName, index);
-
-        return this.boshClient
-                .client()
-                .vms()
-                .ssh(config, privateKeyBuff.toString());
+        return this.getSshSession(DeploymentManager.deploymentName(serviceInstance), instanceGroupName, index);
     }
 
     public Manifest getManifest(Deployment deployment) throws IOException {
