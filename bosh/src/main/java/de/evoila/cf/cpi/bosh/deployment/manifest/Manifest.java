@@ -6,10 +6,7 @@ import de.evoila.cf.cpi.bosh.deployment.manifest.addon.Addon;
 import de.evoila.cf.cpi.bosh.deployment.manifest.job.Job;
 import de.evoila.cf.cpi.bosh.deployment.manifest.network.Network;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Manifest {
@@ -122,5 +119,11 @@ public class Manifest {
 
     public void setAddons(List<Addon> addons) {
         this.addons = addons;
+    }
+
+    public Optional<InstanceGroup> getInstanceGroup(String name){
+        return getInstanceGroups().stream()
+                .filter(ig ->  ig.getName().equals(name))
+                .findAny();
     }
 }
