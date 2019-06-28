@@ -6,10 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import de.evoila.cf.broker.model.catalog.plan.NetworkReference;
 import de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup.JobV2;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InstanceGroup {
@@ -137,5 +134,9 @@ public class InstanceGroup {
 
     public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
+    }
+
+    public Optional<JobV2> getJob(String name){
+        return getJobs().stream().filter(ig ->  ig.getName().equals(name)).findFirst();
     }
 }
