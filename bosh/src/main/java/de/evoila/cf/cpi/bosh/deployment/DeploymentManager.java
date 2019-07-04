@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.sun.jdi.InvalidTypeException;
 import de.evoila.cf.broker.bean.BoshProperties;
 import de.evoila.cf.broker.model.*;
 import de.evoila.cf.broker.model.catalog.plan.InstanceGroupConfig;
