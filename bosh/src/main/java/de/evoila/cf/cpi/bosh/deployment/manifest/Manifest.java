@@ -15,6 +15,8 @@ public class Manifest {
 
     private List<Release> releases = new ArrayList<>();
 
+    private List<Variable> variables = new ArrayList<>();
+
     private Update update;
 
     private List<Stemcell> stemcells = new ArrayList<>();
@@ -102,6 +104,14 @@ public class Manifest {
     public Compilation getCompilation() { return compilation; }
 
     public void setCompilation(Compilation compilation) { this.compilation = compilation; }
+
+    public List<Variable> getVariables() {
+        return variables;
+    }
+
+    public void setVariables(List<Variable> variables) {
+        this.variables = variables;
+    }
 
     public List<Addon> getAddons() {
         return addons;
