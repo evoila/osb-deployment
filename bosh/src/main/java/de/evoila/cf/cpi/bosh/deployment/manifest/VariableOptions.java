@@ -2,6 +2,9 @@ package de.evoila.cf.cpi.bosh.deployment.manifest;
 
 import java.util.List;
 
+/**
+ * @author Christian Brinker
+ */
 public class VariableOptions {
     private String common_name;
 

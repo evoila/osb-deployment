@@ -1,6 +1,10 @@
 package de.evoila.cf.cpi.bosh.deployment.manifest;
 
+/**
+ * @author Christian Brinker
+ */
 public class Variable {
+
     private String name;
 
     private String type;
