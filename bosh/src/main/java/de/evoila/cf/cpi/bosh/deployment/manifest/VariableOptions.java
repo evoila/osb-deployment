@@ -1,48 +1,55 @@
 package de.evoila.cf.cpi.bosh.deployment.manifest;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 /**
  * @author Christian Brinker
  */
 public class VariableOptions {
-    private String common_name;
 
-    private List<String> alternative_names;
+    @JsonProperty("common_name")
+    private String commonName;
 
-    private boolean is_ca;
+    @JsonProperty("alternative_names")
+    private List<String> alternativeNames;
 
-    private List<String> extended_key_usage;
+    @JsonProperty("is_ca")
+    private boolean isCa;
 
-    public String getCommon_name() {
-        return common_name;
+    @JsonProperty("extended_key_usage")
+    private List<String> extendedKeyUsage;
+
+    public String getCommonName() {
+        return commonName;
     }
 
-    public void setCommon_name(String common_name) {
-        this.common_name = common_name;
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
     }
 
-    public List<String> getAlternative_names() {
-        return alternative_names;
+    public List<String> getAlternativeNames() {
+        return alternativeNames;
     }
 
-    public void setAlternative_names(List<String> alternative_names) {
-        this.alternative_names = alternative_names;
+    public void setAlternativeNames(List<String> alternativeNames) {
+        this.alternativeNames = alternativeNames;
     }
 
-    public boolean isIs_ca() {
-        return is_ca;
+    public boolean isCa() {
+        return isCa;
     }
 
-    public void setIs_ca(boolean is_ca) {
-        this.is_ca = is_ca;
+    public void setCa(boolean ca) {
+        this.isCa = ca;
     }
 
-    public List<String> getExtended_key_usage() {
-        return extended_key_usage;
+    public List<String> getExtendedKeyUsage() {
+        return extendedKeyUsage;
     }
 
-    public void setExtended_key_usage(List<String> extended_key_usage) {
-        this.extended_key_usage = extended_key_usage;
+    public void setExtendedKeyUsage(List<String> extendedKeyUsage) {
+        this.extendedKeyUsage = extendedKeyUsage;
     }
 }
