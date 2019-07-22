@@ -18,7 +18,7 @@ import java.util.HashMap;
  */
 public class KubernetesDeploymentManagerTest {
 
-    @Test
+  //  @Test
     public void runLoadBalancerDeployment() throws Exception {
         KubernetesProperties kubernetesProperties = new KubernetesProperties();
         kubernetesProperties.setMaster("https://192.168.99.100:8443");

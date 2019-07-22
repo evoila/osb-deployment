@@ -1,5 +1,6 @@
 package de.evoila.cf.cpi.bosh.manifest;
 
+import de.evoila.cf.broker.bean.BoshProperties;
 import de.evoila.cf.cpi.bosh.deployment.DeploymentManager;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Compilation;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Manifest;
@@ -24,7 +25,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = { DeploymentManager.class})
+@SpringBootTest(classes = {BoshProperties.class, DeploymentManager.class})
 public class ManifestParserTest extends ManifestTest {
 
     @Autowired
