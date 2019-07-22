@@ -1,5 +1,7 @@
 package de.evoila.cf.cpi.bosh.manifest;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.BufferedReader;
@@ -7,9 +9,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
+import java.util.Properties;
 
 public abstract class ManifestTest {
-    public static final String DIRECTOR_UUID = "9b61cd26-8e25-4272-b45d-340eaaf47f08";
     public static final String DEPLOYMENT_NAME = "deployment-name";
     public static final String RELEASE_NAME = "release";
     public static final String RELEASE_VERSION = "latest";
@@ -44,6 +46,8 @@ public abstract class ManifestTest {
     public static final int COMP_WORKERS = 1;
     public static final String COMP_NETWORK = "default";
 
+    static boolean propertiesSet = false;
+
     public String readFile(String path) throws IOException, URISyntaxException {
         InputStream inputStream = new ClassPathResource(path).getInputStream();
         return readFile(inputStream);
@@ -61,6 +65,58 @@ public abstract class ManifestTest {
         }
 
         return stringBuilder.toString();
+    }
+
+    /**
+     * Checks whether any of the necessary environment variables are set for the BoshProperties class.
+     * If this is not the case, dummy values will be written into all necessary variables.
+     * Furthermore {@linkplain #propertiesSet} will be set to true, to indicate that dummy variables are set.
+     * For cleanup see {@linkplain #cleanupEnvVars()}.
+     */
+    @BeforeClass
+    public static void setupEnvVarsForBoshProperties() {
+        // Needed because the BoshProperties class is depending on these environment variables
+        // and the DeploymentManager class has a dependency on BoshProperties.
+        // If more configuration beans need environment variables,
+        // a test configuration file would be a more elegant way to solve this problem.
+
+        Properties props = System.getProperties();
+
+        if (! (props.containsKey("bosh.authentication")
+                || props.containsKey("bosh.authentication")
+                || props.containsKey("bosh.host")
+                || props.containsKey("bosh.stemcellOs")
+                || props.containsKey("bosh.stemcellVersion")
+                || props.containsKey("bosh.username")
+                || props.containsKey("bosh.password"))) {
+
+            propertiesSet = true;
+            props.put("bosh.authentication", "dummy-authentication");
+            props.put("bosh.host", "dummy-host");
+            props.put("bosh.stemcellOs", "dummy-stemcellOs");
+            props.put("bosh.stemcellVersion", "dummy-stemcellVersion");
+            props.put("bosh.username", "dummy-username");
+            props.put("bosh.password", "dummy-password");
+            System.setProperties(props);
+        }
+    }
+
+    /**
+     *  Checks via {@linkplain #propertiesSet} whether dummy environment variables were set before.
+     *  If this is the case, these variables are removed from the properties.
+     */
+    @AfterClass
+    public static void cleanupEnvVars() {
+        if (propertiesSet) {
+            Properties props = System.getProperties();
+            props.remove("bosh.authentication");
+            props.remove("bosh.host");
+            props.remove("bosh.stemcellOs");
+            props.remove("bosh.stemcellVersion");
+            props.remove("bosh.username");
+            props.remove("bosh.password");
+            System.setProperties(props);
+        }
     }
 
 }
