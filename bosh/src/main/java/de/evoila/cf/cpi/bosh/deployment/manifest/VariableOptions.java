@@ -21,6 +21,9 @@ public class VariableOptions {
     @JsonProperty("extended_key_usage")
     private List<String> extendedKeyUsage;
 
+    @JsonProperty("username")
+    private String username;
+
     public String getCommonName() {
         return commonName;
     }
@@ -51,5 +54,13 @@ public class VariableOptions {
 
     public void setExtendedKeyUsage(List<String> extendedKeyUsage) {
         this.extendedKeyUsage = extendedKeyUsage;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }
