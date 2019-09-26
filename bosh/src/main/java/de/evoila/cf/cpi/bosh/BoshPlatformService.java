@@ -8,6 +8,7 @@ import com.jcraft.jsch.Session;
 import de.evoila.cf.broker.bean.BoshProperties;
 import de.evoila.cf.broker.controller.utils.DashboardUtils;
 import de.evoila.cf.broker.exception.PlatformException;
+import de.evoila.cf.broker.exception.ServiceDefinitionDoesNotExistException;
 import de.evoila.cf.broker.model.DashboardClient;
 import de.evoila.cf.broker.model.Platform;
 import de.evoila.cf.broker.model.ServiceInstance;
@@ -97,7 +98,9 @@ public abstract class BoshPlatformService implements PlatformService {
                 boshProperties.getAuthentication()).authenticate();
     }
 
-    public BoshClient getBoshClient() { return boshClient; }
+    public BoshClient getBoshClient() {
+        return boshClient;
+    }
 
     @Override
     public boolean isSyncPossibleOnCreate(Plan plan) {
@@ -105,10 +108,14 @@ public abstract class BoshPlatformService implements PlatformService {
     }
 
     @Override
-    public boolean isSyncPossibleOnBind() { return true; }
+    public boolean isSyncPossibleOnBind() {
+        return true;
+    }
 
     @Override
-    public boolean isSyncPossibleOnUnbind() { return true; }
+    public boolean isSyncPossibleOnUnbind() {
+        return true;
+    }
 
     @Override
     public boolean isSyncPossibleOnDelete(ServiceInstance instance) {
@@ -128,13 +135,16 @@ public abstract class BoshPlatformService implements PlatformService {
     }
 
     protected void runCreateErrands(ServiceInstance instance, Plan plan, Deployment deployment,
-                                    Observable<List<ErrandSummary>> errands) throws PlatformException {}
+                                    Observable<List<ErrandSummary>> errands) throws PlatformException {
+    }
 
     protected void runUpdateErrands(ServiceInstance instance, Plan plan, Deployment deployment,
-                                    Observable<List<ErrandSummary>> errands) throws PlatformException {}
+                                    Observable<List<ErrandSummary>> errands) throws PlatformException {
+    }
 
     protected void runDeleteErrands(ServiceInstance instance, Deployment deployment,
-                                    Observable<List<ErrandSummary>> errands) { }
+                                    Observable<List<ErrandSummary>> errands) {
+    }
 
     protected void waitForTaskCompletion(Task task) throws PlatformException {
         log.debug("Bosh Deployment started waiting for task to complete {}", task);
@@ -161,8 +171,8 @@ public abstract class BoshPlatformService implements PlatformService {
         }
     }
 
-    public ServiceInstance createServiceInstanceObject(ServiceInstance instance, Plan plan) {
-        if(dashboardClient.isPresent()) {
+    public ServiceInstance createServiceInstanceObject(ServiceInstance instance, Plan plan) throws ServiceDefinitionDoesNotExistException {
+        if (dashboardClient.isPresent()) {
             return new ServiceInstance(instance,
                     DashboardUtils.dashboard(catalogService.getServiceDefinition(instance.getServiceDefinitionId()), instance.getId()),
                     randomString());
@@ -176,7 +186,7 @@ public abstract class BoshPlatformService implements PlatformService {
     }
 
     @Override
-    public ServiceInstance getCreateInstancePromise(ServiceInstance instance, Plan plan) {
+    public ServiceInstance getCreateInstancePromise(ServiceInstance instance, Plan plan) throws ServiceDefinitionDoesNotExistException {
         return new ServiceInstance(instance,
                 DashboardUtils.dashboard(catalogService.getServiceDefinition(instance.getServiceDefinitionId()),
                         instance.getId()),
@@ -189,7 +199,7 @@ public abstract class BoshPlatformService implements PlatformService {
     }
 
     @Override
-    public ServiceInstance createInstance(ServiceInstance in, Plan plan, Map<String, Object> customParameters) throws PlatformException {
+    public ServiceInstance createInstance(ServiceInstance in, Plan plan, Map<String, Object> customParameters) throws PlatformException, ServiceDefinitionDoesNotExistException {
         ServiceInstance instance = createServiceInstanceObject(in, plan);
         try {
             Deployment deployment = deploymentManager.createDeployment(instance, plan, customParameters);
@@ -274,7 +284,8 @@ public abstract class BoshPlatformService implements PlatformService {
     }
 
     @Override
-    public void preDeleteInstance(ServiceInstance serviceInstance) {}
+    public void preDeleteInstance(ServiceInstance serviceInstance) {
+    }
 
     @Override
     public void deleteInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
@@ -310,7 +321,10 @@ public abstract class BoshPlatformService implements PlatformService {
     }
 
     @Override
-    public void postDeleteInstance(ServiceInstance serviceInstance) throws PlatformException {};
+    public void postDeleteInstance(ServiceInstance serviceInstance) throws PlatformException {
+    }
+
+    ;
 
     @Override
     public ServiceInstance getInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
