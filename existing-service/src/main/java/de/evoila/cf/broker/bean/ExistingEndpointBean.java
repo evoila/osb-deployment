@@ -1,8 +1,10 @@
 package de.evoila.cf.broker.bean;
 
+import de.evoila.cf.broker.bean.impl.BackupCredentials;
 import de.evoila.cf.broker.model.catalog.ServerAddress;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Yannic Remmet, Johannes Hiemer.
@@ -22,4 +24,8 @@ public interface ExistingEndpointBean {
 	String getDatabase();
 
 	String getDeployment();
+
+    BackupCredentials getBackupCredentials();
+
+	Map<String, String> getParameters();
 }

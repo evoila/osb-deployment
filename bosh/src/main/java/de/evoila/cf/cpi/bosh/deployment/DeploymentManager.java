@@ -26,10 +26,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -227,6 +224,14 @@ public class DeploymentManager {
         return DEPLOYMENT_PREFIX + instance.getId();
     }
 
+    public Map<String,Object> getProperty(Map<String,Object> parent, String key) {
+        if(parent.containsKey(key)) {
+            return (Map<String, Object>) parent.get(key);
+        }
+        Map<String,Object> value = new HashMap<>();
+        parent.put(key,value);
+        return value;
+    }
     public ObjectMapper getMapper() {
         return mapper;
     }

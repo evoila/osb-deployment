@@ -8,7 +8,9 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 @ConfigurationProperties
@@ -32,6 +34,11 @@ public class ExistingEndpoint {
 
     private String deployment;
 
+    private BackupCredentials backupCredentials;
+
+    private Map<String, String> parameters = new HashMap();
+
+    @Override
     public String getName() {
         return name;
     }
@@ -101,6 +108,24 @@ public class ExistingEndpoint {
     public void setDeployment(String deployment) {
         this.deployment = deployment;
     }
+
+    @Override
+    public BackupCredentials getBackupCredentials() {
+        return backupCredentials;
+    }
+
+    public void setBackupCredentials(BackupCredentials backupCredentials) {
+        this.backupCredentials = backupCredentials;
+    }
+
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
+    }
+}
 
     public String getServerName() {
         return serverName;

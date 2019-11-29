@@ -1,5 +1,6 @@
 package de.evoila.cf.cpi.bosh.manifest;
 
+import de.evoila.cf.broker.bean.BoshProperties;
 import de.evoila.cf.cpi.bosh.deployment.DeploymentManager;
 import de.evoila.cf.cpi.bosh.deployment.manifest.InstanceGroup;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Manifest;
@@ -18,7 +19,7 @@ import java.net.URISyntaxException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = { DeploymentManager.class})
+@SpringBootTest(classes = { BoshProperties.class, DeploymentManager.class})
 public class ManifestV2ParserTest extends ManifestTest {
 
     public static final String AZ1 = "z1";

@@ -6,10 +6,7 @@ import de.evoila.cf.cpi.bosh.deployment.manifest.addon.Addon;
 import de.evoila.cf.cpi.bosh.deployment.manifest.job.Job;
 import de.evoila.cf.cpi.bosh.deployment.manifest.network.Network;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Manifest {
@@ -17,6 +14,8 @@ public class Manifest {
     private String name;
 
     private List<Release> releases = new ArrayList<>();
+
+    private List<Variable> variables = new ArrayList<>();
 
     private Update update;
 
@@ -106,11 +105,25 @@ public class Manifest {
 
     public void setCompilation(Compilation compilation) { this.compilation = compilation; }
 
+    public List<Variable> getVariables() {
+        return variables;
+    }
+
+    public void setVariables(List<Variable> variables) {
+        this.variables = variables;
+    }
+
     public List<Addon> getAddons() {
         return addons;
     }
 
     public void setAddons(List<Addon> addons) {
         this.addons = addons;
+    }
+
+    public Optional<InstanceGroup> getInstanceGroup(String name){
+        return getInstanceGroups().stream()
+                .filter(ig ->  ig.getName().equals(name))
+                .findAny();
     }
 }
