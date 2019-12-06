@@ -23,9 +23,17 @@ public interface ExistingEndpointBean {
 
 	String getDatabase();
 
+	String getServerName();
+
 	String getDeployment();
 
     BackupCredentials getBackupCredentials();
+
+    void setUsername(String username);
+    void setPassword(String password);
+    void setDatabase(String database);
+    void setServerName(String serverName);
+    void setHosts(List<ServerAddress> serverAddresses);
 
 	Map<String, String> getParameters();
 }

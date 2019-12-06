@@ -4,9 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import de.evoila.cf.broker.bean.ExistingEndpointBean;
 import de.evoila.cf.broker.model.catalog.ServerAddress;
 import de.evoila.cf.broker.util.ObjectMapperUtils;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,9 +16,9 @@ import java.util.Map;
 /**
  * @author Yannic Remmet, Johannes Hiemer.
  */
+
 @Profile("pcf")
-@Configuration
-@ConfigurationProperties(prefix = "existing.endpoint")
+@Service
 public class PcfExistingEndpointBeanImpl implements ExistingEndpointBean {
 
     private String name;
@@ -42,6 +41,16 @@ public class PcfExistingEndpointBeanImpl implements ExistingEndpointBean {
 
     private Map<String, String> parameters = new HashMap();
 
+    private String serverName;
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
+    }
+
     public String getName() {
         return name;
     }
@@ -53,6 +62,7 @@ public class PcfExistingEndpointBeanImpl implements ExistingEndpointBean {
     public String getPcfHosts() {
         return pcfHosts;
     }
+
 
     public void setPcfHosts(String pcfHosts) throws IOException {
         List<String> pcfHostList = ObjectMapperUtils.getObjectMapper().readValue(pcfHosts, new TypeReference<List<String>>(){});

@@ -1,7 +1,7 @@
 package de.evoila.cf.cpi.existing;
 
-import de.evoila.cf.broker.bean.impl.ExistingEndpoint;
-import de.evoila.cf.broker.bean.impl.ExistingEndpoints;
+import de.evoila.cf.broker.bean.ExistingEndpointBean;
+import de.evoila.cf.broker.bean.ExistingEndpointsBean;
 import de.evoila.cf.broker.exception.PlatformException;
 import de.evoila.cf.broker.model.Platform;
 import de.evoila.cf.broker.model.ServiceInstance;
@@ -29,12 +29,12 @@ public abstract class ExistingServiceFactory implements PlatformService {
 
 	private ServicePortAvailabilityVerifier portAvailabilityVerifier;
 
-    private ExistingEndpoints existingEndpoints;
+    private ExistingEndpointsBean existingEndpoints;
 
     private CredhubClient credhubClient;
 
     public ExistingServiceFactory(PlatformRepository platformRepository, ServicePortAvailabilityVerifier portAvailabilityVerifier,
-								  ExistingEndpoints existingEndpoints, CredhubClient credhubClient) {
+								  ExistingEndpointsBean existingEndpoints, CredhubClient credhubClient) {
     	this.platformRepository = platformRepository;
     	this.portAvailabilityVerifier = portAvailabilityVerifier;
     	this.existingEndpoints = existingEndpoints;
@@ -81,7 +81,7 @@ public abstract class ExistingServiceFactory implements PlatformService {
 
     @Override
     public ServiceInstance postCreateInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
-		List<ExistingEndpoint> hosts = existingEndpoints.getEndpoints().stream().filter(e -> {
+		List<ExistingEndpointBean> hosts = existingEndpoints.getEndpoints().stream().filter(e -> {
 			if (e.getServerName().equals(plan.getMetadata().getEndpointName()))
 				return true;
 			else
