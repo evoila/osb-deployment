@@ -7,8 +7,20 @@
     <packaging>pom</packaging>
     <name>deployment-parent</name>
     <version>1.2.0</version>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
- 	<properties>
+    <properties>
 		<parent.version>1.2.0</parent.version>
 	</properties>
 

@@ -17,6 +17,9 @@ public class VariableOptions {
 
     @JsonProperty("is_ca")
     private boolean isCa;
+    
+    @JsonProperty("ca")
+    private String ca;
 
     @JsonProperty("extended_key_usage")
     private List<String> extendedKeyUsage;
@@ -40,11 +43,19 @@ public class VariableOptions {
         this.alternativeNames = alternativeNames;
     }
 
-    public boolean isCa() {
+    public String getCa() {
+        return ca;
+    }
+
+    public void setCa(String ca) {
+        this.ca = ca;
+    }
+
+    public boolean isIsCa() {
         return isCa;
     }
 
-    public void setCa(boolean ca) {
+    public void setIsCa(boolean ca) {
         this.isCa = ca;
     }
 

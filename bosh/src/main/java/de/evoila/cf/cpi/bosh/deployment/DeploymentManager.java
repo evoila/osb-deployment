@@ -142,6 +142,7 @@ public class DeploymentManager {
     }
 
     public String generateManifest(Manifest manifest) throws JsonProcessingException {
+        log.debug("Bosh manifest:"+mapper.writeValueAsString(manifest));
         return mapper.writeValueAsString(manifest);
     }
 
