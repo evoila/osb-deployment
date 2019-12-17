@@ -12,7 +12,7 @@ import java.util.List;
  */
 
 @Profile("pcf")
-@Service("existingEndpoints")
+@Service()
 public class PcfExistingEndpointsImpl implements ExistingEndpointsBean {
 
     private List<ExistingEndpoint> endpoints = new ArrayList<>();
