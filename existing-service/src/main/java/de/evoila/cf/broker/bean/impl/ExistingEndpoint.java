@@ -1,5 +1,6 @@
 package de.evoila.cf.broker.bean.impl;
 
+import de.evoila.cf.broker.bean.ExistingEndpointBean;
 import de.evoila.cf.broker.model.catalog.ServerAddress;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +17,7 @@ import java.util.Map;
 
 @Configuration
 @ConfigurationProperties
-public class ExistingEndpoint {
+public class ExistingEndpoint implements ExistingEndpointBean {
 
     private String serverName;
 
