@@ -1,5 +1,7 @@
 package de.evoila.cf.broker.bean;
 
+import de.evoila.cf.broker.bean.impl.ExistingEndpoint;
+
 import java.util.List;
 
 /**
@@ -7,9 +9,9 @@ import java.util.List;
  */
 public interface ExistingEndpointsBean {
 
-    ExistingEndpointBean findByName(String name);
+    ExistingEndpoint findByName(String name);
 
-    List<ExistingEndpointBean> getEndpoints();
+    List<ExistingEndpoint> getEndpoints();
 
-    void setEndpoints(List<ExistingEndpointBean> endpoints);
+    void setEndpoints(List<ExistingEndpoint> endpoints);
 }
