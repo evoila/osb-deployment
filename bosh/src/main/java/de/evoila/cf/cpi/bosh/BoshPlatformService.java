@@ -355,8 +355,8 @@ public abstract class BoshPlatformService implements PlatformService {
                             instanceGroupProperties = (Map<String, Object>) instanceGroup.getProperties().get(property.getKey());
 
                         JsonSchemaUtils.mergeMaps(property.getValue().getProperties(), instanceGroupProperties, instanceGroupResult);
+                        result.put(instanceGroup.getName(), instanceGroupResult);
                     }
-                    result.put(instanceGroup.getName(), instanceGroupResult);
                 }
                 serviceInstance.setParameters(result);
             }
