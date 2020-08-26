@@ -437,7 +437,7 @@ public abstract class BoshPlatformService implements PlatformService {
         try {
             deleteInstance(serviceInstance, plan);
         } catch (PlatformException e) {
-            log.error("Clean up Failed with cause: ", e);
+            log.error("Clean up Failed with exception: ", e);
         }
     }
 }
