@@ -45,11 +45,11 @@ import java.time.Instant;
 import java.util.*;
 
 /**
- * @author Yannic Remmet, Johannes Hiemer.
+ * @author Yannic Remmet, Johannes Hiemer, Johannes Strauß.
  */
 public abstract class BoshPlatformService implements PlatformService {
 
-    protected final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private static final String QUEUED = "queued";
 
@@ -229,6 +229,7 @@ public abstract class BoshPlatformService implements PlatformService {
         } catch (IOException e) {
             log.error("Couldn't create Service Instance via Bosh Deployment");
             log.error(e.getMessage());
+            cleanUp(in, plan);
             throw new PlatformException("Could not create Service Instance", e);
         }
         return instance;
@@ -300,8 +301,8 @@ public abstract class BoshPlatformService implements PlatformService {
     @Override
     public void deleteInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
         try {
-            Deployment deployment = null;
-            Observable<List<ErrandSummary>> errands = null;
+            Deployment deployment;
+            Observable<List<ErrandSummary>> errands;
             try {
                 deployment = boshClient
                         .client()
@@ -335,8 +336,6 @@ public abstract class BoshPlatformService implements PlatformService {
     @Override
     public void postDeleteInstance(ServiceInstance serviceInstance) throws PlatformException {
     }
-
-    ;
 
     @Override
     public ServiceInstance getInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
@@ -444,6 +443,15 @@ public abstract class BoshPlatformService implements PlatformService {
 
         return deploymentManager.readManifestFromString(manifest);
     }
+  
+    private void cleanUp(ServiceInstance serviceInstance, Plan plan) {
+        log.error("Cleaning up failed Service Instance: " + serviceInstance.getId());
+        try {
+            deleteInstance(serviceInstance, plan);
+        } catch (PlatformException e) {
+            log.error("Clean up Failed with exception: ", e);
+        }
+    }
 
     private Instant calculateEndTime(ServiceInstance serviceInstance, Plan plan) throws ServiceDefinitionDoesNotExistException {
         ServiceDefinition serviceDefinition = catalogService.getServiceDefinition(serviceInstance.getServiceDefinitionId());
@@ -458,5 +466,4 @@ public abstract class BoshPlatformService implements PlatformService {
             return Instant.now().plus(Duration.ofSeconds(Integer.MAX_VALUE));
         }
     }
-
 }
