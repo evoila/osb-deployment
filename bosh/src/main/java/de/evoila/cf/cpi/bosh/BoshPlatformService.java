@@ -13,6 +13,7 @@ import de.evoila.cf.broker.model.DashboardClient;
 import de.evoila.cf.broker.model.Platform;
 import de.evoila.cf.broker.model.ServiceInstance;
 import de.evoila.cf.broker.model.catalog.ServerAddress;
+import de.evoila.cf.broker.model.catalog.ServiceDefinition;
 import de.evoila.cf.broker.model.catalog.plan.Plan;
 import de.evoila.cf.broker.model.json.schema.JsonSchema;
 import de.evoila.cf.broker.model.json.schema.utils.JsonSchemaUtils;
@@ -39,6 +40,8 @@ import rx.Observable;
 import javax.annotation.PostConstruct;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -146,7 +149,7 @@ public abstract class BoshPlatformService implements PlatformService {
                                     Observable<List<ErrandSummary>> errands) {
     }
 
-    protected void waitForTaskCompletion(Task task) throws PlatformException {
+    protected void waitForTaskCompletion(Task task, Instant endTime) throws PlatformException {
         log.debug("Bosh Deployment started waiting for task to complete {}", task);
         if (task == null) {
             log.error("Deployment Task is null");
@@ -160,8 +163,13 @@ public abstract class BoshPlatformService implements PlatformService {
                 } catch (InterruptedException e) {
                     throw new PlatformException(e);
                 }
+
+                if (Instant.now().isAfter(endTime)) {
+                    throw new PlatformException(String.format("Bosh Task %s exceeded maximum polling duration", task.getId()));
+                }
+
                 Observable<Task> taskObservable = boshClient.client().tasks().get(task.getId());
-                waitForTaskCompletion(taskObservable.toBlocking().first());
+                waitForTaskCompletion(taskObservable.toBlocking().first(), endTime);
                 return;
             case ERROR:
                 log.error(String.format("Could not create Service Instance. Task finished with error. [%s]  %s", task.getId(), task.getResult()));
@@ -208,7 +216,8 @@ public abstract class BoshPlatformService implements PlatformService {
                     .deployments()
                     .create(deployment);
 
-            waitForTaskCompletion(task.toBlocking().first());
+            Instant endTime = calculateEndTime(in, plan);
+            waitForTaskCompletion(task.toBlocking().first(), endTime);
 
             Observable<List<ErrandSummary>> errands = boshClient
                     .client()
@@ -249,7 +258,7 @@ public abstract class BoshPlatformService implements PlatformService {
     }
 
     @Override
-    public ServiceInstance updateInstance(ServiceInstance serviceInstance, Plan plan, Map<String, Object> customParameters) throws PlatformException {
+    public ServiceInstance updateInstance(ServiceInstance serviceInstance, Plan plan, Map<String, Object> customParameters) throws PlatformException, ServiceDefinitionDoesNotExistException {
         Deployment deployment = boshClient.client().deployments()
                 .get(DeploymentManager.deploymentName(serviceInstance))
                 .toBlocking().first();
@@ -269,7 +278,8 @@ public abstract class BoshPlatformService implements PlatformService {
                     .deployments()
                     .update(deployment);
 
-            waitForTaskCompletion(taskObservable.toBlocking().first());
+            Instant endTime = calculateEndTime(serviceInstance, plan);
+            waitForTaskCompletion(taskObservable.toBlocking().first(), endTime);
             updateHosts(serviceInstance, plan, deployment);
         } catch (IOException e) {
             throw new PlatformException("Could not update Service instance", e);
@@ -315,7 +325,9 @@ public abstract class BoshPlatformService implements PlatformService {
                     .client()
                     .deployments()
                     .delete(deployment);
-            waitForTaskCompletion(task.toBlocking().first());
+
+            Instant endTime = calculateEndTime(serviceInstance, plan);
+            waitForTaskCompletion(task.toBlocking().first(), endTime);
         } catch (Exception e) {
             throw new PlatformException("Could not delete failed service instance", e);
         }
@@ -431,13 +443,27 @@ public abstract class BoshPlatformService implements PlatformService {
 
         return deploymentManager.readManifestFromString(manifest);
     }
-
+  
     private void cleanUp(ServiceInstance serviceInstance, Plan plan) {
         log.error("Cleaning up failed Service Instance: " + serviceInstance.getId());
         try {
             deleteInstance(serviceInstance, plan);
         } catch (PlatformException e) {
             log.error("Clean up Failed with exception: ", e);
+        }
+    }
+
+    private Instant calculateEndTime(ServiceInstance serviceInstance, Plan plan) throws ServiceDefinitionDoesNotExistException {
+        ServiceDefinition serviceDefinition = catalogService.getServiceDefinition(serviceInstance.getServiceDefinitionId());
+        Integer maximumPollingDuration = plan.getMaximumPollingDuration();
+        if (maximumPollingDuration == null) {
+            maximumPollingDuration = serviceDefinition.getMaximumPollingDuration();
+        }
+
+        if (maximumPollingDuration != null) {
+            return Instant.now().plus(Duration.ofSeconds(maximumPollingDuration));
+        } else {
+            return Instant.now().plus(Duration.ofSeconds(Integer.MAX_VALUE));
         }
     }
 }
