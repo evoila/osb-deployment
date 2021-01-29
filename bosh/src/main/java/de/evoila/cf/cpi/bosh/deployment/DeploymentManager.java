@@ -80,7 +80,7 @@ public class DeploymentManager {
         Deployment deployment = new Deployment();
         deployment.setName(this.deploymentName(serviceInstance));
 
-        Manifest manifest = readTemplate("bosh/manifest.yml");
+        Manifest manifest = readTemplate("bosh/bosh.yml");
         manifest.setName(DEPLOYMENT_PREFIX + serviceInstance.getId());
         addStemcell(manifest);
         replaceParameters(serviceInstance, manifest, plan, customParameters, false);
