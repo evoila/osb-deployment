@@ -1,26 +1,29 @@
 package de.evoila.cf.cpi.bosh.deployment.manifest.network;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Subnet {
-    private Map<String, Object> cloud_properties;
+    private Map<String, Object> cloudProperties;
     private List<String> dns;
     private String gateway;
     private String range;
     private List<String> reserved;
-    private List<String> static_ips;
+    private List<String> staticIps;
 
-    public Map<String, Object> getCloud_properties () {
-        return cloud_properties;
+    public Map<String, Object> getCloudProperties () {
+        return cloudProperties;
     }
 
-    public void setCloud_properties (Map<String, Object> cloud_properties) {
-        this.cloud_properties = cloud_properties;
+    public void setCloud_properties (Map<String, Object> cloudProperties) {
+        this.cloudProperties = cloudProperties;
     }
 
     public List<String> getDns () {
@@ -59,13 +62,13 @@ public class Subnet {
         this.reserved = reserved;
     }
 
-    public List<String> getStatic_ips () {
-        if(static_ips == null)
-            this.static_ips = new ArrayList<>();
-        return static_ips;
+    public List<String> getStaticIps () {
+        if(staticIps == null)
+            this.staticIps = new ArrayList<>();
+        return staticIps;
     }
 
-    public void setStatic_ips (List<String> static_ips) {
-        this.static_ips = static_ips;
+    public void setStaticIps (List<String> staticIps) {
+        this.staticIps = staticIps;
     }
 }

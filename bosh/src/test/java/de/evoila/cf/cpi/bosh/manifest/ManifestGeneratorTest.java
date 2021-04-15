@@ -41,9 +41,9 @@ public class ManifestGeneratorTest extends ManifestTest {
 
         Update u = new Update();
         u.setCanaries(CANARIES);
-        u.setCanary_watch_time(CANARY_WATCH_TIME);
-        u.setMax_in_flight(MAX_IN_FLIGHT);
-        u.setUpdate_watch_time(UPDATE_WATCH_TIME);
+        u.setCanaryWatchTime(CANARY_WATCH_TIME);
+        u.setMaxInFlight(MAX_IN_FLIGHT);
+        u.setUpdateWatchTime(UPDATE_WATCH_TIME);
         manifest.setUpdate(u);
 
         Stemcell stemcell = new Stemcell();
@@ -61,7 +61,7 @@ public class ManifestGeneratorTest extends ManifestTest {
         Subnet subnet = new Subnet();
         subnet.getDns().add(DNS);
         subnet.setRange(RANGE);
-        subnet.getStatic_ips().add(STATIC_IP);
+        subnet.getStaticIps().add(STATIC_IP);
         subnet.getReserved().add(RESERVED);
 
         Network network = new Network();
@@ -77,8 +77,8 @@ public class ManifestGeneratorTest extends ManifestTest {
         Job job = new Job();
         job.setInstances(INSTANCES);
         job.setName(JOB_NAME);
-        job.setPersistent_disk(JOB_PERSISTENT_DISK);
-        job.setResource_pool(R_POOL_NAME);
+        job.setPersistentDisk(JOB_PERSISTENT_DISK);
+        job.setResourcePool(R_POOL_NAME);
         job.getTemplates().add(t);
         job.getNetworks().add(jobNetwork);
         job.getProperties().put("TEST","TEST");

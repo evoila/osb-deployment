@@ -1,13 +1,18 @@
 package de.evoila.cf.cpi.bosh.deployment.manifest;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
 import java.util.HashMap;
 import java.util.Map;
+
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 
 public class ResourcePool {
     private String name;
     private String network;
     private Stemcell stemcell;
-    private Map<String, Object> cloud_properties = new HashMap<>();
+    private Map<String, Object> cloudProperties = new HashMap<>();
 
     public String getName () {
         return name;
@@ -34,10 +39,10 @@ public class ResourcePool {
     }
 
     public Map<String, Object> getCloud_properties () {
-        return cloud_properties;
+        return cloudProperties;
     }
 
-    public void setCloud_properties (Map<String, Object> cloud_properties) {
-        this.cloud_properties = cloud_properties;
+    public void setCloud_properties (Map<String, Object> cloudProperties) {
+        this.cloudProperties = cloudProperties;
     }
 }

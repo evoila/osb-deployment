@@ -1,12 +1,17 @@
 package de.evoila.cf.cpi.bosh.deployment.manifest;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
 import java.util.HashMap;
 
+
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Compilation {
     private int workers;
-    private boolean reuse_compilation_vms;
+    private boolean reuseCompilationVms;
     private String network;
-    private HashMap<String, Object> cloud_properties;
+    private HashMap<String, Object> cloudProperties;
 
 
     public int getWorkers () {
@@ -17,12 +22,12 @@ public class Compilation {
         this.workers = workers;
     }
 
-    public boolean isReuse_compilation_vms () {
-        return reuse_compilation_vms;
+    public boolean isReuseCompilationVms () {
+        return reuseCompilationVms;
     }
 
-    public void setReuse_compilation_vms (boolean reuse_compilation_vms) {
-        this.reuse_compilation_vms = reuse_compilation_vms;
+    public void setReuseCompilationVms (boolean reuseCompilationVms) {
+        this.reuseCompilationVms = reuseCompilationVms;
     }
 
     public String getNetwork () {
@@ -33,11 +38,11 @@ public class Compilation {
         this.network = network;
     }
 
-    public HashMap<String, Object> getCloud_properties () {
-        return cloud_properties;
+    public HashMap<String, Object> getCloudProperties () {
+        return cloudProperties;
     }
 
-    public void setCloud_properties (HashMap<String, Object> cloud_properties) {
-        this.cloud_properties = cloud_properties;
+    public void setCloud_properties (HashMap<String, Object> cloudProperties) {
+        this.cloudProperties = cloudProperties;
     }
 }

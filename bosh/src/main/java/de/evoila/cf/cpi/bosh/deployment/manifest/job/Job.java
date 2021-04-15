@@ -1,6 +1,8 @@
 package de.evoila.cf.cpi.bosh.deployment.manifest.job;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import de.evoila.cf.cpi.bosh.deployment.manifest.network.Network;
 
 import java.util.ArrayList;
@@ -9,14 +11,16 @@ import java.util.List;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Job {
     private String name;
-    private int persistent_disk;
+    private int persistentDisk;
     private int instances;
-    private String resource_pool;
+    private String resourcePool;
     private List<Template> templates;
     private List<Network> networks;
     private Map<String, Object> properties;
+
 
 
     public String getName () {
@@ -27,12 +31,12 @@ public class Job {
         this.name = name;
     }
 
-    public int getPersistent_disk () {
-        return persistent_disk;
+    public int getPersistentDisk () {
+        return persistentDisk;
     }
 
-    public void setPersistent_disk (int persistent_disk) {
-        this.persistent_disk = persistent_disk;
+    public void setPersistentDisk (int persistentDisk) {
+        this.persistentDisk = persistentDisk;
     }
 
     public int getInstances () {
@@ -43,12 +47,12 @@ public class Job {
         this.instances = instances;
     }
 
-    public String getResource_pool () {
-        return resource_pool;
+    public String getResourcePool () {
+        return resourcePool;
     }
 
-    public void setResource_pool (String resource_pool) {
-        this.resource_pool = resource_pool;
+    public void setResourcePool (String resourcePool) {
+        this.resourcePool = resourcePool;
     }
 
     public List<Template> getTemplates () {

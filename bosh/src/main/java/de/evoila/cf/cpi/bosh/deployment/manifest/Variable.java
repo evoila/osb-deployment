@@ -1,8 +1,13 @@
 package de.evoila.cf.cpi.bosh.deployment.manifest;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
 /**
  * @author Christian Brinker
  */
+
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Variable {
 
     private String name;

@@ -1,30 +1,28 @@
 package de.evoila.cf.cpi.bosh.deployment.manifest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import java.util.List;
 
 /**
  * @author Christian Brinker
  */
+
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class VariableOptions {
 
-    @JsonProperty("common_name")
     private String commonName;
 
-    @JsonProperty("alternative_names")
     private List<String> alternativeNames;
 
-    @JsonProperty("is_ca")
     private boolean isCa;
     
-    @JsonProperty("ca")
     private String ca;
 
-    @JsonProperty("extended_key_usage")
     private List<String> extendedKeyUsage;
 
-    @JsonProperty("username")
     private String username;
 
     public String getCommonName() {

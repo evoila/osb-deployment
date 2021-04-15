@@ -1,11 +1,15 @@
 package de.evoila.cf.cpi.bosh.deployment.manifest;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Update {
     private int canaries;
-    private String canary_watch_time;
-    private String update_watch_time;
+    private String canaryWatchTime;
+    private String updateWatchTime;
 
-    private int max_in_flight;
+    private int maxInFlight;
     private boolean serial;
 
     public int getCanaries () {
@@ -16,28 +20,28 @@ public class Update {
         this.canaries = canaries;
     }
 
-    public String getCanary_watch_time () {
-        return canary_watch_time;
+    public String getCanaryWatchTime () {
+        return canaryWatchTime;
     }
 
-    public void setCanary_watch_time (String canary_watch_time) {
-        this.canary_watch_time = canary_watch_time;
+    public void setCanaryWatchTime (String canaryWatchTime) {
+        this.canaryWatchTime = canaryWatchTime;
     }
 
-    public String getUpdate_watch_time () {
-        return update_watch_time;
+    public String getUpdateWatchTime () {
+        return updateWatchTime;
     }
 
-    public void setUpdate_watch_time (String update_watch_time) {
-        this.update_watch_time = update_watch_time;
+        public void setUpdateWatchTime (String updateWatchTime) {
+        this.updateWatchTime = updateWatchTime;
     }
 
-    public int getMax_in_flight () {
-        return max_in_flight;
+    public int getMaxInFlight () {
+        return maxInFlight;
     }
 
-    public void setMax_in_flight (int max_in_flight) {
-        this.max_in_flight = max_in_flight;
+    public void setMaxInFlight (int maxInFlight) {
+        this.maxInFlight = maxInFlight;
     }
 
     public boolean isSerial () {

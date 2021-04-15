@@ -36,13 +36,10 @@ public class InstanceJob {
 
     private Map<String, Object> properties;
 
-    @JsonProperty(value = "vm_type")
     private String vmType;
 
-    @JsonProperty(value = "persistent_disk_type")
     private String persistentDiskType;
 
-    @JsonProperty(value = "persistent_disk")
     private Integer persistentDisk;
 
     public String getName() {

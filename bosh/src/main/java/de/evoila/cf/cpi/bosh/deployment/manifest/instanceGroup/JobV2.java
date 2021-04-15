@@ -1,20 +1,27 @@
 package de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 @JsonIgnoreProperties(
       ignoreUnknown = true
 )
+
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class JobV2 {
     private String name;
     private String release;
     private Map<String, Object> consumes;
     private Map<String, Object> provides;
+    private ArrayList<Object> customProviderDefinitions;
     private Map<String, Object> properties;
-    private String vm_type;
-    private String vm_extensions;
+    private String vmType;
+    private String vmExtensions;
 
     public String getName () {
         return name;
@@ -47,6 +54,14 @@ public class JobV2 {
     public void setProvides (Map<String, Object> provides) {
         this.provides = provides;
     }
+    
+    public ArrayList<Object> getCustomProviderDefinitions () {
+        return customProviderDefinitions;
+    }
+
+    public void setCustomProviderDefinitions (ArrayList<Object> customProviderDefinitions) {
+        this.customProviderDefinitions = customProviderDefinitions;
+    }
 
     public Map<String, Object> getProperties () {
         return properties;
@@ -56,19 +71,19 @@ public class JobV2 {
         this.properties = properties;
     }
 
-    public String getVm_type () {
-        return vm_type;
+    public String getVmType () {
+        return vmType;
     }
 
-    public void setVm_type (String vm_type) {
-        this.vm_type = vm_type;
+    public void setVmType (String vmType) {
+        this.vmType = vmType;
     }
 
-    public String getVm_extensions () {
-        return vm_extensions;
+    public String getVmExtensions () {
+        return vmExtensions;
     }
 
-    public void setVm_extensions (String vm_extensions) {
-        this.vm_extensions = vm_extensions;
+    public void setVmExtensions (String vm_extensions) {
+        this.vmExtensions = vmExtensions;
     }
 }

@@ -47,9 +47,9 @@ public class ManifestParserTest extends ManifestTest {
     public void testUpdateParameter() throws IOException, URISyntaxException {
         Update update = manifest.getUpdate();
         assertEquals(CANARIES, update.getCanaries());
-        assertEquals(CANARY_WATCH_TIME, update.getCanary_watch_time());
-        assertEquals(UPDATE_WATCH_TIME, update.getUpdate_watch_time());
-        assertEquals(MAX_IN_FLIGHT, update.getMax_in_flight());
+        assertEquals(CANARY_WATCH_TIME, update.getCanaryWatchTime());
+        assertEquals(UPDATE_WATCH_TIME, update.getUpdateWatchTime());
+        assertEquals(MAX_IN_FLIGHT, update.getMaxInFlight());
     }
 
     @Test 
@@ -69,8 +69,8 @@ public class ManifestParserTest extends ManifestTest {
         Job job = manifest.getJobs().get(0);
         assertEquals(JOB_NAME, job.getName());
         assertEquals(INSTANCES, job.getInstances());
-        assertEquals(JOB_PERSISTENT_DISK, job.getPersistent_disk());
-        assertEquals(JOB_RESOURCE_POOL_NAME, job.getResource_pool());
+        assertEquals(JOB_PERSISTENT_DISK, job.getPersistentDisk());
+        assertEquals(JOB_RESOURCE_POOL_NAME, job.getResourcePool());
         assertEquals(R_NETWORK_NAME, job.getNetworks().get(0).getName());
         assertTrue(job.getProperties().isEmpty());
     }
@@ -95,8 +95,8 @@ public class ManifestParserTest extends ManifestTest {
         assertEquals(GATEWAY, snet.getGateway());
         assertEquals(DNS, snet.getDns().get(0));
         assertEquals(RANGE, snet.getRange());
-        assertEquals(STATIC_IP, snet.getStatic_ips().get(0));
-        assertEquals(N_CP_NAME, snet.getCloud_properties().get("name"));
+        assertEquals(STATIC_IP, snet.getStaticIps().get(0));
+        assertEquals(N_CP_NAME, snet.getCloudProperties().get("name"));
     }
 
     @Test 

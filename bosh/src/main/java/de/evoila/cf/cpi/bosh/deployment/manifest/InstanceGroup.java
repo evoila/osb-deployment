@@ -3,12 +3,15 @@ package de.evoila.cf.cpi.bosh.deployment.manifest;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import de.evoila.cf.broker.model.catalog.plan.NetworkReference;
 import de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup.JobV2;
 
 import java.util.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class InstanceGroup {
     
     private String name;
@@ -19,17 +22,14 @@ public class InstanceGroup {
     @JsonInclude(JsonInclude.Include.ALWAYS)
     private Integer connections;
 
-    @JsonProperty("vm_type")
     private String vmType;
 
     private String stemcell;
 
     private String lifecycle;
 
-    @JsonProperty("persistent_disk_type")
     private String persistentDiskType;
 
-    @JsonProperty("persistent_disk")
     private int persistentDisk;
 
     private List<String> azs = new ArrayList<>();

@@ -51,9 +51,9 @@ public class ManifestV2ParserTest extends ManifestTest {
     public void testUpdateParameter() throws IOException, URISyntaxException {
         Update update = manifest.getUpdate();
         assertEquals(CANARIES, update.getCanaries());
-        assertEquals(CANARY_WATCH_TIME, update.getCanary_watch_time());
-        assertEquals(UPDATE_WATCH_TIME, update.getUpdate_watch_time());
-        assertEquals(MAX_IN_FLIGHT, update.getMax_in_flight());
+        assertEquals(CANARY_WATCH_TIME, update.getCanaryWatchTime());
+        assertEquals(UPDATE_WATCH_TIME, update.getUpdateWatchTime());
+        assertEquals(MAX_IN_FLIGHT, update.getMaxInFlight());
     }
 
     @Test 

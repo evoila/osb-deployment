@@ -1,14 +1,17 @@
 package de.evoila.cf.cpi.bosh.deployment.manifest;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import de.evoila.cf.cpi.bosh.deployment.manifest.addon.Addon;
+import de.evoila.cf.cpi.bosh.deployment.manifest.features.Features;
 import de.evoila.cf.cpi.bosh.deployment.manifest.job.Job;
 import de.evoila.cf.cpi.bosh.deployment.manifest.network.Network;
 
 import java.util.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Manifest {
 
     private String name;
@@ -19,9 +22,10 @@ public class Manifest {
 
     private Update update;
 
+    private Features features;
+
     private List<Stemcell> stemcells = new ArrayList<>();
 
-    @JsonProperty("instance_groups")
     private List<InstanceGroup> instanceGroups = new ArrayList<>();
 
     private Map<String, Object> properties = new HashMap<>();
@@ -32,7 +36,6 @@ public class Manifest {
 
     private List<Network> networks = new ArrayList<>();
 
-    @JsonProperty("resource_pools")
     private List<ResourcePool> resourcePools = new ArrayList<>();
 
     private List<Addon> addons = new ArrayList<>();
@@ -59,6 +62,14 @@ public class Manifest {
 
     public void setUpdate(Update update) {
         this.update = update;
+    }
+
+    public Features getFeutures() {
+        return features;
+    }
+
+    public void setFeatures(Features features) {
+        this.features = features;
     }
 
     public List<Stemcell> getStemcells() {

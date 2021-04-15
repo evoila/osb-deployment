@@ -2,6 +2,8 @@ package de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup;
 
 import ch.qos.logback.core.spi.LifeCycle;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import de.evoila.cf.broker.model.catalog.plan.NetworkReference;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Update;
 
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class InstanceGroup {
     private String name;
     private List<String> azs;
@@ -21,8 +24,8 @@ public class InstanceGroup {
     private Update update;
     private LifeCycle lifecycle;
     private Map<String, Object> properties;
-    private String vm_type;
-    private String persistent_disk_type;
+    private String vmType;
+    private String persistentDiskType;
 
     public String getName () {
         return name;
@@ -104,19 +107,19 @@ public class InstanceGroup {
         this.properties = properties;
     }
 
-    public String getVm_type() {
-        return vm_type;
+    public String getVmType() {
+        return vmType;
     }
 
-    public void setVm_type(String vm_type) {
-        this.vm_type = vm_type;
+    public void setVmType(String vmType) {
+        this.vmType = vmType;
     }
 
-    public String getPersistent_disk_type() {
-        return persistent_disk_type;
+    public String getPersistentDiskType() {
+        return persistentDiskType;
     }
 
-    public void setPersistent_disk_type(String persistent_disk_type) {
-        this.persistent_disk_type = persistent_disk_type;
+    public void setPersistentDiskType(String persistent_disk_type) {
+        this.persistentDiskType = persistentDiskType;
     }
 }
