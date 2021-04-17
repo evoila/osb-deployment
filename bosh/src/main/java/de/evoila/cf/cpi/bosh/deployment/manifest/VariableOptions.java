@@ -1,5 +1,6 @@
 package de.evoila.cf.cpi.bosh.deployment.manifest;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -14,15 +15,11 @@ import java.util.List;
 public class VariableOptions {
 
     private String commonName;
-
     private List<String> alternativeNames;
-
     private boolean isCa;
-    
     private String ca;
-
     private List<String> extendedKeyUsage;
-
+    private int duration;
     private String username;
 
     public String getCommonName() {
@@ -71,5 +68,13 @@ public class VariableOptions {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }
