@@ -346,13 +346,13 @@ public abstract class BoshPlatformService implements PlatformService {
             throw new PlatformException("Cannot read HaProxy configuration", ex);
         }
 
+        HashMap<String, Object> result = new HashMap<>();
         if (plan.getSchemas() != null && plan.getSchemas().getServiceInstance() != null
                 && plan.getSchemas().getServiceInstance().getUpdate() != null) {
             JsonSchema jsonSchema = plan.getSchemas().getServiceInstance().getUpdate().getParameters();
             if (jsonSchema != null && jsonSchema.getType().equals(JsonFormatTypes.OBJECT)) {
                 Map<String, JsonSchema> properties = jsonSchema.getProperties();
 
-                HashMap<String, Object> result = new HashMap<>();
                 for (Map.Entry<String, JsonSchema> property : properties.entrySet()) {
                     HashMap<String, Object> instanceGroupResult = new HashMap<>();
 
@@ -369,9 +369,26 @@ public abstract class BoshPlatformService implements PlatformService {
                         result.put(instanceGroup.getName(), instanceGroupResult);
                     }
                 }
-                serviceInstance.setParameters(result);
             }
         }
+        HashMap<String,HashMap<String,Object>> instanceGroups= new HashMap<String, HashMap<String, Object>>();
+        manifest.getInstanceGroups().stream().forEach(instanceGroup -> {
+            HashMap<String, Object> instannceGroupProperties = new HashMap<String, Object>();
+            instannceGroupProperties.put("stemcell", instanceGroup.getStemcell());
+            instannceGroupProperties.put("vm_type", instanceGroup.getVmType());
+            instannceGroupProperties.put("instances", instanceGroup.getInstances());
+            instannceGroupProperties.put("persistent_disk", instanceGroup.getPersistentDisk());
+            instannceGroupProperties.put("persistent_disk_type", instanceGroup.getPersistentDiskType());
+            if (instanceGroup.getLifecycle() != null) {
+                instannceGroupProperties.put("lifecycle", instanceGroup.getLifecycle());
+            }
+            instanceGroups.put(instanceGroup.getName(), instannceGroupProperties);
+        });
+        result.put("releases",manifest.getReleases());
+        result.put("stemcells", manifest.getStemcells());
+        result.put("instance_groups", instanceGroups);
+        result.put("deployment","bosh");
+        serviceInstance.setParameters(result);
         return serviceInstance;
     }
 

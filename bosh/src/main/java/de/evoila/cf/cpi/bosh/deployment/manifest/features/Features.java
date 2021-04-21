@@ -6,18 +6,18 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Features {
 
-    private boolean useDnsAddesses;
+    private boolean useDnsAddresses;
     private boolean convergeVariables;
     private boolean randomizeAzPlacement;
     private boolean useTmpfsConfig;
     private boolean useShortDnsAddresses;
 
-    boolean isUseDnsAddesses() {
-        return useDnsAddesses;
+    public boolean isUseDnsAddresses() {
+        return useDnsAddresses;
     }
 
-    public void  setUseDnsAddesses(boolean useDnsAddesses) {
-        this.useDnsAddesses = useDnsAddesses;
+    public void  setUseDnsAddresses(boolean useDnsAddesses) {
+        this.useDnsAddresses = useDnsAddesses;
     }
 
     public boolean isConvergeVariables() {
@@ -46,5 +46,9 @@ public class Features {
 
     public void setUseShortDnsAddresses(boolean useShortDnsAddresses) {
         this.useShortDnsAddresses = useShortDnsAddresses;
+    }
+
+    public boolean isUseTmpfsConfig() {
+        return useTmpfsConfig;
     }
 }

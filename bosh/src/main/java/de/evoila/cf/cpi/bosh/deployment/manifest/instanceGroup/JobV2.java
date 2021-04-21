@@ -121,6 +121,9 @@ public class JobV2 {
     @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
     public static class Aliases {
 
+        public Aliases() {
+        }
+
         public Aliases(String domain){
             this.domain = domain;
         }
