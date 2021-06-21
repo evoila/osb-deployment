@@ -64,7 +64,7 @@ public class Manifest {
         this.update = update;
     }
 
-    public Features getFeutures() {
+    public Features getFeatures() {
         return features;
     }
 
