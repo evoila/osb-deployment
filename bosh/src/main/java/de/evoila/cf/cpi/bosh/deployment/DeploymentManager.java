@@ -91,9 +91,17 @@ public class DeploymentManager {
 
     public Deployment updateDeployment(ServiceInstance serviceInstance, Deployment deployment, Plan plan,
                                         Map<String, Object> customParameters) throws IOException {
-        Manifest manifest = mapper.readValue(deployment.getRawManifest(), Manifest.class);
 
-        log.debug("Updating deployment: " + deployment.getRawManifest());
+
+        Manifest manifest = readTemplate("bosh/bosh.yml");
+        manifest.setName(DEPLOYMENT_PREFIX + serviceInstance.getId());
+        addStemcell(manifest);
+
+
+        if (!boshProperties.isRecreateManifest()) {
+            manifest = mapper.readValue(deployment.getRawManifest(), Manifest.class);
+            log.debug("Updating deployment: " + deployment.getRawManifest());
+	}
 
         replaceParameters(serviceInstance, manifest, plan, customParameters, true);
 
