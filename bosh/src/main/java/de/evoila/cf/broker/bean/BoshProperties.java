@@ -25,6 +25,8 @@ public class BoshProperties {
     private String stemcellVersion;
 
     private String stemcellOs;
+    
+    private boolean recreateManifest = false;
 
     private Authentication authentication;
 
@@ -60,6 +62,9 @@ public class BoshProperties {
 
     public String getVipNetwork() { return vipNetwork; }
 
-    public void setVipNetwork(String vipNetwork) { this.vipNetwork = vipNetwork;
-    }
+    public void setVipNetwork(String vipNetwork) { this.vipNetwork = vipNetwork; }
+    
+    public boolean isRecreateManifest() { return recreateManifest; }
+
+    public void setRecreateManifest(boolean recreateManifest) { this.recreateManifest = recreateManifest; }
 }
