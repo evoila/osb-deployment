@@ -81,13 +81,13 @@ public class DeploymentManager {
     protected void setManifestMetadataFromPlan(Manifest manifest, Plan plan) {
         Metadata planMetadata = plan.getMetadata();
         if (planMetadata.isRandomizeAzPlacement()) {
-            log.info("Randomize AZ Placement is true");
+            log.debug("Randomize AZ Placement is true");
             if (manifest.getFeatures() == null) {
                 manifest.setFeatures(new Features());
             }
             manifest.getFeatures().setRandomizeAzPlacement(true);
         } else {
-            log.info("Randomize AZ Placements is false");
+            log.debug("Randomize AZ Placements is false");
         }
 
     }
@@ -99,7 +99,7 @@ public class DeploymentManager {
         Manifest manifest = readTemplate("bosh/bosh.yml");
         manifest.setName(DEPLOYMENT_PREFIX + serviceInstance.getId());
         addStemcell(manifest);
-        log.info("Now calling replaceParameters...");
+        log.debug("Now calling replaceParameters...");
         replaceParameters(serviceInstance, manifest, plan, customParameters, false);
 
         deployment.setRawManifest(generateManifest(manifest));

@@ -208,6 +208,7 @@ public abstract class BoshPlatformService implements PlatformService {
 
     @Override
     public ServiceInstance createInstance(ServiceInstance in, Plan plan, Map<String, Object> customParameters) throws PlatformException, ServiceDefinitionDoesNotExistException {
+        log.debug("Inside createInstance");
         ServiceInstance instance = createServiceInstanceObject(in, plan);
         try {
             Deployment deployment = deploymentManager.createDeployment(instance, plan, customParameters);
