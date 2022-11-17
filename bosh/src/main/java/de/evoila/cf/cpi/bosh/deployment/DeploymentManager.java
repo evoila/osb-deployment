@@ -86,6 +86,8 @@ public class DeploymentManager {
                 manifest.setFeatures(new Features());
             }
             manifest.getFeatures().setRandomizeAzPlacement(true);
+        } else {
+            log.info("Randomize AZ Placements is false");
         }
 
     }
@@ -97,6 +99,7 @@ public class DeploymentManager {
         Manifest manifest = readTemplate("bosh/bosh.yml");
         manifest.setName(DEPLOYMENT_PREFIX + serviceInstance.getId());
         addStemcell(manifest);
+        log.info("Now calling replaceParameters...");
         replaceParameters(serviceInstance, manifest, plan, customParameters, false);
 
         deployment.setRawManifest(generateManifest(manifest));
