@@ -15,6 +15,7 @@ import de.evoila.cf.broker.util.MapUtils;
 import de.evoila.cf.cpi.bosh.deployment.manifest.InstanceGroup;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Manifest;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Stemcell;
+import de.evoila.cf.cpi.bosh.deployment.manifest.features.Features;
 import io.bosh.client.deployments.Deployment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +74,20 @@ public class DeploymentManager {
 
     protected void replaceParameters(ServiceInstance serviceInstance, Manifest manifest, Plan plan, Map
             <String, Object> customParameters, boolean isUpdate) {
+        setManifestMetadataFromPlan(manifest, plan);
         manifest.getProperties().putAll(customParameters);
+    }
+
+    protected void setManifestMetadataFromPlan(Manifest manifest, Plan plan) {
+        Metadata planMetadata = plan.getMetadata();
+        if (planMetadata.isRandomizeAzPlacement()) {
+            log.info("Randomize AZ Placement is true");
+            if (manifest.getFeatures() == null) {
+                manifest.setFeatures(new Features());
+            }
+            manifest.getFeatures().setRandomizeAzPlacement(true);
+        }
+
     }
 
     public Deployment createDeployment(ServiceInstance serviceInstance, Plan plan, Map<String, Object> customParameters) throws IOException {
