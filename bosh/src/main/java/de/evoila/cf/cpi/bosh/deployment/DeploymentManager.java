@@ -99,7 +99,6 @@ public class DeploymentManager {
         Manifest manifest = readTemplate("bosh/bosh.yml");
         manifest.setName(DEPLOYMENT_PREFIX + serviceInstance.getId());
         addStemcell(manifest);
-        log.debug("Now calling replaceParameters...");
         replaceParameters(serviceInstance, manifest, plan, customParameters, false);
 
         deployment.setRawManifest(generateManifest(manifest));
