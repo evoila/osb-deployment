@@ -81,15 +81,11 @@ public class DeploymentManager {
     protected void setManifestMetadataFromPlan(Manifest manifest, Plan plan) {
         Metadata planMetadata = plan.getMetadata();
         if (planMetadata.isRandomizeAzPlacement()) {
-            log.debug("Randomize AZ Placement is true");
             if (manifest.getFeatures() == null) {
                 manifest.setFeatures(new Features());
             }
             manifest.getFeatures().setRandomizeAzPlacement(true);
-        } else {
-            log.debug("Randomize AZ Placements is false");
         }
-
     }
 
     public Deployment createDeployment(ServiceInstance serviceInstance, Plan plan, Map<String, Object> customParameters) throws IOException {
