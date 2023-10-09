@@ -6,19 +6,16 @@ import de.evoila.cf.cpi.bosh.deployment.manifest.InstanceGroup;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Manifest;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Update;
 import de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup.JobV2;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = { BoshProperties.class, DeploymentManager.class})
 public class ManifestV2ParserTest extends ManifestTest {
 
@@ -37,18 +34,18 @@ public class ManifestV2ParserTest extends ManifestTest {
 
     Manifest manifest;
 
-    @Before 
-    public void before() throws IOException, URISyntaxException {
+    @BeforeEach
+    void before() throws IOException, URISyntaxException {
         manifest = deploymentManager.readTemplate("/manifestV2.yml");
     }
 
-    @Test 
-    public void testManifestParameter() throws IOException, URISyntaxException {
+    @Test
+    void testManifestParameter() throws IOException, URISyntaxException {
         assertEquals(DEPLOYMENT_NAME, manifest.getName());
     }
 
-    @Test 
-    public void testUpdateParameter() throws IOException, URISyntaxException {
+    @Test
+    void testUpdateParameter() throws IOException, URISyntaxException {
         Update update = manifest.getUpdate();
         assertEquals(CANARIES, update.getCanaries());
         assertEquals(CANARY_WATCH_TIME, update.getCanaryWatchTime());
@@ -56,8 +53,8 @@ public class ManifestV2ParserTest extends ManifestTest {
         assertEquals(MAX_IN_FLIGHT, update.getMaxInFlight());
     }
 
-    @Test 
-    public void testInstanceGroup(){
+    @Test
+    void testInstanceGroup(){
         InstanceGroup job = manifest.getInstanceGroups().get(0);
         assertEquals(INST_GRP_NAME, job.getName());
         assertEquals(AZ1, job.getAzs().get(0));
@@ -67,8 +64,8 @@ public class ManifestV2ParserTest extends ManifestTest {
         assertEquals(PERSISTENT_DISK_TYPE, job.getPersistentDiskType());
     }
 
-    @Test 
-    public void testJobs(){
+    @Test
+    void testJobs(){
         InstanceGroup group = manifest.getInstanceGroups().get(0);
         JobV2 t = group.getJobs().get(0);
         assertEquals("mongodb3", t.getName());
@@ -77,14 +74,14 @@ public class ManifestV2ParserTest extends ManifestTest {
         assertEquals("node-exporter", t.getName());
     }
 
-    @Test 
-    public void testReleases(){
+    @Test
+    void testReleases(){
         assertEquals(RELEASE_NAME, manifest.getReleases().get(0).getName());
         assertEquals(RELEASE_VERSION, manifest.getReleases().get(0).getVersion());
     }
 
-    @Test 
-    public void testStemCell(){
+    @Test
+    void testStemCell(){
         assertEquals(STEMCELL_ALIAS, manifest.getStemcells().get(0).getAlias());
         assertEquals(STEMCELL_OS, manifest.getStemcells().get(0).getOs());
     }

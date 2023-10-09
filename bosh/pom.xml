@@ -10,10 +10,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>17</source>
-                    <target>17</target>
-                </configuration>
+        <configuration>
+          <release>17</release>
+        </configuration>
             </plugin>
         </plugins>
     </build>
@@ -29,24 +28,29 @@
         <version>1.2.0</version>
     </parent>
 
-    <dependencies>
-        <!-- Project dependencies -->
-        <dependency>
-            <groupId>de.evoila.cf.broker</groupId>
-            <artifactId>core</artifactId>
-            <version>${core.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.evoila.cf.broker</groupId>
-            <artifactId>model</artifactId>
-            <version>${core.version}</version>
-        </dependency>
+  <dependencies>
+    <!-- Project dependencies -->
+    <dependency>
+      <groupId>de.evoila.cf.broker</groupId>
+      <artifactId>core</artifactId>
+      <version>${core.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>de.evoila.cf.broker</groupId>
+      <artifactId>model</artifactId>
+      <version>${core.version}</version>
+    </dependency>
 
-        <!-- Others -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
+    <!-- Others -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <scope>provided</scope>
+    </dependency>
         <dependency>
             <groupId>de.evoila</groupId>
             <artifactId>bosh-java-client</artifactId>
@@ -66,12 +70,6 @@
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
         </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
-            <scope>test</scope>
-	</dependency>
     </dependencies>
 
     <repositories>
