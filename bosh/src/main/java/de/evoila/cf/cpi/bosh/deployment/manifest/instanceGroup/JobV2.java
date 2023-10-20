@@ -1,6 +1,9 @@
 package de.evoila.cf.cpi.bosh.deployment.manifest.instanceGroup;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -154,9 +157,14 @@ public class JobV2 {
     }
 
    public static enum PlaceholderType {
-        UUID,
-        AVAILABILTTY_ZONE,
-        NETWORK
+       UUID,
+       AVAILABILTTY_ZONE,
+       NETWORK;
+
+       @JsonValue
+       public String forJackson() {
+           return name().toLowerCase();
+       }
     }
 
     @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
