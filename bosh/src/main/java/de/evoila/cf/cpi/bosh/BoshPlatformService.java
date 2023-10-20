@@ -32,12 +32,12 @@ import io.bosh.client.deployments.SSHConfig;
 import io.bosh.client.errands.ErrandSummary;
 import io.bosh.client.tasks.Task;
 import io.bosh.client.vms.Vm;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import rx.Observable;
 
-import javax.annotation.PostConstruct;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.Duration;
@@ -165,15 +165,15 @@ public abstract class BoshPlatformService implements PlatformService {
                 }
 
                 if (Instant.now().isAfter(endTime)) {
-                    throw new PlatformException(String.format("Bosh Task %s exceeded maximum polling duration", task.getId()));
+                    throw new PlatformException("Bosh Task %s exceeded maximum polling duration".formatted(task.getId()));
                 }
 
                 Observable<Task> taskObservable = boshClient.client().tasks().get(task.getId());
                 waitForTaskCompletion(taskObservable.toBlocking().first(), endTime);
                 return;
             case ERROR:
-                log.error(String.format("Could not create Service Instance. Task finished with error. [%s]  %s", task.getId(), task.getResult()));
-                throw new PlatformException(String.format("Could not create Service Instance. Task finished with error. [%s]  %s", task.getId(), task.getResult()));
+                log.error("Could not create Service Instance. Task finished with error. [%s]  %s".formatted(task.getId(), task.getResult()));
+                throw new PlatformException("Could not create Service Instance. Task finished with error. [%s]  %s".formatted(task.getId(), task.getResult()));
             case DONE:
                 return;
         }

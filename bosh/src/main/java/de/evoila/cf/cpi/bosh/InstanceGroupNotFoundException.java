@@ -12,10 +12,10 @@ public class InstanceGroupNotFoundException extends Exception{
 
     private static String getMessage(ServiceInstance instance,Manifest manifest,String instanceGroup) {
         String groups = manifest.getInstanceGroups().stream().map(i -> i.getName()).collect(Collectors.joining(", "));
-        return String.format("Could not find instance group %s in manifest for service instance %s. It only contains %s",
-                      instanceGroup,
-                      instance.getId(),
-                      groups
+        return "Could not find instance group %s in manifest for service instance %s. It only contains %s".formatted(
+                instanceGroup,
+                instance.getId(),
+                groups
         );
     }
 }

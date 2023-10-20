@@ -8,10 +8,10 @@ import de.evoila.cf.broker.model.ServiceInstance;
 import de.evoila.cf.broker.repository.PlatformRepository;
 import de.evoila.cf.broker.service.PlatformService;
 import de.evoila.cf.broker.service.availability.ServicePortAvailabilityVerifier;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import java.util.Map;
 
 /**

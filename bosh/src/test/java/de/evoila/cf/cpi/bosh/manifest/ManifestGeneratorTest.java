@@ -8,29 +8,26 @@ import de.evoila.cf.cpi.bosh.deployment.manifest.job.Template;
 
 import de.evoila.cf.cpi.bosh.deployment.manifest.network.Network;
 import de.evoila.cf.cpi.bosh.deployment.manifest.network.Subnet;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {BoshProperties.class, DeploymentManager.class})
-public class ManifestGeneratorTest extends ManifestTest {
+class ManifestGeneratorTest extends ManifestTest {
 
     @Autowired
     DeploymentManager deploymentManager;
 
     Manifest manifest;
-    
-    @Before 
-    public void before() throws IOException, URISyntaxException {
+
+    @BeforeEach
+    void before() throws IOException, URISyntaxException {
         manifest = new Manifest();
         manifest.setName(DEPLOYMENT_NAME);
         manifest.getProperties().put("TEST", "TEST");
@@ -93,8 +90,8 @@ public class ManifestGeneratorTest extends ManifestTest {
         manifest.getJobs().add(job);
     }
 
-    @Test 
-    public void testManifestGeneration() throws IOException, URISyntaxException {
+    @Test
+    void testManifestGeneration() throws IOException, URISyntaxException {
         String manifest = deploymentManager.generateManifest(this.manifest);
         String cmp_manifest = readFile("cmp_manifest.yml");
         assertEquals(cmp_manifest, manifest);

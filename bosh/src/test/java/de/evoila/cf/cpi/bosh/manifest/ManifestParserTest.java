@@ -11,12 +11,10 @@ import de.evoila.cf.cpi.bosh.deployment.manifest.job.Job;
 import de.evoila.cf.cpi.bosh.deployment.manifest.job.Template;
 import de.evoila.cf.cpi.bosh.deployment.manifest.network.Network;
 import de.evoila.cf.cpi.bosh.deployment.manifest.network.Subnet;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -24,27 +22,26 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {BoshProperties.class, DeploymentManager.class})
-public class ManifestParserTest extends ManifestTest {
+class ManifestParserTest extends ManifestTest {
 
     @Autowired
     DeploymentManager deploymentManager;
 
     Manifest manifest;
 
-    @Before 
-    public void before() throws IOException, URISyntaxException {
+    @BeforeEach
+    void before() throws IOException, URISyntaxException {
         manifest = deploymentManager.readTemplate("/manifest.yml");
     }
 
-    @Test 
-    public void testManifestParameter() throws IOException, URISyntaxException {
+    @Test
+    void testManifestParameter() throws IOException, URISyntaxException {
         assertEquals(DEPLOYMENT_NAME, manifest.getName());
     }
 
-    @Test 
-    public void testUpdateParameter() throws IOException, URISyntaxException {
+    @Test
+    void testUpdateParameter() throws IOException, URISyntaxException {
         Update update = manifest.getUpdate();
         assertEquals(CANARIES, update.getCanaries());
         assertEquals(CANARY_WATCH_TIME, update.getCanaryWatchTime());
@@ -52,8 +49,8 @@ public class ManifestParserTest extends ManifestTest {
         assertEquals(MAX_IN_FLIGHT, update.getMaxInFlight());
     }
 
-    @Test 
-    public void testResourcePoolParameter(){
+    @Test
+    void testResourcePoolParameter(){
         ResourcePool pool = manifest.getResourcePools().get(0);
         assertEquals(R_POOL_NAME, pool.getName());
         assertEquals(R_NETWORK_NAME, pool.getNetwork());
@@ -64,8 +61,8 @@ public class ManifestParserTest extends ManifestTest {
         assertEquals(4096, pool.getCloud_properties().get("ram"));
     }
 
-    @Test 
-    public void testJobParameter(){
+    @Test
+    void testJobParameter(){
         Job job = manifest.getJobs().get(0);
         assertEquals(JOB_NAME, job.getName());
         assertEquals(INSTANCES, job.getInstances());
@@ -76,7 +73,7 @@ public class ManifestParserTest extends ManifestTest {
     }
 
     @Test
-    public void testTemplates(){
+    void testTemplates(){
         Job job = manifest.getJobs().get(0);
         Template t = job.getTemplates().get(0);
         assertEquals(TEMPLATE1, t.getName());
@@ -86,8 +83,8 @@ public class ManifestParserTest extends ManifestTest {
         assertEquals(TEMPLATE2, t.getRelease());
     }
 
-    @Test 
-    public void testNetworks(){
+    @Test
+    void testNetworks(){
         Network net = manifest.getNetworks().get(0);
         assertEquals(NETWORK_NAME, net.getName());
 
@@ -99,27 +96,27 @@ public class ManifestParserTest extends ManifestTest {
         assertEquals(N_CP_NAME, snet.getCloudProperties().get("name"));
     }
 
-    @Test 
-    public void properties(){
+    @Test
+    void properties(){
         Map<String,Object> objectMap = manifest.getProperties();
         assertFalse(objectMap.isEmpty());
 
         Object custom = objectMap.get("custom");
-        if( custom instanceof Map){
-            assertEquals("TEST",((Map) custom).get("name"));
+        if( custom instanceof Map map){
+            assertEquals("TEST",map.get("name"));
         } else {
             assertFalse(true);
         }
     }
 
-    @Test 
-    public void testReleases(){
+    @Test
+    void testReleases(){
         assertEquals(RELEASE_NAME, manifest.getReleases().get(0).getName());
         assertEquals(RELEASE_VERSION, manifest.getReleases().get(0).getVersion());
     }
 
-    @Test 
-    public void testCompilation(){
+    @Test
+    void testCompilation(){
         Compilation comp = manifest.getCompilation();
 
         assertEquals(COMP_NETWORK, comp.getNetwork());

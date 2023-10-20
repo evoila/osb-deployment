@@ -1,7 +1,7 @@
 package de.evoila.cf.cpi.bosh.manifest;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.BufferedReader;
@@ -73,7 +73,7 @@ public abstract class ManifestTest {
      * Furthermore {@linkplain #propertiesSet} will be set to true, to indicate that dummy variables are set.
      * For cleanup see {@linkplain #cleanupEnvVars()}.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setupEnvVarsForBoshProperties() {
         // Needed because the BoshProperties class is depending on these environment variables
         // and the DeploymentManager class has a dependency on BoshProperties.
@@ -105,7 +105,7 @@ public abstract class ManifestTest {
      *  Checks via {@linkplain #propertiesSet} whether dummy environment variables were set before.
      *  If this is the case, these variables are removed from the properties.
      */
-    @AfterClass
+    @AfterAll
     public static void cleanupEnvVars() {
         if (propertiesSet) {
             Properties props = System.getProperties();
