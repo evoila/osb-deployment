@@ -423,7 +423,7 @@ public abstract class BoshPlatformService implements PlatformService {
                                                 int index) throws JSchException {
 
         JSch jsch = new JSch();
-        KeyPair keyPair = KeyPair.genKeyPair(jsch, KeyPair.RSA);
+        KeyPair keyPair = KeyPair.genKeyPair(jsch, KeyPair.ECDSA, 521);
         ByteArrayOutputStream privateKeyBuff = new ByteArrayOutputStream(2048);
         ByteArrayOutputStream publicKeyBuff = new ByteArrayOutputStream(2048);
 
