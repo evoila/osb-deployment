@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "bosh")
 @ConditionalOnProperty(prefix = "bosh", name = {"host", "username",
-        "password", "stemcellVersion", "stemcellOs", "authentication"}, havingValue = "")
+        "password", "stemcellVersion", "stemcellOs", "authentication"})
 public class BoshProperties {
 
     private String host;
