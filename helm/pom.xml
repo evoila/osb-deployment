@@ -21,7 +21,7 @@
 
     <properties>
         <core.version>1.3.0</core.version>
-        <netty-version>1.11.0</netty-version>
+        <netty-version>1.53.0</netty-version>
     </properties>
 
     <parent>
