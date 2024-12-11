@@ -85,5 +85,9 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>bosh-java-client</id>
+            <url>https://maven.pkg.github.com/evoila/bosh-java-client</url>
+        </repository>
     </repositories>
 </project>
